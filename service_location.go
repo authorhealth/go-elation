@@ -1,4 +1,4 @@
-package elationclient
+package elation
 
 import (
 	"context"
@@ -37,12 +37,12 @@ type ServiceLocation struct {
 }
 
 func (s *ServiceLocationService) Find(ctx context.Context) ([]*ServiceLocation, *http.Response, error) {
-	out := []*ServiceLocation{}
+	out := &Response[[]*ServiceLocation]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/service_locations", nil, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
-	return out, res, nil
+	return out.Results, res, nil
 }

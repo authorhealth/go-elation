@@ -1,4 +1,4 @@
-package elationclient
+package elation
 
 import (
 	"bytes"
@@ -19,6 +19,7 @@ type Client struct {
 
 	AppointmentSvc     *AppointmentService
 	ServiceLocationSvc *ServiceLocationService
+	SubscriptionSvc    *SubscriptionService
 }
 
 func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *Client {
@@ -37,22 +38,25 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 
 	client.AppointmentSvc = &AppointmentService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
+	client.SubscriptionSvc = &SubscriptionService{client}
 
 	return client
 }
 
-type Response struct {
-	Count    int             `json:"count"`
-	Next     string          `json:"next"`
-	Previous string          `json:"previous"`
-	Results  json.RawMessage `json:"results"`
+type Response[ResultsT any] struct {
+	Count    int      `json:"count"`
+	Next     string   `json:"next"`
+	Previous string   `json:"previous"`
+	Results  ResultsT `json:"results"`
 }
 
 type ErrorResponse struct {
+	StatusCode int
+	Detail     string `json:"detail"`
 }
 
 func (e *ErrorResponse) Error() string {
-	return ""
+	return e.Detail
 }
 
 func (c *Client) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
@@ -102,17 +106,13 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 			return res, fmt.Errorf("unmarshaling response body (error): %w", err)
 		}
 
+		errRes.StatusCode = res.StatusCode
+
 		return res, fmt.Errorf("API error: %w", errRes)
 	}
 
 	if out != nil {
-		apiRes := &Response{}
-		err = json.Unmarshal(resBody, apiRes)
-		if err != nil {
-			return res, fmt.Errorf("unmarshaling response body: %w", err)
-		}
-
-		err = json.Unmarshal(apiRes.Results, out)
+		err = json.Unmarshal(resBody, out)
 		if err != nil {
 			return res, fmt.Errorf("unmarshaling results: %w", err)
 		}

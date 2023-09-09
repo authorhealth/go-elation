@@ -1,4 +1,4 @@
-package elationclient
+package elation
 
 import (
 	"context"
@@ -86,12 +86,12 @@ type AppointmentPayment struct {
 }
 
 func (a *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error) {
-	out := []*Appointment{}
+	out := &Response[[]*Appointment]{}
 
 	res, err := a.client.request(ctx, http.MethodGet, "/appointments", opts, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
-	return out, res, nil
+	return out.Results, res, nil
 }
