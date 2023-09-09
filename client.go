@@ -99,6 +99,8 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 	//nolint
 	_ = res.Body.Close()
 
+	res.Body = io.NopCloser(bytes.NewBuffer(resBody))
+
 	if res.StatusCode > http.StatusIMUsed {
 		errRes := &ErrorResponse{}
 		err = json.Unmarshal(resBody, errRes)
