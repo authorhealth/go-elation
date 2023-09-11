@@ -4,11 +4,15 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 type AppointmentServicer interface {
 	Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error)
+	Get(ctx context.Context, id int64) (*Appointment, *http.Response, error)
+	Update(ctx context.Context, id int64, appt *AppointmentUpdate) (*Appointment, *http.Response, error)
+	Delete(ctx context.Context, id int64) (*http.Response, error)
 }
 
 var _ AppointmentServicer = (*AppointmentService)(nil)
@@ -94,4 +98,39 @@ func (a *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOpt
 	}
 
 	return out.Results, res, nil
+}
+
+func (a *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *http.Response, error) {
+	out := &Appointment{}
+
+	res, err := a.client.request(ctx, http.MethodGet, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, &out)
+	if err != nil {
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
+}
+
+type AppointmentUpdate struct {
+	Duration bool `json:"duration"`
+}
+
+func (a *AppointmentService) Update(ctx context.Context, id int64, appt *AppointmentUpdate) (*Appointment, *http.Response, error) {
+	out := &Appointment{}
+
+	res, err := a.client.request(ctx, http.MethodPatch, "/appointments/"+strconv.FormatInt(id, 10), nil, appt, &out)
+	if err != nil {
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
+}
+
+func (a *AppointmentService) Delete(ctx context.Context, id int64) (*http.Response, error) {
+	res, err := a.client.request(ctx, http.MethodDelete, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, nil)
+	if err != nil {
+		return res, fmt.Errorf("making request: %w", err)
+	}
+
+	return res, nil
 }

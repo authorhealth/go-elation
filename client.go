@@ -50,13 +50,13 @@ type Response[ResultsT any] struct {
 	Results  ResultsT `json:"results"`
 }
 
-type ErrorResponse struct {
+type Error struct {
 	StatusCode int
-	Detail     string `json:"detail"`
+	Body       string
 }
 
-func (e *ErrorResponse) Error() string {
-	return e.Detail
+func (e Error) Error() string {
+	return fmt.Sprintf("API error (status code %d)", e.StatusCode)
 }
 
 func (c *Client) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
@@ -102,15 +102,10 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 	res.Body = io.NopCloser(bytes.NewBuffer(resBody))
 
 	if res.StatusCode > http.StatusIMUsed {
-		errRes := &ErrorResponse{}
-		err = json.Unmarshal(resBody, errRes)
-		if err != nil {
-			return res, fmt.Errorf("unmarshaling response body (error): %w", err)
+		return res, &Error{
+			StatusCode: res.StatusCode,
+			Body:       string(resBody),
 		}
-
-		errRes.StatusCode = res.StatusCode
-
-		return res, fmt.Errorf("API error: %w", errRes)
 	}
 
 	if out != nil {
