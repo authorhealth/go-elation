@@ -13,7 +13,7 @@ import (
 type SubscriptionServicer interface {
 	Find(ctx context.Context) ([]*Subscription, *http.Response, error)
 	Subscribe(ctx context.Context, opts *SubscribeOptions) (*Subscription, *http.Response, error)
-	Delete(ctx context.Context, opts *DeleteSubscriptionOptions) (*http.Response, error)
+	Delete(ctx context.Context, id int64) (*http.Response, error)
 }
 
 var _ SubscriptionServicer = (*SubscriptionService)(nil)
@@ -78,9 +78,9 @@ type DeleteSubscriptionOptions struct {
 	ID int64 `url:"id"`
 }
 
-func (s *SubscriptionService) Delete(ctx context.Context, opts *DeleteSubscriptionOptions) (*http.Response, error) {
+func (s *SubscriptionService) Delete(ctx context.Context, id int64) (*http.Response, error) {
 	// The trailing slash in the path is required.
-	res, err := s.client.request(ctx, http.MethodDelete, "/app/subscriptions/"+strconv.Itoa(int(opts.ID))+"/", nil, nil, nil)
+	res, err := s.client.request(ctx, http.MethodDelete, "/app/subscriptions/"+strconv.FormatInt(id, 10)+"/", nil, nil, nil)
 	if err != nil {
 		return res, fmt.Errorf("making request: %w", err)
 	}

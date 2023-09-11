@@ -9,6 +9,7 @@ import (
 )
 
 type AppointmentServicer interface {
+	Create(ctx context.Context, appt *AppointmentCreate) (*Appointment, *http.Response, error)
 	Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error)
 	Get(ctx context.Context, id int64) (*Appointment, *http.Response, error)
 	Update(ctx context.Context, id int64, appt *AppointmentUpdate) (*Appointment, *http.Response, error)
@@ -21,13 +22,23 @@ type AppointmentService struct {
 	client *Client
 }
 
-type FindAppointmentsOptions struct {
-	Patient      []int64   `url:"patient,omitempty"`
-	Practice     []int64   `url:"practice,omitempty"`
-	Physician    []int64   `url:"physician,omitempty"`
-	FromDate     time.Time `url:"from_date,omitempty"`
-	ToDate       time.Time `url:"to_date,omitempty"`
-	TimeSlotType string    `url:"time_slot_type,omitempty"`
+type AppointmentCreate struct {
+	ScheduledDate time.Time `json:"scheduled_date"`
+	Reason        string    `json:"reason"`
+	Patient       int64     `json:"patient"`
+	Physician     int64     `json:"physician"`
+	Practice      int64     `json:"practice"`
+}
+
+func (a *AppointmentService) Create(ctx context.Context, appt *AppointmentCreate) (*Appointment, *http.Response, error) {
+	out := &Appointment{}
+
+	res, err := a.client.request(ctx, http.MethodPost, "/appointments", nil, appt, &out)
+	if err != nil {
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
 }
 
 type Appointment struct {
@@ -50,7 +61,7 @@ type Appointment struct {
 	Metadata               any                         `json:"metadata"`
 	CreatedDate            time.Time                   `json:"created_date"`
 	LastModifiedDate       time.Time                   `json:"last_modified_date"`
-	DeletedDate            any                         `json:"deleted_date"`
+	DeletedDate            *time.Time                  `json:"deleted_date"`
 	Mode                   string                      `json:"mode"`
 	Instructions           string                      `json:"instructions"`
 }
@@ -80,13 +91,22 @@ type AppointmentBillingDetails struct {
 }
 
 type AppointmentPayment struct {
-	ID            int64     `json:"id"`
-	Amount        string    `json:"amount"`
-	WhenCollected time.Time `json:"when_collected"`
-	Bill          any       `json:"bill"`
-	Appointment   int64     `json:"appointment"`
-	CreateDate    time.Time `json:"create_date"`
-	DeleteDate    any       `json:"delete_date"`
+	ID            int64      `json:"id"`
+	Amount        string     `json:"amount"`
+	WhenCollected time.Time  `json:"when_collected"`
+	Bill          any        `json:"bill"`
+	Appointment   int64      `json:"appointment"`
+	CreateDate    time.Time  `json:"create_date"`
+	DeleteDate    *time.Time `json:"delete_date"`
+}
+
+type FindAppointmentsOptions struct {
+	Patient      []int64   `url:"patient,omitempty"`
+	Practice     []int64   `url:"practice,omitempty"`
+	Physician    []int64   `url:"physician,omitempty"`
+	FromDate     time.Time `url:"from_date,omitempty"`
+	ToDate       time.Time `url:"to_date,omitempty"`
+	TimeSlotType string    `url:"time_slot_type,omitempty"`
 }
 
 func (a *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error) {
@@ -112,7 +132,8 @@ func (a *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *
 }
 
 type AppointmentUpdate struct {
-	Duration bool `json:"duration"`
+	Duration          *int    `json:"duration,omitempty"`
+	TelehealthDetails *string `json:"telehealth_details,omitempty"`
 }
 
 func (a *AppointmentService) Update(ctx context.Context, id int64, appt *AppointmentUpdate) (*Appointment, *http.Response, error) {
