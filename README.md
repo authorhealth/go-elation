@@ -28,11 +28,15 @@ func main() {
 
 	client := elation.NewClient(httpClient, tokenURL, clientID, clientSecret, baseURL)
 
-	patients, _, err := client.PatientSvc.Find(context.Background(), nil)
+	res, _, err := client.PatientSvc.Find(context.Background(), &elation.FindPatientsOptions{
+		Pagination: &elation.Pagination{
+			Limit: 1,
+		},
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(patients[0].FirstName)
+	fmt.Println(res.Results[0].FirstName)
 }
 ```
