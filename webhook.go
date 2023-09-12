@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	webhookSignatureHeader = "El8-Ed25519-Signature"
+	WebhookSignatureHeader = "El8-Ed25519-Signature"
 )
 
 func VerifyWebhook(r *http.Request, publicKey []byte) error {
-	sig, err := base64.StdEncoding.DecodeString(r.Header.Get(webhookSignatureHeader))
+	sig, err := base64.StdEncoding.DecodeString(r.Header.Get(WebhookSignatureHeader))
 	if err != nil {
 		return fmt.Errorf("decoding Ed25519 signature: %w", err)
 	}

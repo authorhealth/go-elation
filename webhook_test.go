@@ -26,7 +26,7 @@ func TestWebhook(t *testing.T) {
 	sig := ed25519.Sign(privateKey, body)
 	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(body))
 
-	req.Header.Set(webhookSignatureHeader, base64.StdEncoding.EncodeToString(sig))
+	req.Header.Set(WebhookSignatureHeader, base64.StdEncoding.EncodeToString(sig))
 
 	err = VerifyWebhook(req, publicKey)
 	assert.NoError(err)
