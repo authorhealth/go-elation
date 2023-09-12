@@ -129,8 +129,6 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 		return nil, fmt.Errorf("encoding URL query: %w", err)
 	}
 
-	fmt.Println(q)
-
 	u := c.baseURL + path
 	if len(q) > 0 {
 		u = u + "?" + q.Encode()

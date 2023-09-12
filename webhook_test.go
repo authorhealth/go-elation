@@ -31,3 +31,12 @@ func TestWebhook(t *testing.T) {
 	err = VerifyWebhook(req, publicKey)
 	assert.NoError(err)
 }
+
+func TestWebhook_incorrect_public_key_len(t *testing.T) {
+	assert := assert.New(t)
+
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+
+	err := VerifyWebhook(req, []byte("foo"))
+	assert.ErrorIs(err, ErrPublicKeyLength)
+}

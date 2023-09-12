@@ -14,7 +14,13 @@ const (
 	WebhookSignatureHeader = "El8-Ed25519-Signature"
 )
 
+var ErrPublicKeyLength = errors.New("incorrect length of public key")
+
 func VerifyWebhook(r *http.Request, publicKey []byte) error {
+	if len(publicKey) != ed25519.PublicKeySize {
+		return ErrPublicKeyLength
+	}
+
 	sig, err := base64.StdEncoding.DecodeString(r.Header.Get(WebhookSignatureHeader))
 	if err != nil {
 		return fmt.Errorf("decoding Ed25519 signature: %w", err)
