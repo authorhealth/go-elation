@@ -1,4 +1,4 @@
-package elationclient
+package elation
 
 import (
 	"bytes"
@@ -7,18 +7,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strconv"
 
 	querystring "github.com/google/go-querystring/query"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
 
+const defaultPaginationLimit = 25
+
 type Client struct {
 	httpClient *http.Client
 	baseURL    string
 
 	AppointmentSvc     *AppointmentService
+	PatientSvc         *PatientService
+	PhysicianSvc       *PhysicianService
 	ServiceLocationSvc *ServiceLocationService
+	SubscriptionSvc    *SubscriptionService
 }
 
 func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *Client {
@@ -36,23 +43,84 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
+	client.PatientSvc = &PatientService{client}
+	client.PhysicianSvc = &PhysicianService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
+	client.SubscriptionSvc = &SubscriptionService{client}
 
 	return client
 }
 
-type Response struct {
-	Count    int             `json:"count"`
-	Next     string          `json:"next"`
-	Previous string          `json:"previous"`
-	Results  json.RawMessage `json:"results"`
+type Response[ResultsT any] struct {
+	Count    int      `json:"count"`
+	Next     string   `json:"next"`
+	Previous string   `json:"previous"`
+	Results  ResultsT `json:"results"`
 }
 
-type ErrorResponse struct {
+func (r *Response[ResultsT]) HasPrevious() bool {
+	return len(r.Previous) > 0
 }
 
-func (e *ErrorResponse) Error() string {
-	return ""
+func (r *Response[ResultsT]) HasNext() bool {
+	return len(r.Next) > 0
+}
+
+func (r *Response[ResultsT]) Limit() int {
+	if !r.HasNext() {
+		return defaultPaginationLimit
+	}
+
+	u, err := url.Parse(r.Next)
+	if err != nil {
+		return defaultPaginationLimit
+	}
+
+	offset, err := strconv.Atoi(u.Query().Get("limit"))
+	if err != nil {
+		return defaultPaginationLimit
+	}
+
+	return offset
+}
+
+func (r *Response[ResultsT]) Offset() int {
+	if !r.HasNext() {
+		return 0
+	}
+
+	u, err := url.Parse(r.Next)
+	if err != nil {
+		return 0
+	}
+
+	offset, err := strconv.Atoi(u.Query().Get("offset"))
+	if err != nil {
+		return 0
+	}
+
+	return offset
+}
+
+func (r *Response[ResultsT]) Pagination() *Pagination {
+	return &Pagination{
+		Limit:  r.Limit(),
+		Offset: r.Offset(),
+	}
+}
+
+type Error struct {
+	StatusCode int
+	Body       string
+}
+
+type Pagination struct {
+	Limit  int `url:"limit,omitempty"`
+	Offset int `url:"offset,omitempty"`
+}
+
+func (e Error) Error() string {
+	return fmt.Sprintf("API error (status code %d)", e.StatusCode)
 }
 
 func (c *Client) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
@@ -95,24 +163,17 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 	//nolint
 	_ = res.Body.Close()
 
-	if res.StatusCode > http.StatusIMUsed {
-		errRes := &ErrorResponse{}
-		err = json.Unmarshal(resBody, errRes)
-		if err != nil {
-			return res, fmt.Errorf("unmarshaling response body (error): %w", err)
-		}
+	res.Body = io.NopCloser(bytes.NewBuffer(resBody))
 
-		return res, fmt.Errorf("API error: %w", errRes)
+	if res.StatusCode >= http.StatusBadRequest {
+		return res, &Error{
+			StatusCode: res.StatusCode,
+			Body:       string(resBody),
+		}
 	}
 
 	if out != nil {
-		apiRes := &Response{}
-		err = json.Unmarshal(resBody, apiRes)
-		if err != nil {
-			return res, fmt.Errorf("unmarshaling response body: %w", err)
-		}
-
-		err = json.Unmarshal(apiRes.Results, out)
+		err = json.Unmarshal(resBody, out)
 		if err != nil {
 			return res, fmt.Errorf("unmarshaling results: %w", err)
 		}
