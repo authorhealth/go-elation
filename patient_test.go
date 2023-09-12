@@ -40,12 +40,7 @@ func TestPatientService_Create(t *testing.T) {
 		err = json.Unmarshal(body, actual)
 		assert.NoError(err)
 
-		assert.Equal(expected.LastName, actual.LastName)
-		assert.Equal(expected.FirstName, actual.FirstName)
-		assert.Equal(expected.Sex, actual.Sex)
-		assert.Equal(expected.DOB, actual.DOB)
-		assert.Equal(expected.PrimaryPhysician, actual.PrimaryPhysician)
-		assert.Equal(expected.CaregiverPractice, actual.CaregiverPractice)
+		assert.Equal(expected, actual)
 
 		b, err := json.Marshal(&Patient{})
 		assert.NoError(err)

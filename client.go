@@ -15,7 +15,7 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-const defaultLimit = 25
+const defaultPaginationLimit = 25
 
 type Client struct {
 	httpClient *http.Client
@@ -68,17 +68,17 @@ func (r *Response[ResultsT]) HasNext() bool {
 
 func (r *Response[ResultsT]) Limit() int {
 	if !r.HasNext() {
-		return defaultLimit
+		return defaultPaginationLimit
 	}
 
 	u, err := url.Parse(r.Next)
 	if err != nil {
-		return defaultLimit
+		return defaultPaginationLimit
 	}
 
 	offset, err := strconv.Atoi(u.Query().Get("limit"))
 	if err != nil {
-		return defaultLimit
+		return defaultPaginationLimit
 	}
 
 	return offset
@@ -165,7 +165,7 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 
 	res.Body = io.NopCloser(bytes.NewBuffer(resBody))
 
-	if res.StatusCode > http.StatusIMUsed {
+	if res.StatusCode >= http.StatusBadRequest {
 		return res, &Error{
 			StatusCode: res.StatusCode,
 			Body:       string(resBody),

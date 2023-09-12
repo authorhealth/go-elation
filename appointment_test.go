@@ -39,11 +39,7 @@ func TestAppointmentService_Create(t *testing.T) {
 		err = json.Unmarshal(body, actual)
 		assert.NoError(err)
 
-		assert.Equal(expected.ScheduledDate, actual.ScheduledDate)
-		assert.Equal(expected.Reason, actual.Reason)
-		assert.Equal(expected.Patient, actual.Patient)
-		assert.Equal(expected.Physician, actual.Physician)
-		assert.Equal(expected.Practice, actual.Practice)
+		assert.Equal(expected, actual)
 
 		b, err := json.Marshal(&Appointment{})
 		assert.NoError(err)
