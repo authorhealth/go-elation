@@ -8,7 +8,7 @@ import (
 )
 
 type ServiceLocationServicer interface {
-	Find(ctx context.Context) ([]*ServiceLocation, *http.Response, error)
+	Find(ctx context.Context, opts *FindServiceLocationOptions) (*Response[[]*ServiceLocation], *http.Response, error)
 }
 
 var _ ServiceLocationServicer = (*ServiceLocationService)(nil)
@@ -36,13 +36,17 @@ type ServiceLocation struct {
 	Zip            string     `json:"zip"`
 }
 
-func (s *ServiceLocationService) Find(ctx context.Context) ([]*ServiceLocation, *http.Response, error) {
+type FindServiceLocationOptions struct {
+	*Pagination
+}
+
+func (s *ServiceLocationService) Find(ctx context.Context, opts *FindServiceLocationOptions) (*Response[[]*ServiceLocation], *http.Response, error) {
 	out := &Response[[]*ServiceLocation]{}
 
-	res, err := s.client.request(ctx, http.MethodGet, "/service_locations", nil, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/service_locations", opts, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
-	return out.Results, res, nil
+	return out, res, nil
 }

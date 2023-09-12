@@ -7,11 +7,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strconv"
 
 	querystring "github.com/google/go-querystring/query"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
+
+const defaultLimit = 25
 
 type Client struct {
 	httpClient *http.Client
@@ -54,9 +58,65 @@ type Response[ResultsT any] struct {
 	Results  ResultsT `json:"results"`
 }
 
+func (r *Response[ResultsT]) HasPrevious() bool {
+	return len(r.Previous) > 0
+}
+
+func (r *Response[ResultsT]) HasNext() bool {
+	return len(r.Next) > 0
+}
+
+func (r *Response[ResultsT]) Limit() int {
+	if !r.HasNext() {
+		return defaultLimit
+	}
+
+	u, err := url.Parse(r.Next)
+	if err != nil {
+		return defaultLimit
+	}
+
+	offset, err := strconv.Atoi(u.Query().Get("limit"))
+	if err != nil {
+		return defaultLimit
+	}
+
+	return offset
+}
+
+func (r *Response[ResultsT]) Offset() int {
+	if !r.HasNext() {
+		return 0
+	}
+
+	u, err := url.Parse(r.Next)
+	if err != nil {
+		return 0
+	}
+
+	offset, err := strconv.Atoi(u.Query().Get("offset"))
+	if err != nil {
+		return 0
+	}
+
+	return offset
+}
+
+func (r *Response[ResultsT]) Pagination() *Pagination {
+	return &Pagination{
+		Limit:  r.Limit(),
+		Offset: r.Offset(),
+	}
+}
+
 type Error struct {
 	StatusCode int
 	Body       string
+}
+
+type Pagination struct {
+	Limit  int `url:"limit,omitempty"`
+	Offset int `url:"offset,omitempty"`
 }
 
 func (e Error) Error() string {
@@ -68,6 +128,8 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 	if err != nil {
 		return nil, fmt.Errorf("encoding URL query: %w", err)
 	}
+
+	fmt.Println(q)
 
 	u := c.baseURL + path
 	if len(q) > 0 {

@@ -40,3 +40,12 @@ func strToInt64(in string) int64 {
 
 	return i
 }
+
+func strToInt(in string) int {
+	i, err := strconv.Atoi(in)
+	if err != nil {
+		return 0
+	}
+
+	return i
+}

@@ -10,7 +10,7 @@ import (
 
 type PatientServicer interface {
 	Create(ctx context.Context, create *PatientCreate) (*Patient, *http.Response, error)
-	Find(ctx context.Context, opts *FindPatientsOptions) ([]*Patient, *http.Response, error)
+	Find(ctx context.Context, opts *FindPatientsOptions) (*Response[[]*Patient], *http.Response, error)
 	Get(ctx context.Context, id int64) (*Patient, *http.Response, error)
 	Update(ctx context.Context, id int64, update *PatientUpdate) (*Patient, *http.Response, error)
 	Delete(ctx context.Context, id int64) (*http.Response, error)
@@ -197,6 +197,8 @@ type PatientConsent struct {
 }
 
 type FindPatientsOptions struct {
+	*Pagination
+
 	FirstName        string    `url:"first_name,omitempty"`
 	LastName         string    `url:"last_name,omitempty"`
 	DOB              string    `url:"dob,omitempty"`
@@ -213,7 +215,7 @@ type FindPatientsOptions struct {
 	LastModifiedLTE  time.Time `url:"last_modified_lte,omitempty"`
 }
 
-func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) ([]*Patient, *http.Response, error) {
+func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) (*Response[[]*Patient], *http.Response, error) {
 	out := &Response[[]*Patient]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/patients", opts, nil, &out)
@@ -221,7 +223,7 @@ func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) ([
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
-	return out.Results, res, nil
+	return out, res, nil
 }
 
 func (s *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Response, error) {

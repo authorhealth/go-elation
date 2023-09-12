@@ -8,7 +8,7 @@ import (
 )
 
 type PhysicianServicer interface {
-	Find(ctx context.Context, opts *FindPhysiciansOptions) ([]*Physician, *http.Response, error)
+	Find(ctx context.Context, opts *FindPhysiciansOptions) (*Response[[]*Physician], *http.Response, error)
 	Get(ctx context.Context, id int64) (*Physician, *http.Response, error)
 }
 
@@ -35,12 +35,14 @@ type Physician struct {
 }
 
 type FindPhysiciansOptions struct {
+	*Pagination
+
 	FirstName string `url:"first_name,omitempty"`
 	LastName  string `url:"last_name,omitempty"`
 	NPI       string `url:"npi,omitempty"`
 }
 
-func (s *PhysicianService) Find(ctx context.Context, opts *FindPhysiciansOptions) ([]*Physician, *http.Response, error) {
+func (s *PhysicianService) Find(ctx context.Context, opts *FindPhysiciansOptions) (*Response[[]*Physician], *http.Response, error) {
 	out := &Response[[]*Physician]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/physicians", opts, nil, &out)
@@ -48,7 +50,7 @@ func (s *PhysicianService) Find(ctx context.Context, opts *FindPhysiciansOptions
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
-	return out.Results, res, nil
+	return out, res, nil
 }
 
 func (s *PhysicianService) Get(ctx context.Context, id int64) (*Physician, *http.Response, error) {

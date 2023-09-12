@@ -15,6 +15,11 @@ func TestPhysicianService_Find(t *testing.T) {
 	assert := assert.New(t)
 
 	opts := &FindPhysiciansOptions{
+		Pagination: &Pagination{
+			Limit:  1,
+			Offset: 2,
+		},
+
 		FirstName: "first name",
 		LastName:  "last name",
 		NPI:       "npi",
@@ -32,9 +37,15 @@ func TestPhysicianService_Find(t *testing.T) {
 		lastName := r.URL.Query().Get("last_name")
 		npi := r.URL.Query().Get("npi")
 
+		limit := r.URL.Query().Get("limit")
+		offset := r.URL.Query().Get("offset")
+
 		assert.Equal(opts.FirstName, firstName)
 		assert.Equal(opts.LastName, lastName)
 		assert.Equal(opts.NPI, npi)
+
+		assert.Equal(opts.Pagination.Limit, strToInt(limit))
+		assert.Equal(opts.Pagination.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Physician]{
 			Results: []*Physician{

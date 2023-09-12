@@ -69,6 +69,11 @@ func TestPatientService_Find(t *testing.T) {
 	assert := assert.New(t)
 
 	opts := &FindPatientsOptions{
+		Pagination: &Pagination{
+			Limit:  1,
+			Offset: 2,
+		},
+
 		FirstName:        "first name",
 		LastName:         "last name",
 		DOB:              "dob",
@@ -108,6 +113,9 @@ func TestPatientService_Find(t *testing.T) {
 		lastModifiedLT := r.URL.Query().Get("last_modified_lt")
 		lastModifiedLTE := r.URL.Query().Get("last_modified_lte")
 
+		limit := r.URL.Query().Get("limit")
+		offset := r.URL.Query().Get("offset")
+
 		assert.Equal(opts.FirstName, firstName)
 		assert.Equal(opts.LastName, lastName)
 		assert.Equal(opts.DOB, dob)
@@ -122,6 +130,9 @@ func TestPatientService_Find(t *testing.T) {
 		assert.Equal(opts.LastModifiedGTE.Format(time.RFC3339), lastModifiedGTE)
 		assert.Equal(opts.LastModifiedLT.Format(time.RFC3339), lastModifiedLT)
 		assert.Equal(opts.LastModifiedLTE.Format(time.RFC3339), lastModifiedLTE)
+
+		assert.Equal(opts.Pagination.Limit, strToInt(limit))
+		assert.Equal(opts.Pagination.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Patient]{
 			Results: []*Patient{

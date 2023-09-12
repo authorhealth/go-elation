@@ -67,6 +67,11 @@ func TestAppointmentService_Find(t *testing.T) {
 	assert := assert.New(t)
 
 	opts := &FindAppointmentsOptions{
+		Pagination: &Pagination{
+			Limit:  1,
+			Offset: 2,
+		},
+
 		Patient:      []int64{1},
 		Practice:     []int64{2},
 		Physician:    []int64{3},
@@ -90,12 +95,18 @@ func TestAppointmentService_Find(t *testing.T) {
 		toDate := r.URL.Query().Get("to_date")
 		timeSlotType := r.URL.Query().Get("time_slot_type")
 
+		limit := r.URL.Query().Get("limit")
+		offset := r.URL.Query().Get("offset")
+
 		assert.Equal(opts.Patient, sliceStrToInt64(patient))
 		assert.Equal(opts.Practice, sliceStrToInt64(practice))
 		assert.Equal(opts.Physician, sliceStrToInt64(physician))
 		assert.Equal(opts.FromDate.Format(time.RFC3339), fromDate)
 		assert.Equal(opts.ToDate.Format(time.RFC3339), toDate)
 		assert.Equal(opts.TimeSlotType, timeSlotType)
+
+		assert.Equal(opts.Pagination.Limit, strToInt(limit))
+		assert.Equal(opts.Pagination.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Appointment]{
 			Results: []*Appointment{

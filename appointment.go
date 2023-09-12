@@ -10,7 +10,7 @@ import (
 
 type AppointmentServicer interface {
 	Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error)
-	Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error)
+	Find(ctx context.Context, opts *FindAppointmentsOptions) (*Response[[]*Appointment], *http.Response, error)
 	Get(ctx context.Context, id int64) (*Appointment, *http.Response, error)
 	Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error)
 	Delete(ctx context.Context, id int64) (*http.Response, error)
@@ -101,6 +101,8 @@ type AppointmentPayment struct {
 }
 
 type FindAppointmentsOptions struct {
+	*Pagination
+
 	Patient      []int64   `url:"patient,omitempty"`
 	Practice     []int64   `url:"practice,omitempty"`
 	Physician    []int64   `url:"physician,omitempty"`
@@ -109,7 +111,7 @@ type FindAppointmentsOptions struct {
 	TimeSlotType string    `url:"time_slot_type,omitempty"`
 }
 
-func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error) {
+func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) (*Response[[]*Appointment], *http.Response, error) {
 	out := &Response[[]*Appointment]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/appointments", opts, nil, &out)
@@ -117,7 +119,7 @@ func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOpt
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
-	return out.Results, res, nil
+	return out, res, nil
 }
 
 func (s *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *http.Response, error) {
