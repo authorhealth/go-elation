@@ -49,6 +49,7 @@ func TestAppointmentService_Create(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()
@@ -109,6 +110,7 @@ func TestAppointmentService_Find(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()
@@ -141,6 +143,7 @@ func TestAppointmentService_Get(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()

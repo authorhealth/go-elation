@@ -31,10 +31,10 @@ type PatientCreate struct {
 	CaregiverPractice int64  `json:"caregiver_practice"`
 }
 
-func (a *PatientService) Create(ctx context.Context, create *PatientCreate) (*Patient, *http.Response, error) {
+func (s *PatientService) Create(ctx context.Context, create *PatientCreate) (*Patient, *http.Response, error) {
 	out := &Patient{}
 
-	res, err := a.client.request(ctx, http.MethodPost, "/patients", nil, create, &out)
+	res, err := s.client.request(ctx, http.MethodPost, "/patients", nil, create, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -213,10 +213,10 @@ type FindPatientsOptions struct {
 	LastModifiedLTE  time.Time `url:"last_modified_lte,omitempty"`
 }
 
-func (a *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) ([]*Patient, *http.Response, error) {
+func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) ([]*Patient, *http.Response, error) {
 	out := &Response[[]*Patient]{}
 
-	res, err := a.client.request(ctx, http.MethodGet, "/patients", opts, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/patients", opts, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -224,10 +224,10 @@ func (a *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) ([
 	return out.Results, res, nil
 }
 
-func (a *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Response, error) {
+func (s *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Response, error) {
 	out := &Patient{}
 
-	res, err := a.client.request(ctx, http.MethodGet, "/patients/"+strconv.FormatInt(id, 10), nil, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/patients/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -258,10 +258,10 @@ type PatientUpdate struct {
 	Consents          []*PatientConsent `json:"consents"`
 }
 
-func (a *PatientService) Update(ctx context.Context, id int64, update *PatientUpdate) (*Patient, *http.Response, error) {
+func (s *PatientService) Update(ctx context.Context, id int64, update *PatientUpdate) (*Patient, *http.Response, error) {
 	out := &Patient{}
 
-	res, err := a.client.request(ctx, http.MethodPatch, "/patients/"+strconv.FormatInt(id, 10), nil, update, &out)
+	res, err := s.client.request(ctx, http.MethodPatch, "/patients/"+strconv.FormatInt(id, 10), nil, update, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -269,8 +269,8 @@ func (a *PatientService) Update(ctx context.Context, id int64, update *PatientUp
 	return out, res, nil
 }
 
-func (a *PatientService) Delete(ctx context.Context, id int64) (*http.Response, error) {
-	res, err := a.client.request(ctx, http.MethodDelete, "/patients/"+strconv.FormatInt(id, 10), nil, nil, nil)
+func (s *PatientService) Delete(ctx context.Context, id int64) (*http.Response, error) {
+	res, err := s.client.request(ctx, http.MethodDelete, "/patients/"+strconv.FormatInt(id, 10), nil, nil, nil)
 	if err != nil {
 		return res, fmt.Errorf("making request: %w", err)
 	}

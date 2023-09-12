@@ -30,10 +30,10 @@ type AppointmentCreate struct {
 	Practice      int64     `json:"practice"`
 }
 
-func (a *AppointmentService) Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error) {
+func (s *AppointmentService) Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error) {
 	out := &Appointment{}
 
-	res, err := a.client.request(ctx, http.MethodPost, "/appointments", nil, create, &out)
+	res, err := s.client.request(ctx, http.MethodPost, "/appointments", nil, create, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -109,10 +109,10 @@ type FindAppointmentsOptions struct {
 	TimeSlotType string    `url:"time_slot_type,omitempty"`
 }
 
-func (a *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error) {
+func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error) {
 	out := &Response[[]*Appointment]{}
 
-	res, err := a.client.request(ctx, http.MethodGet, "/appointments", opts, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/appointments", opts, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -120,10 +120,10 @@ func (a *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOpt
 	return out.Results, res, nil
 }
 
-func (a *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *http.Response, error) {
+func (s *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *http.Response, error) {
 	out := &Appointment{}
 
-	res, err := a.client.request(ctx, http.MethodGet, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -136,10 +136,10 @@ type AppointmentUpdate struct {
 	TelehealthDetails *string `json:"telehealth_details,omitempty"`
 }
 
-func (a *AppointmentService) Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error) {
+func (s *AppointmentService) Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error) {
 	out := &Appointment{}
 
-	res, err := a.client.request(ctx, http.MethodPatch, "/appointments/"+strconv.FormatInt(id, 10), nil, update, &out)
+	res, err := s.client.request(ctx, http.MethodPatch, "/appointments/"+strconv.FormatInt(id, 10), nil, update, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -147,8 +147,8 @@ func (a *AppointmentService) Update(ctx context.Context, id int64, update *Appoi
 	return out, res, nil
 }
 
-func (a *AppointmentService) Delete(ctx context.Context, id int64) (*http.Response, error) {
-	res, err := a.client.request(ctx, http.MethodDelete, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, nil)
+func (s *AppointmentService) Delete(ctx context.Context, id int64) (*http.Response, error) {
+	res, err := s.client.request(ctx, http.MethodDelete, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, nil)
 	if err != nil {
 		return res, fmt.Errorf("making request: %w", err)
 	}
