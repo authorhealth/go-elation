@@ -19,6 +19,7 @@ type Client struct {
 
 	AppointmentSvc     *AppointmentService
 	PatientSvc         *PatientService
+	PhysicianSvc       *PhysicianService
 	ServiceLocationSvc *ServiceLocationService
 	SubscriptionSvc    *SubscriptionService
 }
@@ -39,6 +40,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 
 	client.AppointmentSvc = &AppointmentService{client}
 	client.PatientSvc = &PatientService{client}
+	client.PhysicianSvc = &PhysicianService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
 
