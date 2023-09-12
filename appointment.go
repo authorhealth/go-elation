@@ -9,10 +9,10 @@ import (
 )
 
 type AppointmentServicer interface {
-	Create(ctx context.Context, appt *AppointmentCreate) (*Appointment, *http.Response, error)
+	Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error)
 	Find(ctx context.Context, opts *FindAppointmentsOptions) ([]*Appointment, *http.Response, error)
 	Get(ctx context.Context, id int64) (*Appointment, *http.Response, error)
-	Update(ctx context.Context, id int64, appt *AppointmentUpdate) (*Appointment, *http.Response, error)
+	Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error)
 	Delete(ctx context.Context, id int64) (*http.Response, error)
 }
 
@@ -30,10 +30,10 @@ type AppointmentCreate struct {
 	Practice      int64     `json:"practice"`
 }
 
-func (a *AppointmentService) Create(ctx context.Context, appt *AppointmentCreate) (*Appointment, *http.Response, error) {
+func (a *AppointmentService) Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error) {
 	out := &Appointment{}
 
-	res, err := a.client.request(ctx, http.MethodPost, "/appointments", nil, appt, &out)
+	res, err := a.client.request(ctx, http.MethodPost, "/appointments", nil, create, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
@@ -136,10 +136,10 @@ type AppointmentUpdate struct {
 	TelehealthDetails *string `json:"telehealth_details,omitempty"`
 }
 
-func (a *AppointmentService) Update(ctx context.Context, id int64, appt *AppointmentUpdate) (*Appointment, *http.Response, error) {
+func (a *AppointmentService) Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error) {
 	out := &Appointment{}
 
-	res, err := a.client.request(ctx, http.MethodPatch, "/appointments/"+strconv.FormatInt(id, 10), nil, appt, &out)
+	res, err := a.client.request(ctx, http.MethodPatch, "/appointments/"+strconv.FormatInt(id, 10), nil, update, &out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}

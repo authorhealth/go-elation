@@ -12,7 +12,7 @@ import (
 
 type SubscriptionServicer interface {
 	Find(ctx context.Context) ([]*Subscription, *http.Response, error)
-	Subscribe(ctx context.Context, opts *SubscribeOptions) (*Subscription, *http.Response, error)
+	Subscribe(ctx context.Context, opts *Subscribe) (*Subscription, *http.Response, error)
 	Delete(ctx context.Context, id int64) (*http.Response, error)
 }
 
@@ -32,6 +32,10 @@ type Subscription struct {
 }
 
 type SubscriptionJSONDate time.Time
+
+func (s *SubscriptionJSONDate) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + time.Time(*s).Format("2006-01-02T15:04:05") + "\""), nil
+}
 
 func (s *SubscriptionJSONDate) UnmarshalJSON(b []byte) error {
 	t, err := time.Parse("2006-01-02T15:04:05", strings.Trim(string(b), "\""))
@@ -56,17 +60,17 @@ func (s *SubscriptionService) Find(ctx context.Context) ([]*Subscription, *http.
 	return out.Results, res, nil
 }
 
-type SubscribeOptions struct {
+type Subscribe struct {
 	Resource   string          `json:"resource"`
 	Target     string          `json:"target"`
 	Properties json.RawMessage `json:"properties"`
 }
 
-func (s *SubscriptionService) Subscribe(ctx context.Context, opts *SubscribeOptions) (*Subscription, *http.Response, error) {
+func (s *SubscriptionService) Subscribe(ctx context.Context, subscribe *Subscribe) (*Subscription, *http.Response, error) {
 	out := &Subscription{}
 
 	// The trailing slash in the path is required.
-	res, err := s.client.request(ctx, http.MethodPost, "/app/subscriptions/", nil, opts, out)
+	res, err := s.client.request(ctx, http.MethodPost, "/app/subscriptions/", nil, subscribe, out)
 	if err != nil {
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}

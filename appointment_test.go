@@ -16,7 +16,7 @@ import (
 func TestAppointmentService_Create(t *testing.T) {
 	assert := assert.New(t)
 
-	expectedAppt := &AppointmentCreate{
+	expected := &AppointmentCreate{
 		ScheduledDate: time.Date(2023, 5, 15, 0, 0, 0, 0, time.UTC),
 		Reason:        "reason",
 		Patient:       1,
@@ -30,19 +30,20 @@ func TestAppointmentService_Create(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodPost, r.Method)
+		assert.Equal("/appointments", r.URL.Path)
 
 		body, err := io.ReadAll(r.Body)
 		assert.NoError(err)
 
-		actualAppt := &AppointmentCreate{}
-		err = json.Unmarshal(body, actualAppt)
+		actual := &AppointmentCreate{}
+		err = json.Unmarshal(body, actual)
 		assert.NoError(err)
 
-		assert.Equal(expectedAppt.ScheduledDate, actualAppt.ScheduledDate)
-		assert.Equal(expectedAppt.Reason, actualAppt.Reason)
-		assert.Equal(expectedAppt.Patient, actualAppt.Patient)
-		assert.Equal(expectedAppt.Physician, actualAppt.Physician)
-		assert.Equal(expectedAppt.Practice, actualAppt.Practice)
+		assert.Equal(expected.ScheduledDate, actual.ScheduledDate)
+		assert.Equal(expected.Reason, actual.Reason)
+		assert.Equal(expected.Patient, actual.Patient)
+		assert.Equal(expected.Physician, actual.Physician)
+		assert.Equal(expected.Practice, actual.Practice)
 
 		b, err := json.Marshal(&Appointment{})
 		assert.NoError(err)
@@ -55,8 +56,8 @@ func TestAppointmentService_Create(t *testing.T) {
 	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
-	appt, res, err := svc.Create(context.Background(), expectedAppt)
-	assert.NotNil(appt)
+	created, res, err := svc.Create(context.Background(), expected)
+	assert.NotNil(created)
 	assert.NotNil(res)
 	assert.NoError(err)
 }
@@ -79,6 +80,7 @@ func TestAppointmentService_Find(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodGet, r.Method)
+		assert.Equal("/appointments", r.URL.Path)
 
 		patient := r.URL.Query()["patient"]
 		practice := r.URL.Query()["practice"]
@@ -95,9 +97,6 @@ func TestAppointmentService_Find(t *testing.T) {
 		assert.Equal(opts.TimeSlotType, timeSlotType)
 
 		b, err := json.Marshal(Response[[]*Appointment]{
-			Count:    0,
-			Next:     "",
-			Previous: "",
 			Results: []*Appointment{
 				{
 					ID: 1,
@@ -117,8 +116,8 @@ func TestAppointmentService_Find(t *testing.T) {
 	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
-	appts, res, err := svc.Find(context.Background(), opts)
-	assert.NotNil(appts)
+	found, res, err := svc.Find(context.Background(), opts)
+	assert.NotNil(found)
 	assert.NotNil(res)
 	assert.NoError(err)
 }
@@ -126,7 +125,7 @@ func TestAppointmentService_Find(t *testing.T) {
 func TestAppointmentService_Get(t *testing.T) {
 	assert := assert.New(t)
 
-	var apptID int64 = 1
+	var id int64 = 1
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if tokenRequest(w, r) {
@@ -134,10 +133,10 @@ func TestAppointmentService_Get(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodGet, r.Method)
-		assert.Equal("/appointments/"+strconv.FormatInt(apptID, 10), r.URL.Path)
+		assert.Equal("/appointments/"+strconv.FormatInt(id, 10), r.URL.Path)
 
 		b, err := json.Marshal(&Appointment{
-			ID: apptID,
+			ID: id,
 		})
 		assert.NoError(err)
 
@@ -149,8 +148,8 @@ func TestAppointmentService_Get(t *testing.T) {
 	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
-	appt, res, err := svc.Get(context.Background(), apptID)
-	assert.NotNil(appt)
+	found, res, err := svc.Get(context.Background(), id)
+	assert.NotNil(found)
 	assert.NotNil(res)
 	assert.NoError(err)
 }
@@ -158,8 +157,8 @@ func TestAppointmentService_Get(t *testing.T) {
 func TestAppointmentService_Update(t *testing.T) {
 	assert := assert.New(t)
 
-	var apptID int64 = 1
-	expectedAppt := &AppointmentUpdate{
+	var id int64 = 1
+	expected := &AppointmentUpdate{
 		Duration:          Ptr(30),
 		TelehealthDetails: Ptr("telehealth details"),
 	}
@@ -170,17 +169,16 @@ func TestAppointmentService_Update(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodPatch, r.Method)
-		assert.Equal("/appointments/"+strconv.FormatInt(apptID, 10), r.URL.Path)
+		assert.Equal("/appointments/"+strconv.FormatInt(id, 10), r.URL.Path)
 
 		body, err := io.ReadAll(r.Body)
 		assert.NoError(err)
 
-		actualAppt := &AppointmentUpdate{}
-		err = json.Unmarshal(body, actualAppt)
+		actual := &AppointmentUpdate{}
+		err = json.Unmarshal(body, actual)
 		assert.NoError(err)
 
-		assert.Equal(expectedAppt.Duration, actualAppt.Duration)
-		assert.Equal(expectedAppt.TelehealthDetails, actualAppt.TelehealthDetails)
+		assert.Equal(expected, actual)
 
 		b, err := json.Marshal(&Appointment{})
 		assert.NoError(err)
@@ -193,8 +191,8 @@ func TestAppointmentService_Update(t *testing.T) {
 	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
-	appt, res, err := svc.Update(context.Background(), apptID, expectedAppt)
-	assert.NotNil(appt)
+	found, res, err := svc.Update(context.Background(), id, expected)
+	assert.NotNil(found)
 	assert.NotNil(res)
 	assert.NoError(err)
 }
@@ -202,7 +200,7 @@ func TestAppointmentService_Update(t *testing.T) {
 func TestAppointmentService_Delete(t *testing.T) {
 	assert := assert.New(t)
 
-	var apptID int64 = 1
+	var id int64 = 1
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if tokenRequest(w, r) {
@@ -210,14 +208,14 @@ func TestAppointmentService_Delete(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodDelete, r.Method)
-		assert.Equal("/appointments/"+strconv.FormatInt(apptID, 10), r.URL.Path)
+		assert.Equal("/appointments/"+strconv.FormatInt(id, 10), r.URL.Path)
 	}))
 	defer srv.Close()
 
 	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
-	res, err := svc.Delete(context.Background(), apptID)
+	res, err := svc.Delete(context.Background(), id)
 	assert.NotNil(res)
 	assert.NoError(err)
 }

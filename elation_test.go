@@ -30,3 +30,12 @@ func sliceStrToInt64(in []string) []int64 {
 
 	return out
 }
+
+func strToInt64(in string) int64 {
+	i, err := strconv.ParseInt(in, 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return i
+}
