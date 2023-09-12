@@ -51,6 +51,7 @@ func TestPatientService_Create(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()
@@ -135,6 +136,7 @@ func TestPatientService_Find(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()
@@ -167,6 +169,7 @@ func TestPatientService_Get(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()
@@ -248,6 +251,7 @@ func TestPatientService_Update(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()

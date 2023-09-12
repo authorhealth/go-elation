@@ -34,6 +34,7 @@ func TestServiceLocationService_Find(t *testing.T) {
 		assert.NoError(err)
 
 		w.Header().Set("Content-Type", "application/json")
+		//nolint
 		w.Write(b)
 	}))
 	defer srv.Close()

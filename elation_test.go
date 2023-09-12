@@ -11,6 +11,7 @@ func tokenRequest(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	//nolint
 	w.Write([]byte(`{"access_token":"foo"}`))
 
 	return true
