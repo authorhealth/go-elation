@@ -28,10 +28,11 @@ func main() {
 
 	client := elation.NewClient(httpClient, tokenURL, clientID, clientSecret, baseURL)
 
-	res, _, err := client.PatientSvc.Find(context.Background(), &elation.FindPatientsOptions{
-		Pagination: &elation.Pagination{
-			Limit: 1,
-		},
+	res := &elation.Response[[]*elation.Patient]{}
+	var err error
+
+	res, _, err = client.PatientSvc.Find(context.Background(), &elation.FindPatientsOptions{
+		Pagination: res.PaginationNextWithLimit(1),
 	})
 	if err != nil {
 		log.Fatal(err)

@@ -66,46 +66,24 @@ func (r *Response[ResultsT]) HasNext() bool {
 	return len(r.Next) > 0
 }
 
-func (r *Response[ResultsT]) Limit() int {
-	if !r.HasNext() {
-		return defaultPaginationLimit
-	}
-
-	u, err := url.Parse(r.Next)
-	if err != nil {
-		return defaultPaginationLimit
-	}
-
-	offset, err := strconv.Atoi(u.Query().Get("limit"))
-	if err != nil {
-		return defaultPaginationLimit
-	}
-
-	return offset
-}
-
-func (r *Response[ResultsT]) Offset() int {
-	if !r.HasNext() {
-		return 0
-	}
-
-	u, err := url.Parse(r.Next)
-	if err != nil {
-		return 0
-	}
-
-	offset, err := strconv.Atoi(u.Query().Get("offset"))
-	if err != nil {
-		return 0
-	}
-
-	return offset
-}
-
-func (r *Response[ResultsT]) Pagination() *Pagination {
+func (r *Response[ResultsT]) PaginationNext() *Pagination {
 	return &Pagination{
-		Limit:  r.Limit(),
-		Offset: r.Offset(),
+		Limit:  parseLimit(r.Next),
+		Offset: parseOffset(r.Next),
+	}
+}
+
+func (r *Response[ResultsT]) PaginationPrevious() *Pagination {
+	return &Pagination{
+		Limit:  parseLimit(r.Previous),
+		Offset: parseOffset(r.Previous),
+	}
+}
+
+func (r *Response[ResultsT]) PaginationNextWithLimit(limit int) *Pagination {
+	return &Pagination{
+		Limit:  limit,
+		Offset: parseOffset(r.Next),
 	}
 }
 
@@ -180,4 +158,32 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 	}
 
 	return res, nil
+}
+
+func parseLimit(v string) int {
+	u, err := url.Parse(v)
+	if err != nil {
+		return defaultPaginationLimit
+	}
+
+	offset, err := strconv.Atoi(u.Query().Get("limit"))
+	if err != nil {
+		return defaultPaginationLimit
+	}
+
+	return offset
+}
+
+func parseOffset(v string) int {
+	u, err := url.Parse(v)
+	if err != nil {
+		return 0
+	}
+
+	offset, err := strconv.Atoi(u.Query().Get("offset"))
+	if err != nil {
+		return 0
+	}
+
+	return offset
 }
