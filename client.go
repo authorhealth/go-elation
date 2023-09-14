@@ -15,7 +15,13 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-const defaultPaginationLimit = 25
+const (
+	defaultPaginationLimit = 25
+
+	ResourceAppointments string = "appointments"
+	ResourcePatients     string = "patients"
+	ResourcePhysicians   string = "physicians"
+)
 
 type Client struct {
 	httpClient *http.Client
