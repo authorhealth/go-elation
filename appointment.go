@@ -53,8 +53,8 @@ type Appointment struct {
 	ServiceLocation        *AppointmentServiceLocation `json:"service_location"`
 	TelehealthDetails      string                      `json:"telehealth_details"`
 	Patient                int64                       `json:"patient"`
-	Physician              int                         `json:"physician"`
-	Practice               int                         `json:"practice"`
+	Physician              int64                       `json:"physician"`
+	Practice               int64                       `json:"practice"`
 	RecurringEventSchedule any                         `json:"recurring_event_schedule"`
 	BillingDetails         *AppointmentBillingDetails  `json:"billing_details"`
 	Payment                *AppointmentPayment         `json:"payment"`
