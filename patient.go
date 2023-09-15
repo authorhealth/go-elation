@@ -151,8 +151,8 @@ type PatientInsurance struct {
 	RelationshipToInsured  string     `json:"relationship_to_insured"`
 	CreatedDate            time.Time  `json:"created_date"`
 	DeletedDate            *time.Time `json:"deleted_date"`
-	StartDate              time.Time  `json:"start_date"`
-	EndDate                time.Time  `json:"end_date"`
+	StartDate              string     `json:"start_date"`
+	EndDate                string     `json:"end_date"`
 }
 
 type PatientStatus struct {
