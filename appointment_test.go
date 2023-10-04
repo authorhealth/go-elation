@@ -171,6 +171,7 @@ func TestAppointmentService_Update(t *testing.T) {
 	expected := &AppointmentUpdate{
 		Duration:          Ptr(30),
 		TelehealthDetails: Ptr("telehealth details"),
+		Instructions:      Ptr("instructions"),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
