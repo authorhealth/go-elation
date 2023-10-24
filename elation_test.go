@@ -49,3 +49,12 @@ func strToInt(in string) int {
 
 	return i
 }
+
+func strToBool(in string) bool {
+	b, err := strconv.ParseBool(in)
+	if err != nil {
+		return false
+	}
+
+	return b
+}
