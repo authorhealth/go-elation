@@ -25,7 +25,7 @@ type PatientProblem struct {
 	Status       string              `json:"status"`
 	Synopsis     string              `json:"synopsis"`
 	StartDate    string              `json:"start_date"`
-	ResolvedDate *time.Time          `json:"resolved_date"`
+	ResolvedDate string              `json:"resolved_date"`
 	Dx           []*PatientProblemDX `json:"dx"`
 	Patient      int64               `json:"patient"`
 	CreatedDate  time.Time           `json:"created_date"`
@@ -41,7 +41,7 @@ type PatientProblemDX struct {
 type FindPatientProblemsOptions struct {
 	*Pagination
 
-	Patient int64 `url:"patient"`
+	Patient int64 `url:"patient,omitempty"`
 }
 
 func (s *ProblemService) Find(ctx context.Context, opts *FindPatientProblemsOptions) (*Response[[]*PatientProblem], *http.Response, error) {
