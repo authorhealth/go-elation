@@ -19,8 +19,10 @@ const (
 	defaultPaginationLimit = 25
 
 	ResourceAppointments string = "appointments"
+	ResourceMedications  string = "medications"
 	ResourcePatients     string = "patients"
 	ResourcePhysicians   string = "physicians"
+	ResourceProblems     string = "problems"
 )
 
 type Client struct {
@@ -28,8 +30,10 @@ type Client struct {
 	baseURL    string
 
 	AppointmentSvc     *AppointmentService
+	MedicationSvc      *MedicationService
 	PatientSvc         *PatientService
 	PhysicianSvc       *PhysicianService
+	ProblemSvc         *ProblemService
 	ServiceLocationSvc *ServiceLocationService
 	SubscriptionSvc    *SubscriptionService
 }
@@ -49,8 +53,10 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
+	client.MedicationSvc = &MedicationService{client}
 	client.PatientSvc = &PatientService{client}
 	client.PhysicianSvc = &PhysicianService{client}
+	client.ProblemSvc = &ProblemService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
 
