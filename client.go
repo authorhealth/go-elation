@@ -23,6 +23,9 @@ const (
 	ResourcePatients     string = "patients"
 	ResourcePhysicians   string = "physicians"
 	ResourceProblems     string = "problems"
+
+	WebhookEventActionSaved   string = "saved"
+	WebhookEventActionDeleted string = "deleted"
 )
 
 type Client struct {
