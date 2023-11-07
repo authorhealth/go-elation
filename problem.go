@@ -6,6 +6,10 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type ProblemServicer interface {
@@ -45,10 +49,15 @@ type FindPatientProblemsOptions struct {
 }
 
 func (s *ProblemService) Find(ctx context.Context, opts *FindPatientProblemsOptions) (*Response[[]*PatientProblem], *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "find problems", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Response[[]*PatientProblem]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/problems", opts, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -56,10 +65,15 @@ func (s *ProblemService) Find(ctx context.Context, opts *FindPatientProblemsOpti
 }
 
 func (s *ProblemService) Get(ctx context.Context, id int64) (*PatientProblem, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "get problem", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.problem_id", id)))
+	defer span.End()
+
 	out := &PatientProblem{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/problems/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 

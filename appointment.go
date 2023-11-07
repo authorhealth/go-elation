@@ -6,6 +6,10 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type AppointmentServicer interface {
@@ -31,10 +35,15 @@ type AppointmentCreate struct {
 }
 
 func (s *AppointmentService) Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "create appointment", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Appointment{}
 
 	res, err := s.client.request(ctx, http.MethodPost, "/appointments", nil, create, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -112,10 +121,15 @@ type FindAppointmentsOptions struct {
 }
 
 func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) (*Response[[]*Appointment], *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "find appointments", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Response[[]*Appointment]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/appointments", opts, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -123,10 +137,15 @@ func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOpt
 }
 
 func (s *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "get appointment", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.appointment_id", id)))
+	defer span.End()
+
 	out := &Appointment{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -140,10 +159,15 @@ type AppointmentUpdate struct {
 }
 
 func (s *AppointmentService) Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "update appointment", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.appointment_id", id)))
+	defer span.End()
+
 	out := &Appointment{}
 
 	res, err := s.client.request(ctx, http.MethodPatch, "/appointments/"+strconv.FormatInt(id, 10), nil, update, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -151,8 +175,13 @@ func (s *AppointmentService) Update(ctx context.Context, id int64, update *Appoi
 }
 
 func (s *AppointmentService) Delete(ctx context.Context, id int64) (*http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "delete appointment", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.appointment_id", id)))
+	defer span.End()
+
 	res, err := s.client.request(ctx, http.MethodDelete, "/appointments/"+strconv.FormatInt(id, 10), nil, nil, nil)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return res, fmt.Errorf("making request: %w", err)
 	}
 

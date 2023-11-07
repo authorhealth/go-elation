@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type ServiceLocationServicer interface {
@@ -41,10 +44,15 @@ type FindServiceLocationOptions struct {
 }
 
 func (s *ServiceLocationService) Find(ctx context.Context, opts *FindServiceLocationOptions) (*Response[[]*ServiceLocation], *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "find service locations", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Response[[]*ServiceLocation]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/service_locations", opts, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 

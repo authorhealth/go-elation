@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type PhysicianServicer interface {
@@ -43,10 +47,15 @@ type FindPhysiciansOptions struct {
 }
 
 func (s *PhysicianService) Find(ctx context.Context, opts *FindPhysiciansOptions) (*Response[[]*Physician], *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "find physicians", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Response[[]*Physician]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/physicians", opts, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -54,10 +63,15 @@ func (s *PhysicianService) Find(ctx context.Context, opts *FindPhysiciansOptions
 }
 
 func (s *PhysicianService) Get(ctx context.Context, id int64) (*Physician, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "get physician", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.physician_id", id)))
+	defer span.End()
+
 	out := &Physician{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/physicians/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
