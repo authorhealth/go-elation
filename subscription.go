@@ -53,7 +53,7 @@ func (s *SubscriptionJSONDate) UnmarshalJSON(b []byte) error {
 }
 
 func (s *SubscriptionService) Find(ctx context.Context) ([]*Subscription, *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find subscription", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find subscriptions", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*Subscription]{}

@@ -117,7 +117,7 @@ type FindPatientMedicationsOptions struct {
 }
 
 func (s *MedicationService) Find(ctx context.Context, opts *FindPatientMedicationsOptions) (*Response[[]*PatientMedication], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find medication", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find medications", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*PatientMedication]{}

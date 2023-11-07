@@ -121,7 +121,7 @@ type FindAppointmentsOptions struct {
 }
 
 func (s *AppointmentService) Find(ctx context.Context, opts *FindAppointmentsOptions) (*Response[[]*Appointment], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find appointment", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes())
+	ctx, span := s.client.tracer.Start(ctx, "find appointments", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*Appointment]{}

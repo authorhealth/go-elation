@@ -225,7 +225,7 @@ type FindPatientsOptions struct {
 }
 
 func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) (*Response[[]*Patient], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find patient", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find patients", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*Patient]{}

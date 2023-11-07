@@ -49,7 +49,7 @@ type FindPatientProblemsOptions struct {
 }
 
 func (s *ProblemService) Find(ctx context.Context, opts *FindPatientProblemsOptions) (*Response[[]*PatientProblem], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find problem", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find problems", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*PatientProblem]{}

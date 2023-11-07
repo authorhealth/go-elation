@@ -44,7 +44,7 @@ type FindServiceLocationOptions struct {
 }
 
 func (s *ServiceLocationService) Find(ctx context.Context, opts *FindServiceLocationOptions) (*Response[[]*ServiceLocation], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find service location", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find service locations", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*ServiceLocation]{}

@@ -47,7 +47,7 @@ type FindPhysiciansOptions struct {
 }
 
 func (s *PhysicianService) Find(ctx context.Context, opts *FindPhysiciansOptions) (*Response[[]*Physician], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find physician", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find physicians", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*Physician]{}
