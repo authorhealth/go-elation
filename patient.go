@@ -6,6 +6,10 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type PatientServicer interface {
@@ -32,10 +36,15 @@ type PatientCreate struct {
 }
 
 func (s *PatientService) Create(ctx context.Context, create *PatientCreate) (*Patient, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "create patient", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Patient{}
 
 	res, err := s.client.request(ctx, http.MethodPost, "/patients", nil, create, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -216,10 +225,15 @@ type FindPatientsOptions struct {
 }
 
 func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) (*Response[[]*Patient], *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "find patient", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
 	out := &Response[[]*Patient]{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/patients", opts, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -227,10 +241,15 @@ func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) (*
 }
 
 func (s *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "get patient", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.patient_id", id)))
+	defer span.End()
+
 	out := &Patient{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/patients/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -261,10 +280,15 @@ type PatientUpdate struct {
 }
 
 func (s *PatientService) Update(ctx context.Context, id int64, update *PatientUpdate) (*Patient, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "update patient", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.patient_id", id)))
+	defer span.End()
+
 	out := &Patient{}
 
 	res, err := s.client.request(ctx, http.MethodPatch, "/patients/"+strconv.FormatInt(id, 10), nil, update, &out)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
@@ -272,8 +296,13 @@ func (s *PatientService) Update(ctx context.Context, id int64, update *PatientUp
 }
 
 func (s *PatientService) Delete(ctx context.Context, id int64) (*http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "delete patient", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.patient_id", id)))
+	defer span.End()
+
 	res, err := s.client.request(ctx, http.MethodDelete, "/patients/"+strconv.FormatInt(id, 10), nil, nil, nil)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
 		return res, fmt.Errorf("making request: %w", err)
 	}
 

@@ -11,6 +11,9 @@ import (
 	"strconv"
 
 	querystring "github.com/google/go-querystring/query"
+	"go.opentelemetry.io/otel"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -31,6 +34,7 @@ const (
 type Client struct {
 	httpClient *http.Client
 	baseURL    string
+	tracer     trace.Tracer
 
 	AppointmentSvc     *AppointmentService
 	MedicationSvc      *MedicationService
@@ -53,6 +57,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client := &Client{
 		httpClient: config.Client(ctx),
 		baseURL:    baseURL,
+		tracer:     otel.GetTracerProvider().Tracer("github.com/authorhealth/go-elation"),
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
@@ -117,6 +122,9 @@ func (e Error) Error() string {
 }
 
 func (c *Client) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(semconv.HTTPRequestMethodKey.String(method))
+
 	q, err := querystring.Values(query)
 	if err != nil {
 		return nil, fmt.Errorf("encoding URL query: %w", err)
@@ -126,6 +134,8 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 	if len(q) > 0 {
 		u = u + "?" + q.Encode()
 	}
+
+	span.SetAttributes(semconv.URLFull(u))
 
 	reader := bytes.NewReader(nil)
 	if body != nil {
@@ -149,9 +159,11 @@ func (c *Client) request(ctx context.Context, method string, path string, query 
 		return nil, fmt.Errorf("doing HTTP request: %w", err)
 	}
 
+	span.SetAttributes(semconv.HTTPResponseStatusCode(res.StatusCode))
+
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading response bodu: %w", err)
+		return nil, fmt.Errorf("reading response body: %w", err)
 	}
 	//nolint
 	_ = res.Body.Close()
