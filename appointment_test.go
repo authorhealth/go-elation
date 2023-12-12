@@ -172,6 +172,10 @@ func TestAppointmentService_Update(t *testing.T) {
 		Duration:          Ptr(30),
 		TelehealthDetails: Ptr("telehealth details"),
 		Instructions:      Ptr("instructions"),
+		Status: &AppointmentStatus{
+			Status: "Confirmed",
+			Room:   "Room 1",
+		},
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -153,9 +153,10 @@ func (s *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *
 }
 
 type AppointmentUpdate struct {
-	Duration          *int    `json:"duration,omitempty"`
-	TelehealthDetails *string `json:"telehealth_details,omitempty"`
-	Instructions      *string `json:"instructions,omitempty"`
+	Duration          *int               `json:"duration,omitempty"`
+	TelehealthDetails *string            `json:"telehealth_details,omitempty"`
+	Instructions      *string            `json:"instructions,omitempty"`
+	Status            *AppointmentStatus `json:"status,omitempty"`
 }
 
 func (s *AppointmentService) Update(ctx context.Context, id int64, update *AppointmentUpdate) (*Appointment, *http.Response, error) {
