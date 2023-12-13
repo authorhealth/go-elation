@@ -27,12 +27,15 @@ type PatientService struct {
 }
 
 type PatientCreate struct {
-	LastName          string `json:"last_name"`
-	FirstName         string `json:"first_name"`
-	Sex               string `json:"sex"`
-	DOB               string `json:"dob"`
-	PrimaryPhysician  int64  `json:"primary_physician"`
-	CaregiverPractice int64  `json:"caregiver_practice"`
+	LastName          string          `json:"last_name"`
+	FirstName         string          `json:"first_name"`
+	Sex               string          `json:"sex"`
+	DOB               string          `json:"dob"`
+	PrimaryPhysician  int64           `json:"primary_physician"`
+	CaregiverPractice int64           `json:"caregiver_practice"`
+	Address           *PatientAddress `json:"address,omitempty"`
+	Phones            []*PatientPhone `json:"phones,omitempty"`
+	Emails            []*PatientEmail `json:"emails,omitempty"`
 }
 
 func (s *PatientService) Create(ctx context.Context, create *PatientCreate) (*Patient, *http.Response, error) {

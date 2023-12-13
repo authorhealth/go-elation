@@ -14,50 +14,94 @@ import (
 )
 
 func TestPatientService_Create(t *testing.T) {
-	assert := assert.New(t)
-
-	expected := &PatientCreate{
-		LastName:          "last name",
-		FirstName:         "first name",
-		Sex:               "sex",
-		DOB:               "dob",
-		PrimaryPhysician:  1,
-		CaregiverPractice: 2,
+	testCases := map[string]struct {
+		create *PatientCreate
+	}{
+		"minimally-specified request": {
+			create: &PatientCreate{
+				LastName:          "last name",
+				FirstName:         "first name",
+				Sex:               "sex",
+				DOB:               "dob",
+				PrimaryPhysician:  1,
+				CaregiverPractice: 2,
+			},
+		},
+		"fully-specified request": {
+			create: &PatientCreate{
+				LastName:          "last name",
+				FirstName:         "first name",
+				Sex:               "sex",
+				DOB:               "dob",
+				PrimaryPhysician:  1,
+				CaregiverPractice: 2,
+				Address: &PatientAddress{
+					AddressLine1: "123 Any St",
+					AddressLine2: "Unit 5B",
+					City:         "Schenectady",
+					State:        "NY",
+					Zip:          "12345",
+				},
+				Phones: []*PatientPhone{
+					{
+						Phone:     "555-234-5678",
+						PhoneType: "Mobile",
+					},
+					{
+						Phone:     "555-987-6543",
+						PhoneType: "Home",
+					},
+				},
+				Emails: []*PatientEmail{
+					{
+						Email: "x@y.net",
+					},
+					{
+						Email: "a@b.com",
+					},
+				},
+			},
+		},
 	}
+	for name, testCase := range testCases {
+		t.Run(name, func(t *testing.T) {
+			assert := assert.New(t)
 
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if tokenRequest(w, r) {
-			return
-		}
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if tokenRequest(w, r) {
+					return
+				}
 
-		assert.Equal(http.MethodPost, r.Method)
-		assert.Equal("/patients", r.URL.Path)
+				assert.Equal(http.MethodPost, r.Method)
+				assert.Equal("/patients", r.URL.Path)
 
-		body, err := io.ReadAll(r.Body)
-		assert.NoError(err)
+				body, err := io.ReadAll(r.Body)
+				assert.NoError(err)
 
-		actual := &PatientCreate{}
-		err = json.Unmarshal(body, actual)
-		assert.NoError(err)
+				create := &PatientCreate{}
+				err = json.Unmarshal(body, create)
+				assert.NoError(err)
 
-		assert.Equal(expected, actual)
+				assert.Equal(testCase.create, create)
 
-		b, err := json.Marshal(&Patient{})
-		assert.NoError(err)
+				b, err := json.Marshal(&Patient{})
+				assert.NoError(err)
 
-		w.Header().Set("Content-Type", "application/json")
-		//nolint
-		w.Write(b)
-	}))
-	defer srv.Close()
+				w.Header().Set("Content-Type", "application/json")
+				//nolint
+				w.Write(b)
+			}))
+			defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
-	svc := PatientService{client}
+			client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			svc := PatientService{client}
 
-	created, res, err := svc.Create(context.Background(), expected)
-	assert.NotNil(created)
-	assert.NotNil(res)
-	assert.NoError(err)
+			created, res, err := svc.Create(context.Background(), testCase.create)
+			assert.NotNil(created)
+			assert.NotNil(res)
+			assert.NoError(err)
+		})
+	}
 }
 
 func TestPatientService_Find(t *testing.T) {
