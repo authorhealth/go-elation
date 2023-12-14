@@ -172,7 +172,7 @@ func TestAppointmentService_Update(t *testing.T) {
 		Duration:          Ptr(30),
 		TelehealthDetails: Ptr("telehealth details"),
 		Instructions:      Ptr("instructions"),
-		Status: &AppointmentStatus{
+		Status: &AppointmentUpdateStatus{
 			Status: "Confirmed",
 			Room:   "Room 1",
 		},
