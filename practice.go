@@ -24,7 +24,7 @@ type PracticeService struct {
 }
 
 type Practice struct {
-	ID               int                        `json:"id"`
+	ID               int64                      `json:"id"`
 	Name             string                     `json:"name"`
 	AddressLine1     string                     `json:"address_line1"`
 	AddressLine2     string                     `json:"address_line2"`
@@ -34,7 +34,7 @@ type Practice struct {
 	Timezone         string                     `json:"timezone"`
 	ElationRootOid   string                     `json:"elation_root_oid"`
 	Employers        []*PracticeEmployer        `json:"employers"`
-	Physicians       []int                      `json:"physicians"`
+	Physicians       []int64                    `json:"physicians"`
 	ServiceLocations []*PracticeServiceLocation `json:"service_locations"`
 	Metadata         any                        `json:"metadata"`
 	Status           string                     `json:"status"`
