@@ -12,9 +12,9 @@ import (
 )
 
 type InsuranceEligibilityServicer interface {
-	Create(ctx context.Context, id int64, create *InsuranceEligibilityCreate) (*InsuranceEligibility, *http.Response, error)
-	Get(ctx context.Context, id int64) (*InsuranceEligibility, *http.Response, error)
-	GetFullReport(ctx context.Context, id int64) (*InsuranceEligibilityFullReport, *http.Response, error)
+	Create(ctx context.Context, patientInsuranceID int64, create *InsuranceEligibilityCreate) (*InsuranceEligibility, *http.Response, error)
+	Get(ctx context.Context, patientInsuranceID int64) (*InsuranceEligibility, *http.Response, error)
+	GetFullReport(ctx context.Context, patientInsuranceID int64) (*InsuranceEligibilityFullReport, *http.Response, error)
 }
 
 var _ InsuranceEligibilityServicer = (*InsuranceEligibilityService)(nil)
