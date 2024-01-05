@@ -260,27 +260,33 @@ func (s *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Res
 }
 
 type PatientUpdate struct {
-	FirstName         *string             `json:"first_name,omitempty"`
-	MiddleName        *string             `json:"middle_name,omitempty"`
-	LastName          *string             `json:"last_name,omitempty"`
-	ActualName        *string             `json:"actual_name,omitempty"`
-	GenderIdentity    *string             `json:"gender_identity,omitempty"`
-	LegalGenderMarker *string             `json:"legal_gender_marker,omitempty"`
-	Pronouns          *string             `json:"pronouns,omitempty"`
-	Sex               *string             `json:"sex,omitempty"`
-	SexualOrientation *string             `json:"sexual_orientation,omitempty"`
-	PrimaryPhysician  *int64              `json:"primary_physician,omitempty"`
-	DOB               *string             `json:"dob,omitempty"`
-	SSN               *string             `json:"ssn,omitempty"`
-	Race              *string             `json:"race,omitempty"`
-	PreferredLanguage *string             `json:"preferred_language,omitempty"`
-	Ethnicity         *string             `json:"ethnicity,omitempty"`
-	Notes             *string             `json:"notes,omitempty"`
-	Address           *PatientAddress     `json:"address,omitempty"`
-	Phones            []*PatientPhone     `json:"phones,omitempty"`
-	Emails            []*PatientEmail     `json:"emails,omitempty"`
-	Insurances        []*PatientInsurance `json:"insurances,omitempty"`
-	Consents          []*PatientConsent   `json:"consents,omitempty"`
+	ActualName        *string              `json:"actual_name,omitempty"`
+	Address           *PatientAddress      `json:"address,omitempty"`
+	Consents          []*PatientConsent    `json:"consents,omitempty"`
+	DOB               *string              `json:"dob,omitempty"`
+	Emails            []*PatientEmail      `json:"emails,omitempty"`
+	Ethnicity         *string              `json:"ethnicity,omitempty"`
+	FirstName         *string              `json:"first_name,omitempty"`
+	GenderIdentity    *string              `json:"gender_identity,omitempty"`
+	Insurances        []*PatientInsurance  `json:"insurances,omitempty"`
+	LastName          *string              `json:"last_name,omitempty"`
+	LegalGenderMarker *string              `json:"legal_gender_marker,omitempty"`
+	MiddleName        *string              `json:"middle_name,omitempty"`
+	Notes             *string              `json:"notes,omitempty"`
+	PatientStatus     *PatientStatusUpdate `json:"patient_status,omitempty"`
+	Phones            []*PatientPhone      `json:"phones,omitempty"`
+	PreferredLanguage *string              `json:"preferred_language,omitempty"`
+	PrimaryPhysician  *int64               `json:"primary_physician,omitempty"`
+	Pronouns          *string              `json:"pronouns,omitempty"`
+	Race              *string              `json:"race,omitempty"`
+	Sex               *string              `json:"sex,omitempty"`
+	SexualOrientation *string              `json:"sexual_orientation,omitempty"`
+	SSN               *string              `json:"ssn,omitempty"`
+}
+
+type PatientStatusUpdate struct {
+	InactiveReason *string `json:"inactive_reason,omitempty"`
+	Status         *string `json:"status,omitempty"`
 }
 
 func (s *PatientService) Update(ctx context.Context, id int64, update *PatientUpdate) (*Patient, *http.Response, error) {

@@ -278,6 +278,10 @@ func TestPatientService_Update(t *testing.T) {
 				Expiration:  "expiration",
 			},
 		},
+		PatientStatus: &PatientStatusUpdate{
+			InactiveReason: Ptr("other"),
+			Status:         Ptr("inactive"),
+		},
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
