@@ -273,7 +273,7 @@ type PatientUpdate struct {
 	LegalGenderMarker *string              `json:"legal_gender_marker,omitempty"`
 	MiddleName        *string              `json:"middle_name,omitempty"`
 	Notes             *string              `json:"notes,omitempty"`
-	PatientStatus     *UpdatePatientStatus `json:"patient_status"`
+	PatientStatus     *UpdatePatientStatus `json:"patient_status,omitempty"`
 	Phones            []*PatientPhone      `json:"phones,omitempty"`
 	PreferredLanguage *string              `json:"preferred_language,omitempty"`
 	PrimaryPhysician  *int64               `json:"primary_physician,omitempty"`
