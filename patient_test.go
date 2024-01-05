@@ -278,7 +278,7 @@ func TestPatientService_Update(t *testing.T) {
 				Expiration:  "expiration",
 			},
 		},
-		PatientStatus: &UpdatePatientStatus{
+		PatientStatus: &PatientStatusUpdate{
 			InactiveReason: Ptr("other"),
 			Status:         Ptr("inactive"),
 		},
