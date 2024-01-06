@@ -47,6 +47,7 @@ type Client struct {
 	ProblemSvc              *ProblemService
 	ServiceLocationSvc      *ServiceLocationService
 	SubscriptionSvc         *SubscriptionService
+	VisitNoteSvc            *VisitNoteService
 }
 
 func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *Client {
@@ -75,6 +76,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client.ProblemSvc = &ProblemService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
+	client.VisitNoteSvc = &VisitNoteService{client}
 
 	return client
 }
