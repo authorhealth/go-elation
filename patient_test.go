@@ -238,22 +238,7 @@ func TestPatientService_Update(t *testing.T) {
 
 	var id int64 = 1
 	expected := &PatientUpdate{
-		FirstName:         Ptr("first name"),
-		MiddleName:        Ptr("middle name"),
-		LastName:          Ptr("last name"),
-		ActualName:        Ptr("actual name"),
-		GenderIdentity:    Ptr("gender identity name"),
-		LegalGenderMarker: Ptr("legal gender marker"),
-		Pronouns:          Ptr("pronouns"),
-		Sex:               Ptr("sex"),
-		SexualOrientation: Ptr("sexual orientation"),
-		PrimaryPhysician:  Ptr[int64](1),
-		DOB:               Ptr("dob"),
-		SSN:               Ptr("ssn"),
-		Race:              Ptr("race"),
-		PreferredLanguage: Ptr("preferred language"),
-		Ethnicity:         Ptr("ethnicity"),
-		Notes:             Ptr("notes"),
+		ActualName: Ptr("actual name"),
 		Address: &PatientAddress{
 			AddressLine1: "address line 1",
 			AddressLine2: "address line 2",
@@ -261,27 +246,43 @@ func TestPatientService_Update(t *testing.T) {
 			State:        "state",
 			Zip:          "zip",
 		},
-		Phones: []*PatientPhone{
-			{
-				Phone:     "phone",
-				PhoneType: "phone type",
-			},
-		},
-		Emails: []*PatientEmail{
-			{
-				Email: "email",
-			},
-		},
 		Consents: []*PatientConsent{
 			{
 				ConsentType: "consent type",
 				Expiration:  "expiration",
 			},
 		},
+		DOB: Ptr("dob"),
+		Emails: []*PatientEmail{
+			{
+				Email: "email",
+			},
+		},
+		Ethnicity:         Ptr("ethnicity"),
+		FirstName:         Ptr("first name"),
+		GenderIdentity:    Ptr("gender identity name"),
+		LastName:          Ptr("last name"),
+		LegalGenderMarker: Ptr("legal gender marker"),
+		MiddleName:        Ptr("middle name"),
+		Notes:             Ptr("notes"),
 		PatientStatus: &PatientStatusUpdate{
 			InactiveReason: Ptr("other"),
 			Status:         Ptr("inactive"),
 		},
+		Phones: []*PatientPhone{
+			{
+				Phone:     "phone",
+				PhoneType: "phone type",
+			},
+		},
+		PreferredLanguage:      Ptr("preferred language"),
+		PrimaryCareProviderNPI: Ptr("primary care provider NPI"),
+		PrimaryPhysician:       Ptr[int64](1),
+		Pronouns:               Ptr("pronouns"),
+		Race:                   Ptr("race"),
+		Sex:                    Ptr("sex"),
+		SexualOrientation:      Ptr("sexual orientation"),
+		SSN:                    Ptr("ssn"),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
