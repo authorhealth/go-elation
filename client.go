@@ -37,10 +37,14 @@ type Client struct {
 	tracer     trace.Tracer
 
 	AppointmentSvc          *AppointmentService
+	ClinicalDocumentSvc     *ClinicalDocumentService
+	ContactSvc              *ContactService
 	InsuranceCompanySvc     *InsuranceCompanyService
 	InsuranceEligibilitySvc *InsuranceEligibilityService
 	InsurancePlanSvc        *InsurancePlanService
+	LetterSvc               *LetterService
 	MedicationSvc           *MedicationService
+	NonVisitNoteSvc         *NonVisitNoteService
 	PatientSvc              *PatientService
 	PhysicianSvc            *PhysicianService
 	PracticeSvc             *PracticeService
@@ -65,10 +69,14 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
+	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
+	client.ContactSvc = &ContactService{client}
 	client.InsuranceCompanySvc = &InsuranceCompanyService{client}
 	client.InsuranceEligibilitySvc = &InsuranceEligibilityService{client}
 	client.InsurancePlanSvc = &InsurancePlanService{client}
+	client.LetterSvc = &LetterService{client}
 	client.MedicationSvc = &MedicationService{client}
+	client.NonVisitNoteSvc = &NonVisitNoteService{client}
 	client.PatientSvc = &PatientService{client}
 	client.PhysicianSvc = &PhysicianService{client}
 	client.PracticeSvc = &PracticeService{client}
