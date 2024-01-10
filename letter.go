@@ -75,10 +75,10 @@ type LetterSendToContactSpeciality struct {
 type FindLettersOptions struct {
 	*Pagination
 
-	DocumentDateGT  time.Time `url:"document_date_gt,omitempty"`
-	DocumentDateGTE time.Time `url:"document_date_gte,omitempty"`
-	DocumentDateLT  time.Time `url:"document_date_lt,omitempty"`
-	DocumentDateLTE time.Time `url:"document_date_lte,omitempty"`
+	DocumentDateGT  time.Time `url:"document_date__gt,omitempty"`
+	DocumentDateGTE time.Time `url:"document_date__gte,omitempty"`
+	DocumentDateLT  time.Time `url:"document_date__lt,omitempty"`
+	DocumentDateLTE time.Time `url:"document_date__lte,omitempty"`
 	Patient         int64     `url:"patient,omitempty"`
 	Practice        int64     `url:"practice,omitempty"`
 	RecipientID     int64     `url:"recipient_id,omitempty"`

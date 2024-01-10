@@ -13,8 +13,8 @@ import (
 )
 
 type ContactServicer interface {
-	Find(ctx context.Context, opts *FindContactsOptions) (*Response[[]*Contact], *http.Response, error)
 	Get(ctx context.Context, id int64) (*Contact, *http.Response, error)
+	List(ctx context.Context, opts *ListContactsOptions) (*Response[[]*Contact], *http.Response, error)
 }
 
 var _ ContactServicer = (*ContactService)(nil)
@@ -55,16 +55,13 @@ type Contact struct {
 	Zip                  string         `json:"zip"`
 }
 
-type FindContactsOptions struct {
+type ListContactsOptions struct {
 	*Pagination
 
-	Q           string   `url:"q,omitempty"`
-	City        string   `url:"city,omitempty"`
-	State       string   `url:"state,omitempty"`
-	Specialties []string `url:"specialties,comma,omitempty"`
+	NPI string `url:"npi,omitempty"`
 }
 
-func (s *ContactService) Find(ctx context.Context, opts *FindContactsOptions) (*Response[[]*Contact], *http.Response, error) {
+func (s *ContactService) List(ctx context.Context, opts *ListContactsOptions) (*Response[[]*Contact], *http.Response, error) {
 	ctx, span := s.client.tracer.Start(ctx, "find contacts", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 

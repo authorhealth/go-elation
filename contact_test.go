@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestContactService_Find(t *testing.T) {
+func TestContactService_List(t *testing.T) {
 	assert := assert.New(t)
 
-	opts := &FindContactsOptions{
+	opts := &ListContactsOptions{
 		Pagination: &Pagination{
 			Limit:  1,
 			Offset: 2,
@@ -56,7 +56,7 @@ func TestContactService_Find(t *testing.T) {
 	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := ContactService{client}
 
-	found, res, err := svc.Find(context.Background(), opts)
+	found, res, err := svc.List(context.Background(), opts)
 	assert.NotNil(found)
 	assert.NotNil(res)
 	assert.NoError(err)
