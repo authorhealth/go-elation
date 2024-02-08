@@ -169,13 +169,14 @@ func TestAppointmentService_Update(t *testing.T) {
 
 	var id int64 = 1
 	expected := &AppointmentUpdate{
-		Duration:          Ptr(30),
-		TelehealthDetails: Ptr("telehealth details"),
-		Instructions:      Ptr("instructions"),
+		Duration: Ptr(30),
+		Mode:     Ptr(AppointmentModeVideo),
 		Status: &AppointmentUpdateStatus{
 			Status: "Confirmed",
 			Room:   "Room 1",
 		},
+		TelehealthDetails: Ptr("telehealth details"),
+		Instructions:      Ptr("instructions"),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

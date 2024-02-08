@@ -12,6 +12,11 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+const (
+	AppointmentModeInPerson = "IN_PERSON"
+	AppointmentModeVideo    = "VIDEO"
+)
+
 type AppointmentServicer interface {
 	Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error)
 	Find(ctx context.Context, opts *FindAppointmentsOptions) (*Response[[]*Appointment], *http.Response, error)
@@ -154,9 +159,10 @@ func (s *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *
 
 type AppointmentUpdate struct {
 	Duration          *int                     `json:"duration,omitempty"`
-	TelehealthDetails *string                  `json:"telehealth_details,omitempty"`
 	Instructions      *string                  `json:"instructions,omitempty"`
+	Mode              *string                  `json:"mode,omitempty"`
 	Status            *AppointmentUpdateStatus `json:"status,omitempty"`
+	TelehealthDetails *string                  `json:"telehealth_details,omitempty"`
 }
 
 type AppointmentUpdateStatus struct {
