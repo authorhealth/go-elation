@@ -17,6 +17,14 @@ const (
 	AppointmentModeVideo    = "VIDEO"
 )
 
+type TimeSlotType string
+
+const (
+	AppointmentTimeSlotTypeAppointment     TimeSlotType = "appointment"
+	AppointmentTimeSlotTypeAppointmentSlot TimeSlotType = "appointment_slot"
+	AppointmentTimeSlotTypeEvent           TimeSlotType = "event"
+)
+
 type AppointmentServicer interface {
 	Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error)
 	Find(ctx context.Context, opts *FindAppointmentsOptions) (*Response[[]*Appointment], *http.Response, error)
