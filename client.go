@@ -36,21 +36,22 @@ type Client struct {
 	baseURL    string
 	tracer     trace.Tracer
 
-	AppointmentSvc          *AppointmentService
-	ClinicalDocumentSvc     *ClinicalDocumentService
-	ContactSvc              *ContactService
-	InsuranceCompanySvc     *InsuranceCompanyService
-	InsuranceEligibilitySvc *InsuranceEligibilityService
-	InsurancePlanSvc        *InsurancePlanService
-	LetterSvc               *LetterService
-	MedicationSvc           *MedicationService
-	NonVisitNoteSvc         *NonVisitNoteService
-	PatientSvc              *PatientService
-	PhysicianSvc            *PhysicianService
-	PracticeSvc             *PracticeService
-	ProblemSvc              *ProblemService
-	ServiceLocationSvc      *ServiceLocationService
-	SubscriptionSvc         *SubscriptionService
+	AppointmentSvc             *AppointmentService
+	ClinicalDocumentSvc        *ClinicalDocumentService
+	ContactSvc                 *ContactService
+	InsuranceCompanySvc        *InsuranceCompanyService
+	InsuranceEligibilitySvc    *InsuranceEligibilityService
+	InsurancePlanSvc           *InsurancePlanService
+	LetterSvc                  *LetterService
+	MedicationSvc              *MedicationService
+	NonVisitNoteSvc            *NonVisitNoteService
+	PatientSvc                 *PatientService
+	PhysicianSvc               *PhysicianService
+	PracticeSvc                *PracticeService
+	ProblemSvc                 *ProblemService
+	RecurringEventGroupService *RecurringEventGroupService
+	ServiceLocationSvc         *ServiceLocationService
+	SubscriptionSvc            *SubscriptionService
 }
 
 func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *Client {
@@ -81,6 +82,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client.PhysicianSvc = &PhysicianService{client}
 	client.PracticeSvc = &PracticeService{client}
 	client.ProblemSvc = &ProblemService{client}
+	client.RecurringEventGroupService = &RecurringEventGroupService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
 
