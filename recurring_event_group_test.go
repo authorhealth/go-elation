@@ -90,6 +90,8 @@ func TestRecurringEventGroupService_Find(t *testing.T) {
 		Practice:     []int64{2},
 		Reason:       "Some reason",
 		TimeSlotType: AppointmentTimeSlotTypeEvent,
+		StartDate:    "2024-01-01",
+		EndDate:      "2024-03-01",
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -104,6 +106,8 @@ func TestRecurringEventGroupService_Find(t *testing.T) {
 		physician := r.URL.Query()["physician"]
 		reason := r.URL.Query().Get("reason")
 		timeSlotType := r.URL.Query().Get("time_slot_type")
+		startDate := r.URL.Query().Get("start_date")
+		endDate := r.URL.Query().Get("end_date")
 
 		limit := r.URL.Query().Get("limit")
 		offset := r.URL.Query().Get("offset")
@@ -112,6 +116,8 @@ func TestRecurringEventGroupService_Find(t *testing.T) {
 		assert.Equal(opts.Physician, sliceStrToInt64(physician))
 		assert.Equal(opts.Reason, reason)
 		assert.Equal(opts.TimeSlotType, TimeSlotType(timeSlotType))
+		assert.Equal(opts.StartDate, startDate)
+		assert.Equal(opts.EndDate, endDate)
 
 		assert.Equal(opts.Pagination.Limit, strToInt(limit))
 		assert.Equal(opts.Pagination.Offset, strToInt(offset))
