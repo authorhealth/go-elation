@@ -87,8 +87,8 @@ type FindRecurringEventGroupsOptions struct {
 	Physician    []int64      `url:"physician,omitempty"`
 	Practice     []int64      `url:"practice,omitempty"`
 	Reason       string       `url:"reason,omitempty"`
-	StartDate    time.Time    `url:"start_date,omitempty"`
-	EndDate      time.Time    `url:"end_date,omitempty"`
+	StartDate    string       `url:"start_date,omitempty"`
+	EndDate      string       `url:"end_date,omitempty"`
 	TimeSlotType TimeSlotType `url:"time_slot_type,omitempty"`
 }
 
