@@ -19,8 +19,7 @@ func TestDiscontinuedMedicationService_Create(t *testing.T) {
 	}{
 		"minimally-specified request": {
 			create: &DiscontinuedMedicationCreate{
-				MedOrder:     12345,
-				IsDocumented: false,
+				MedOrder: 12345,
 			},
 		},
 		"fully-specified request": {
@@ -28,7 +27,7 @@ func TestDiscontinuedMedicationService_Create(t *testing.T) {
 				MedOrder:             12345,
 				DiscontinueDate:      "2024-04-15",
 				Reason:               "a very good reason",
-				IsDocumented:         true,
+				IsDocumented:         Ptr(true),
 				DocumentingPersonnel: 67890,
 			},
 		},
@@ -83,12 +82,12 @@ func TestDiscontinuedMedicationService_Find(t *testing.T) {
 			Offset: 2,
 		},
 
-		Patient:         []int64{12345, 67890},
-		Practice:        []int64{98765, 43210},
-		DocumentDateLT:  time.Now(),
-		DocumentDateGT:  time.Now(),
-		DocumentDateLTE: time.Now(),
-		DocumentDateGTE: time.Now(),
+		Patient:            []int64{12345, 67890},
+		Practice:           []int64{98765, 43210},
+		DiscontinueDateLTE: time.Now(),
+		DiscontinueDateGTE: time.Now(),
+		DocumentDateLTE:    time.Now(),
+		DocumentDateGTE:    time.Now(),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -111,8 +110,8 @@ func TestDiscontinuedMedicationService_Find(t *testing.T) {
 
 		assert.Equal(opts.Patient, sliceStrToInt64(patient))
 		assert.Equal(opts.Practice, sliceStrToInt64(practice))
-		assert.Equal(opts.DocumentDateLT.Format(time.RFC3339), documentDateLT)
-		assert.Equal(opts.DocumentDateGT.Format(time.RFC3339), documentDateGT)
+		assert.Equal(opts.DiscontinueDateLTE.Format(time.RFC3339), documentDateLT)
+		assert.Equal(opts.DiscontinueDateGTE.Format(time.RFC3339), documentDateGT)
 		assert.Equal(opts.DocumentDateLTE.Format(time.RFC3339), documentDateLTE)
 		assert.Equal(opts.DocumentDateGTE.Format(time.RFC3339), documentDateGTE)
 

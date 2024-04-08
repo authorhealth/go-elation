@@ -29,7 +29,7 @@ type DiscontinuedMedicationCreate struct {
 	MedOrder             int64  `json:"med_order"`
 	DiscontinueDate      string `json:"discontinue_date,omitempty"`
 	Reason               string `json:"reason,omitempty"`
-	IsDocumented         bool   `json:"is_documented"`
+	IsDocumented         *bool  `json:"is_documented,omitempty"`
 	DocumentingPersonnel int64  `json:"documenting_personnel,omitempty"`
 }
 
@@ -88,12 +88,12 @@ type DiscontinuedMedicationMedication struct {
 type FindDiscontinuedMedicationsOptions struct {
 	*Pagination
 
-	Patient         []int64   `url:"patient,omitempty"`
-	Practice        []int64   `url:"practice,omitempty"`
-	DocumentDateLT  time.Time `url:"document_date__lt,omitempty"`
-	DocumentDateGT  time.Time `url:"document_date__gt,omitempty"`
-	DocumentDateLTE time.Time `url:"document_date__lte,omitempty"`
-	DocumentDateGTE time.Time `url:"document_date__gte,omitempty"`
+	Patient            []int64   `url:"patient,omitempty"`
+	Practice           []int64   `url:"practice,omitempty"`
+	DocumentDateLTE    time.Time `url:"document_date__lte,omitempty"`
+	DocumentDateGTE    time.Time `url:"document_date__gte,omitempty"`
+	DiscontinueDateGTE time.Time `url:"discontinue_date__gte,omitempty"`
+	DiscontinueDateLTE time.Time `url:"discontinue_date__lte,omitempty"`
 }
 
 func (s *DiscontinuedMedicationService) Find(ctx context.Context, opts *FindDiscontinuedMedicationsOptions) (*Response[[]*DiscontinuedMedication], *http.Response, error) {
