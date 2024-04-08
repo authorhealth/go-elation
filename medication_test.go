@@ -3,6 +3,7 @@ package elation
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -11,6 +12,88 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMedicationService_Create(t *testing.T) {
+	testCases := map[string]struct {
+		create *PatientMedicationCreate
+	}{
+		"minimally-specified request": {
+			create: &PatientMedicationCreate{},
+		},
+		"fully-specified request": {
+			create: &PatientMedicationCreate{
+				AuthRefills: 5,
+				IsDocMed:    true,
+				Medication: &PatientMedicationCreateMedication{
+					ID:         12345,
+					NDCs:       []string{"ndc 1", "ndc 2"},
+					RxnormCuis: []string{"rxnormCui 1", "rxnormCui 2"},
+				},
+				MedicationType:       "otc",
+				OrderType:            "New",
+				Patient:              12345,
+				Practice:             12345,
+				PrescribingPhysician: 12345,
+				Qty:                  "20",
+				QtyUnits:             "tab",
+				StartDate:            "2024-04-15",
+				Icd10Codes: []*PatientMedicationCreateICD10Code{
+					{Code: "icd-10 code 1"},
+					{Code: "icd-10 code 2"},
+				},
+				Thread: &PatientMedicationCreateThread{
+					ID:          12345,
+					IsPermanent: true,
+				},
+				Directions:           "take 1 tab with water twice a day",
+				Notes:                "some notes",
+				PharmacyInstructions: "some instructions to the pharmacy",
+				NumSamples:           "5",
+				DocumentDate:         Ptr(time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC)),
+				DocumentingPersonnel: 12345,
+			},
+		},
+	}
+	for name, testCase := range testCases {
+		t.Run(name, func(t *testing.T) {
+			assert := assert.New(t)
+
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if tokenRequest(w, r) {
+					return
+				}
+
+				assert.Equal(http.MethodPost, r.Method)
+				assert.Equal("/medications", r.URL.Path)
+
+				body, err := io.ReadAll(r.Body)
+				assert.NoError(err)
+
+				create := &PatientMedicationCreate{}
+				err = json.Unmarshal(body, create)
+				assert.NoError(err)
+
+				assert.Equal(testCase.create, create)
+
+				b, err := json.Marshal(&Medication{})
+				assert.NoError(err)
+
+				w.Header().Set("Content-Type", "application/json")
+				//nolint
+				w.Write(b)
+			}))
+			defer srv.Close()
+
+			client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			svc := MedicationService{client}
+
+			created, res, err := svc.Create(context.Background(), testCase.create)
+			assert.NotNil(created)
+			assert.NotNil(res)
+			assert.NoError(err)
+		})
+	}
+}
 
 func TestMedicationService_Find(t *testing.T) {
 	assert := assert.New(t)

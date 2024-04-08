@@ -13,6 +13,7 @@ import (
 )
 
 type MedicationServicer interface {
+	Create(ctx context.Context, create *PatientMedicationCreate) (*PatientMedication, *http.Response, error)
 	Find(ctx context.Context, opts *FindPatientMedicationsOptions) (*Response[[]*PatientMedication], *http.Response, error)
 	Get(ctx context.Context, id int64) (*PatientMedication, *http.Response, error)
 }
@@ -52,6 +53,43 @@ type PatientMedication struct {
 	CreatedDate          time.Time                     `json:"created_date"`
 	DeletedDate          *time.Time                    `json:"deleted_date"`
 	Icd10Codes           []*PatientMedicationICD10Code `json:"icd10_codes"`
+}
+
+type PatientMedicationCreate struct {
+	AuthRefills          int                                 `json:"auth_refills"`
+	IsDocMed             bool                                `json:"is_doc_med"`
+	Medication           *PatientMedicationCreateMedication  `json:"medication"`
+	MedicationType       string                              `json:"medication_type"`
+	OrderType            string                              `json:"order_type"`
+	Patient              int64                               `json:"patient"`
+	Practice             int64                               `json:"practice"`
+	PrescribingPhysician int                                 `json:"prescribing_physician"`
+	Qty                  string                              `json:"qty"`
+	QtyUnits             string                              `json:"qty_units"`
+	StartDate            string                              `json:"start_date"`
+	Icd10Codes           []*PatientMedicationCreateICD10Code `json:"icd10_codes"`
+	Thread               *PatientMedicationCreateThread      `json:"thread"`
+	Directions           string                              `json:"directions,omitempty"`
+	Notes                string                              `json:"notes,omitempty"`
+	PharmacyInstructions string                              `json:"pharmacy_instructions,omitempty"`
+	NumSamples           string                              `json:"num_samples,omitempty"`
+	DocumentDate         *time.Time                          `json:"document_date,omitempty"`
+	DocumentingPersonnel int                                 `json:"documenting_personnel,omitempty"`
+}
+
+type PatientMedicationCreateMedication struct {
+	ID         int64    `json:"id,omitempty"`
+	NDCs       []string `json:"ndcs,omitempty"`
+	RxnormCuis []string `json:"rxnorm_cuis,omitempty"`
+}
+
+type PatientMedicationCreateICD10Code struct {
+	Code string `json:"code"`
+}
+
+type PatientMedicationCreateThread struct {
+	ID          int  `json:"id,omitempty"`
+	IsPermanent bool `json:"is_permanent"`
 }
 
 type Medication struct {
@@ -114,6 +152,22 @@ type FindPatientMedicationsOptions struct {
 	DocumentDateGT  time.Time `url:"document_date__gt,omitempty"`
 	DocumentDateLTE time.Time `url:"document_date__lte,omitempty"`
 	DocumentDateGTE time.Time `url:"document_date__gte,omitempty"`
+}
+
+func (s *MedicationService) Create(ctx context.Context, create *PatientMedicationCreate) (*PatientMedication, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "create medication", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
+	out := &PatientMedication{}
+
+	res, err := s.client.request(ctx, http.MethodPost, "/medications", nil, create, &out)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
 }
 
 func (s *MedicationService) Find(ctx context.Context, opts *FindPatientMedicationsOptions) (*Response[[]*PatientMedication], *http.Response, error) {
