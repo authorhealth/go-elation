@@ -100,8 +100,8 @@ func TestDiscontinuedMedicationService_Find(t *testing.T) {
 
 		patient := r.URL.Query()["patient"]
 		practice := r.URL.Query()["practice"]
-		documentDateLT := r.URL.Query().Get("document_date__lt")
-		documentDateGT := r.URL.Query().Get("document_date__gt")
+		discontinueDateLTE := r.URL.Query().Get("discontinue_date__lte")
+		discontinueDateGTE := r.URL.Query().Get("discontinue_date__gte")
 		documentDateLTE := r.URL.Query().Get("document_date__lte")
 		documentDateGTE := r.URL.Query().Get("document_date__gte")
 
@@ -110,8 +110,8 @@ func TestDiscontinuedMedicationService_Find(t *testing.T) {
 
 		assert.Equal(opts.Patient, sliceStrToInt64(patient))
 		assert.Equal(opts.Practice, sliceStrToInt64(practice))
-		assert.Equal(opts.DiscontinueDateLTE.Format(time.RFC3339), documentDateLT)
-		assert.Equal(opts.DiscontinueDateGTE.Format(time.RFC3339), documentDateGT)
+		assert.Equal(opts.DiscontinueDateLTE.Format(time.RFC3339), discontinueDateLTE)
+		assert.Equal(opts.DiscontinueDateGTE.Format(time.RFC3339), discontinueDateGTE)
 		assert.Equal(opts.DocumentDateLTE.Format(time.RFC3339), documentDateLTE)
 		assert.Equal(opts.DocumentDateGTE.Format(time.RFC3339), documentDateGTE)
 
