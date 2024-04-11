@@ -18,17 +18,19 @@ func tokenRequest(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
-func commaStrToInt64(in string) []int64 {
+func sliceCommaStrToInt64(in []string) []int64 {
 	var out []int64
 
-	for _, v := range strings.Split(in, ",") {
-		i, err := strconv.ParseInt(v, 10, 64)
+	for _, commaStr := range in {
+		for _, v := range strings.Split(commaStr, ",") {
+			i, err := strconv.ParseInt(v, 10, 64)
 
-		if err != nil {
-			panic(err)
+			if err != nil {
+				panic(err)
+			}
+
+			out = append(out, i)
 		}
-
-		out = append(out, i)
 	}
 
 	return out
