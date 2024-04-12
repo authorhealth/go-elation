@@ -112,8 +112,8 @@ func TestRecurringEventGroupService_Find(t *testing.T) {
 		limit := r.URL.Query().Get("limit")
 		offset := r.URL.Query().Get("offset")
 
-		assert.Equal(opts.Practice, sliceCommaStrToInt64(practice))
-		assert.Equal(opts.Physician, sliceCommaStrToInt64(physician))
+		assert.Equal(opts.Practice, commaStrToInt64(practice[0]))
+		assert.Equal(opts.Physician, commaStrToInt64(physician[0]))
 		assert.Equal(opts.Reason, reason)
 		assert.Equal(opts.TimeSlotType, TimeSlotType(timeSlotType))
 		assert.Equal(opts.StartDate, startDate)
@@ -184,8 +184,8 @@ func TestRecurringEventGroupService_Find_Multiple_Params(t *testing.T) {
 		limit := r.URL.Query().Get("limit")
 		offset := r.URL.Query().Get("offset")
 
-		assert.Equal(opts.Practice, sliceCommaStrToInt64(practice))
-		assert.Equal(opts.Physician, sliceCommaStrToInt64(physician))
+		assert.Equal(opts.Practice, commaStrToInt64(practice[0]))
+		assert.Equal(opts.Physician, commaStrToInt64(physician[0]))
 		assert.Equal(opts.Reason, reason)
 		assert.Equal(opts.TimeSlotType, TimeSlotType(timeSlotType))
 		assert.Equal(opts.StartDate, startDate)
