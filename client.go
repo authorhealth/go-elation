@@ -36,18 +36,24 @@ type Client struct {
 	baseURL    string
 	tracer     trace.Tracer
 
-	AppointmentSvc          *AppointmentService
-	InsuranceCompanySvc     *InsuranceCompanyService
-	InsuranceEligibilitySvc *InsuranceEligibilityService
-	InsurancePlanSvc        *InsurancePlanService
-	MedicationSvc           *MedicationService
-	PatientSvc              *PatientService
-	PhysicianSvc            *PhysicianService
-	PracticeSvc             *PracticeService
-	ProblemSvc              *ProblemService
-	ServiceLocationSvc      *ServiceLocationService
-	SubscriptionSvc         *SubscriptionService
-	VisitNoteSvc            *VisitNoteService
+	AppointmentSvc             *AppointmentService
+	ClinicalDocumentSvc        *ClinicalDocumentService
+	ContactSvc                 *ContactService
+	DiscontinuedMedicationSvc  *DiscontinuedMedicationService
+	InsuranceCompanySvc        *InsuranceCompanyService
+	InsuranceEligibilitySvc    *InsuranceEligibilityService
+	InsurancePlanSvc           *InsurancePlanService
+	LetterSvc                  *LetterService
+	MedicationSvc              *MedicationService
+	NonVisitNoteSvc            *NonVisitNoteService
+	PatientSvc                 *PatientService
+	PhysicianSvc               *PhysicianService
+	PracticeSvc                *PracticeService
+	ProblemSvc                 *ProblemService
+	RecurringEventGroupService *RecurringEventGroupService
+	ServiceLocationSvc         *ServiceLocationService
+	SubscriptionSvc            *SubscriptionService
+	VisitNoteSvc               *VisitNoteService
 }
 
 func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *Client {
@@ -66,14 +72,20 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
+	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
+	client.ContactSvc = &ContactService{client}
+	client.DiscontinuedMedicationSvc = &DiscontinuedMedicationService{client}
 	client.InsuranceCompanySvc = &InsuranceCompanyService{client}
 	client.InsuranceEligibilitySvc = &InsuranceEligibilityService{client}
 	client.InsurancePlanSvc = &InsurancePlanService{client}
+	client.LetterSvc = &LetterService{client}
 	client.MedicationSvc = &MedicationService{client}
+	client.NonVisitNoteSvc = &NonVisitNoteService{client}
 	client.PatientSvc = &PatientService{client}
 	client.PhysicianSvc = &PhysicianService{client}
 	client.PracticeSvc = &PracticeService{client}
 	client.ProblemSvc = &ProblemService{client}
+	client.RecurringEventGroupService = &RecurringEventGroupService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
 	client.VisitNoteSvc = &VisitNoteService{client}
