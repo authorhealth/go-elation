@@ -88,7 +88,7 @@ type Patient struct {
 	PrimaryCareProviderNPI string              `json:"primary_care_provider_npi"`
 	PreviousFirstName      string              `json:"previous_first_name"`
 	PreviousLastName       string              `json:"previous_last_name"`
-	MasterPatient          any                 `json:"master_patient"`
+	MasterPatient          *int64              `json:"master_patient"`
 	Employer               *PatientEmployer    `json:"employer"`
 	Consents               []*PatientConsent   `json:"consents"`
 	Metadata               any                 `json:"metadata"`
