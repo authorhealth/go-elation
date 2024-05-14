@@ -84,8 +84,8 @@ func (s *RecurringEventGroupService) Create(ctx context.Context, create *Recurri
 type FindRecurringEventGroupsOptions struct {
 	*Pagination
 
-	Physician    []int64      `url:"physician,omitempty,comma"`
-	Practice     []int64      `url:"practice,omitempty,comma"`
+	Physician    []int64      `url:"physician,omitempty"`
+	Practice     []int64      `url:"practice,omitempty"`
 	Reason       string       `url:"reason,omitempty"`
 	StartDate    string       `url:"start_date,omitempty"`
 	EndDate      string       `url:"end_date,omitempty"`
