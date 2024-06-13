@@ -49,6 +49,7 @@ type Client struct {
 	PatientSvc                 *PatientService
 	PhysicianSvc               *PhysicianService
 	PracticeSvc                *PracticeService
+	PrescriptionFillSvc        *PrescriptionFillService
 	ProblemSvc                 *ProblemService
 	RecurringEventGroupService *RecurringEventGroupService
 	ServiceLocationSvc         *ServiceLocationService
@@ -83,6 +84,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client.PatientSvc = &PatientService{client}
 	client.PhysicianSvc = &PhysicianService{client}
 	client.PracticeSvc = &PracticeService{client}
+	client.PrescriptionFillSvc = &PrescriptionFillService{client}
 	client.ProblemSvc = &ProblemService{client}
 	client.RecurringEventGroupService = &RecurringEventGroupService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
