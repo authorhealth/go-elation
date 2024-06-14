@@ -46,6 +46,7 @@ type Client struct {
 	InsurancePlanSvc           *InsurancePlanService
 	LetterSvc                  *LetterService
 	MedicationSvc              *MedicationService
+	MessageThreadSvc           *MessageThreadService
 	NonVisitNoteSvc            *NonVisitNoteService
 	PatientSvc                 *PatientService
 	PhysicianSvc               *PhysicianService
@@ -55,6 +56,7 @@ type Client struct {
 	RecurringEventGroupService *RecurringEventGroupService
 	ServiceLocationSvc         *ServiceLocationService
 	SubscriptionSvc            *SubscriptionService
+	ThreadMemberSvc            *ThreadMemberService
 }
 
 func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *Client {
@@ -82,6 +84,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client.InsurancePlanSvc = &InsurancePlanService{client}
 	client.LetterSvc = &LetterService{client}
 	client.MedicationSvc = &MedicationService{client}
+	client.MessageThreadSvc = &MessageThreadService{client}
 	client.NonVisitNoteSvc = &NonVisitNoteService{client}
 	client.PatientSvc = &PatientService{client}
 	client.PhysicianSvc = &PhysicianService{client}
@@ -91,6 +94,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client.RecurringEventGroupService = &RecurringEventGroupService{client}
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
+	client.ThreadMemberSvc = &ThreadMemberService{client}
 
 	return client
 }
