@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/authorhealth/go-elation"
 	"github.com/joho/godotenv"
@@ -31,10 +33,13 @@ func wrapRunFunc(runFunc runFunc) func(cmd *cobra.Command, args []string) {
 
 		ctx := context.Background()
 
-		logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 		slog.SetDefault(logger)
 
-		client := elation.NewClient(&http.Client{},
+		client := elation.NewClient(
+			&http.Client{
+				Timeout: 15 * time.Second,
+			},
 			os.Getenv("ELATION_TOKEN_URL"),
 			os.Getenv("ELATION_CLIENT_ID"),
 			os.Getenv("ELATION_CLIENT_SECRET"),
@@ -42,7 +47,15 @@ func wrapRunFunc(runFunc runFunc) func(cmd *cobra.Command, args []string) {
 
 		err := runFunc(ctx, client, args)
 		if err != nil {
-			slog.ErrorContext(ctx, "error running command", slog.Any("error", err))
+			apiError := &elation.Error{}
+			if errors.As(err, &apiError) {
+				slog.ErrorContext(ctx, "API error running command",
+					slog.Any("error", err),
+					slog.Int("statusCode", apiError.StatusCode),
+					slog.String("body", apiError.Body))
+			} else {
+				slog.ErrorContext(ctx, "error running command", slog.Any("error", err))
+			}
 		}
 	}
 }
