@@ -19,9 +19,6 @@ require (
 
 require (
 	cloud.google.com/go v0.114.0
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-querystring v1.1.0
 	github.com/stretchr/testify v1.9.0
-	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
 )
