@@ -40,6 +40,7 @@ type Client struct {
 	ClinicalDocumentSvc        *ClinicalDocumentService
 	ContactSvc                 *ContactService
 	DiscontinuedMedicationSvc  *DiscontinuedMedicationService
+	HistoryDownloadFillSvc     *HistoryDownloadFillService
 	InsuranceCompanySvc        *InsuranceCompanyService
 	InsuranceEligibilitySvc    *InsuranceEligibilityService
 	InsurancePlanSvc           *InsurancePlanService
@@ -75,6 +76,7 @@ func NewClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseUR
 	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
 	client.ContactSvc = &ContactService{client}
 	client.DiscontinuedMedicationSvc = &DiscontinuedMedicationService{client}
+	client.HistoryDownloadFillSvc = &HistoryDownloadFillService{client}
 	client.InsuranceCompanySvc = &InsuranceCompanyService{client}
 	client.InsuranceEligibilitySvc = &InsuranceEligibilityService{client}
 	client.InsurancePlanSvc = &InsurancePlanService{client}
