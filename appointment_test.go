@@ -16,12 +16,17 @@ import (
 func TestAppointmentService_Create(t *testing.T) {
 	assert := assert.New(t)
 
+	var serviceLocation int64 = 4
+
 	expected := &AppointmentCreate{
-		ScheduledDate: time.Date(2023, 5, 15, 0, 0, 0, 0, time.UTC),
-		Reason:        "reason",
-		Patient:       1,
-		Physician:     2,
-		Practice:      3,
+		Description:     Ptr("description"),
+		Duration:        60,
+		Patient:         1,
+		Physician:       2,
+		Practice:        3,
+		Reason:          "reason",
+		ScheduledDate:   time.Date(2023, 5, 15, 0, 0, 0, 0, time.UTC),
+		ServiceLocation: Ptr(serviceLocation),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
