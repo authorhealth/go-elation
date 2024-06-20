@@ -40,11 +40,14 @@ type AppointmentService struct {
 }
 
 type AppointmentCreate struct {
-	ScheduledDate time.Time `json:"scheduled_date"`
-	Reason        string    `json:"reason"`
-	Patient       int64     `json:"patient"`
-	Physician     int64     `json:"physician"`
-	Practice      int64     `json:"practice"`
+	Description     *string   `json:"description"`
+	Duration        int64     `json:"duration"`
+	Patient         int64     `json:"patient"`
+	Physician       int64     `json:"physician"`
+	Practice        int64     `json:"practice"`
+	Reason          string    `json:"reason"`
+	ScheduledDate   time.Time `json:"scheduled_date"`
+	ServiceLocation *int64    `json:"service_location"`
 }
 
 func (s *AppointmentService) Create(ctx context.Context, create *AppointmentCreate) (*Appointment, *http.Response, error) {
