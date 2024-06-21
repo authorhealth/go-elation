@@ -84,7 +84,7 @@ func TestMedicationService_Create(t *testing.T) {
 			}))
 			defer srv.Close()
 
-			client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 			svc := MedicationService{client}
 
 			created, res, err := svc.Create(context.Background(), testCase.create)
@@ -165,7 +165,7 @@ func TestMedicationService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := MedicationService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -198,7 +198,7 @@ func TestMedicationService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := MedicationService{client}
 
 	found, res, err := svc.Get(context.Background(), id)

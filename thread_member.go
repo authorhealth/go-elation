@@ -20,7 +20,7 @@ type ThreadMemberServicer interface {
 var _ ThreadMemberServicer = (*ThreadMemberService)(nil)
 
 type ThreadMemberService struct {
-	client *Client
+	client *HttpClient
 }
 
 type ThreadMember struct {

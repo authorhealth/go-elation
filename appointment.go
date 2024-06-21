@@ -36,7 +36,7 @@ type AppointmentServicer interface {
 var _ AppointmentServicer = (*AppointmentService)(nil)
 
 type AppointmentService struct {
-	client *Client
+	client *HttpClient
 }
 
 type AppointmentCreate struct {

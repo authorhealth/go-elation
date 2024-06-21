@@ -20,7 +20,7 @@ type NonVisitNoteServicer interface {
 var _ NonVisitNoteServicer = (*NonVisitNoteService)(nil)
 
 type NonVisitNoteService struct {
-	client *Client
+	client *HttpClient
 }
 
 type NonVisitNote struct {

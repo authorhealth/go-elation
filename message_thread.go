@@ -20,7 +20,7 @@ type MessageThreadServicer interface {
 var _ MessageThreadServicer = (*MessageThreadService)(nil)
 
 type MessageThreadService struct {
-	client *Client
+	client *HttpClient
 }
 
 type MessageThread struct {
