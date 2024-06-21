@@ -23,7 +23,7 @@ type SubscriptionServicer interface {
 var _ SubscriptionServicer = (*SubscriptionService)(nil)
 
 type SubscriptionService struct {
-	client *Client
+	client *HttpClient
 }
 
 type Subscription struct {

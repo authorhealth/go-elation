@@ -22,7 +22,7 @@ type DiscontinuedMedicationServicer interface {
 var _ DiscontinuedMedicationServicer = (*DiscontinuedMedicationService)(nil)
 
 type DiscontinuedMedicationService struct {
-	client *Client
+	client *HttpClient
 }
 
 type DiscontinuedMedicationCreate struct {

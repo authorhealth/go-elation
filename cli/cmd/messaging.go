@@ -16,8 +16,8 @@ var (
 
 var findThreadMembersCmd = &cobra.Command{
 	Use: "find-thread-members",
-	Run: wrapRunFunc(func(ctx context.Context, client *elation.Client, args []string) error {
-		response, _, err := client.ThreadMemberSvc.Find(ctx, &elation.FindThreadMembersOptions{
+	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
+		response, _, err := client.ThreadMembers().Find(ctx, &elation.FindThreadMembersOptions{
 			Patient: findThreadMembersPatients,
 			User:    findThreadMembersUsers,
 		})
@@ -34,9 +34,9 @@ var findThreadMembersCmd = &cobra.Command{
 var getMessageThreadCmd = &cobra.Command{
 	Use:  "get-message-thread [thread ID]",
 	Args: cobra.ExactArgs(1),
-	Run: wrapRunFunc(func(ctx context.Context, client *elation.Client, args []string) error {
+	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
 		threadID, _ := strconv.ParseInt(args[0], 10, 64)
-		response, _, err := client.MessageThreadSvc.Get(ctx, threadID)
+		response, _, err := client.MessageThreads().Get(ctx, threadID)
 		if err != nil {
 			return err
 		}

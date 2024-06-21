@@ -68,7 +68,7 @@ func TestRecurringEventGroupService_Create(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := RecurringEventGroupService{client}
 
 	created, res, err := svc.Create(context.Background(), expected)
@@ -140,7 +140,7 @@ func TestRecurringEventGroupService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := RecurringEventGroupService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -212,7 +212,7 @@ func TestRecurringEventGroupService_Find_Multiple_Params(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := RecurringEventGroupService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -245,7 +245,7 @@ func TestRecurringEventGroupService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := RecurringEventGroupService{client}
 
 	found, res, err := svc.Get(context.Background(), id)
@@ -308,7 +308,7 @@ func TestRecurringEventGroupService_Update(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := RecurringEventGroupService{client}
 
 	found, res, err := svc.Update(context.Background(), id, expected)
@@ -332,7 +332,7 @@ func TestRecurringEventGroupService_Delete(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := RecurringEventGroupService{client}
 
 	res, err := svc.Delete(context.Background(), id)

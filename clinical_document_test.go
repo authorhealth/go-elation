@@ -53,7 +53,7 @@ func TestClinicalDocumentService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := ClinicalDocumentService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -86,7 +86,7 @@ func TestClinicalDocumentService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := ClinicalDocumentService{client}
 
 	found, res, err := svc.Get(context.Background(), id)

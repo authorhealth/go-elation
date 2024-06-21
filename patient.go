@@ -23,7 +23,7 @@ type PatientServicer interface {
 var _ PatientServicer = (*PatientService)(nil)
 
 type PatientService struct {
-	client *Client
+	client *HttpClient
 }
 
 type PatientCreate struct {
