@@ -26,12 +26,12 @@ func main() {
 	clientSecret := os.Getenv("CLIENT_SECRET")
 	baseURL := os.Getenv("BASE_URL")
 
-	client := elation.NewClient(httpClient, tokenURL, clientID, clientSecret, baseURL)
+	client := elation.NewHttpClient(httpClient, tokenURL, clientID, clientSecret, baseURL)
 
 	res := &elation.Response[[]*elation.Patient]{}
 	var err error
 
-	res, _, err = client.PatientSvc.Find(context.Background(), &elation.FindPatientsOptions{
+	res, _, err = client.Patients().Find(context.Background(), &elation.FindPatientsOptions{
 		Pagination: res.PaginationNextWithLimit(1),
 	})
 	if err != nil {
