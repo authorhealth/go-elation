@@ -20,7 +20,7 @@ type ClinicalDocumentServicer interface {
 var _ ClinicalDocumentServicer = (*ClinicalDocumentService)(nil)
 
 type ClinicalDocumentService struct {
-	client *Client
+	client *HttpClient
 }
 
 type ClinicalDocument struct {

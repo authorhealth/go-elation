@@ -20,7 +20,7 @@ type LetterServicer interface {
 var _ LetterServicer = (*LetterService)(nil)
 
 type LetterService struct {
-	client *Client
+	client *HttpClient
 }
 
 type Letter struct {

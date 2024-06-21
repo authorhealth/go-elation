@@ -53,7 +53,7 @@ func TestContactService_List(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := ContactService{client}
 
 	found, res, err := svc.List(context.Background(), opts)
@@ -86,7 +86,7 @@ func TestContactService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := ContactService{client}
 
 	found, res, err := svc.Get(context.Background(), id)

@@ -25,7 +25,7 @@ func Execute() {
 	}
 }
 
-type runFunc func(ctx context.Context, client *elation.Client, args []string) error
+type runFunc func(ctx context.Context, client elation.Client, args []string) error
 
 func wrapRunFunc(runFunc runFunc) func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
@@ -36,7 +36,7 @@ func wrapRunFunc(runFunc runFunc) func(cmd *cobra.Command, args []string) {
 		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 		slog.SetDefault(logger)
 
-		client := elation.NewClient(
+		client := elation.NewHttpClient(
 			&http.Client{
 				Timeout: 15 * time.Second,
 			},

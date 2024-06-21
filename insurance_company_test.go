@@ -71,7 +71,7 @@ func TestInsuranceCompanyService_Create(t *testing.T) {
 			}))
 			defer srv.Close()
 
-			client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 			svc := InsuranceCompanyService{client}
 
 			created, res, err := svc.Create(context.Background(), testCase.create)
@@ -133,7 +133,7 @@ func TestInsuranceCompanyService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := InsuranceCompanyService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -166,7 +166,7 @@ func TestInsuranceCompanyService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := InsuranceCompanyService{client}
 
 	found, res, err := svc.Get(context.Background(), id)
@@ -221,7 +221,7 @@ func TestInsuranceCompanyService_Update(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := InsuranceCompanyService{client}
 
 	updated, res, err := svc.Update(context.Background(), id, expected)
@@ -245,7 +245,7 @@ func TestInsuranceCompanyService_Delete(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := InsuranceCompanyService{client}
 
 	res, err := svc.Delete(context.Background(), id)

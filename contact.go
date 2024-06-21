@@ -20,7 +20,7 @@ type ContactServicer interface {
 var _ ContactServicer = (*ContactService)(nil)
 
 type ContactService struct {
-	client *Client
+	client *HttpClient
 }
 
 type Contact struct {

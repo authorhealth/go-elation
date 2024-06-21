@@ -23,7 +23,7 @@ type RecurringEventGroupServicer interface {
 var _ RecurringEventGroupServicer = (*RecurringEventGroupService)(nil)
 
 type RecurringEventGroupService struct {
-	client *Client
+	client *HttpClient
 }
 
 type RecurringEventGroupSchedule struct {

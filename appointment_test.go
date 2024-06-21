@@ -55,7 +55,7 @@ func TestAppointmentService_Create(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
 	created, res, err := svc.Create(context.Background(), expected)
@@ -127,7 +127,7 @@ func TestAppointmentService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -160,7 +160,7 @@ func TestAppointmentService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
 	found, res, err := svc.Get(context.Background(), id)
@@ -210,7 +210,7 @@ func TestAppointmentService_Update(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
 	found, res, err := svc.Update(context.Background(), id, expected)
@@ -234,7 +234,7 @@ func TestAppointmentService_Delete(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := AppointmentService{client}
 
 	res, err := svc.Delete(context.Background(), id)
