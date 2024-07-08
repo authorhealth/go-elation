@@ -14,8 +14,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	paginationLimit  int
+	paginationOffset int
+)
+
 var rootCmd = &cobra.Command{
 	Use: "elation",
+}
+
+func init() {
+	rootCmd.PersistentFlags().IntVar(&paginationLimit, "limit", 0, "")
+	rootCmd.PersistentFlags().IntVar(&paginationOffset, "offset", 0, "")
 }
 
 func Execute() {
