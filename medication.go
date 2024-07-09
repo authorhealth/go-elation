@@ -21,7 +21,7 @@ type MedicationServicer interface {
 var _ MedicationServicer = (*MedicationService)(nil)
 
 type MedicationService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type PatientMedication struct {

@@ -46,7 +46,7 @@ func wrapRunFunc(runFunc runFunc) func(cmd *cobra.Command, args []string) {
 		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 		slog.SetDefault(logger)
 
-		client := elation.NewHttpClient(
+		client := elation.NewHTTPClient(
 			&http.Client{
 				Timeout: 15 * time.Second,
 			},

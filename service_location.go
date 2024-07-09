@@ -17,7 +17,7 @@ type ServiceLocationServicer interface {
 var _ ServiceLocationServicer = (*ServiceLocationService)(nil)
 
 type ServiceLocationService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type ServiceLocation struct {

@@ -22,7 +22,7 @@ type InsuranceCompanyServicer interface {
 var _ InsuranceCompanyServicer = (*InsuranceCompanyService)(nil)
 
 type InsuranceCompanyService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type InsuranceCompanyCreate struct {

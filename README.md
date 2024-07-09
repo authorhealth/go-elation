@@ -26,7 +26,7 @@ func main() {
 	clientSecret := os.Getenv("CLIENT_SECRET")
 	baseURL := os.Getenv("BASE_URL")
 
-	client := elation.NewHttpClient(httpClient, tokenURL, clientID, clientSecret, baseURL)
+	client := elation.NewHTTPClient(httpClient, tokenURL, clientID, clientSecret, baseURL)
 
 	res := &elation.Response[[]*elation.Patient]{}
 	var err error

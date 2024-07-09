@@ -62,7 +62,7 @@ func TestDiscontinuedMedicationService_Create(t *testing.T) {
 			}))
 			defer srv.Close()
 
-			client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 			svc := DiscontinuedMedicationService{client}
 
 			created, res, err := svc.Create(context.Background(), testCase.create)
@@ -136,7 +136,7 @@ func TestDiscontinuedMedicationService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := DiscontinuedMedicationService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -169,7 +169,7 @@ func TestDiscontinuedMedicationService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := DiscontinuedMedicationService{client}
 
 	found, res, err := svc.Get(context.Background(), id)
@@ -214,7 +214,7 @@ func TestDiscontinuedMedicationService_Update(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := DiscontinuedMedicationService{client}
 
 	updated, res, err := svc.Update(context.Background(), id, expected)

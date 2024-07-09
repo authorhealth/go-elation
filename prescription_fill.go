@@ -21,7 +21,7 @@ type PrescriptionFillServicer interface {
 var _ PrescriptionFillServicer = (*PrescriptionFillService)(nil)
 
 type PrescriptionFillService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type PrescriptionFill struct {

@@ -55,7 +55,7 @@ type Client interface {
 	ThreadMembers() ThreadMemberServicer
 }
 
-type HttpClient struct {
+type HTTPClient struct {
 	httpClient *http.Client
 	baseURL    string
 	tracer     trace.Tracer
@@ -83,9 +83,9 @@ type HttpClient struct {
 	ThreadMemberSvc            *ThreadMemberService
 }
 
-var _ Client = (*HttpClient)(nil)
+var _ Client = (*HTTPClient)(nil)
 
-func NewHttpClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *HttpClient {
+func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, baseURL string) *HTTPClient {
 	config := clientcredentials.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
@@ -94,7 +94,7 @@ func NewHttpClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, httpClient)
 
-	client := &HttpClient{
+	client := &HTTPClient{
 		httpClient: config.Client(ctx),
 		baseURL:    baseURL,
 		tracer:     otel.GetTracerProvider().Tracer("github.com/authorhealth/go-elation"),
@@ -125,87 +125,87 @@ func NewHttpClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	return client
 }
 
-func (c *HttpClient) Appointments() AppointmentServicer {
+func (c *HTTPClient) Appointments() AppointmentServicer {
 	return c.AppointmentSvc
 }
 
-func (c *HttpClient) ClinicalDocuments() ClinicalDocumentServicer {
+func (c *HTTPClient) ClinicalDocuments() ClinicalDocumentServicer {
 	return c.ClinicalDocumentSvc
 }
 
-func (c *HttpClient) Contacts() ContactServicer {
+func (c *HTTPClient) Contacts() ContactServicer {
 	return c.ContactSvc
 }
 
-func (c *HttpClient) DiscontinuedMedications() DiscontinuedMedicationServicer {
+func (c *HTTPClient) DiscontinuedMedications() DiscontinuedMedicationServicer {
 	return c.DiscontinuedMedicationSvc
 }
 
-func (c *HttpClient) HistoryDownloadFills() HistoryDownloadFillServicer {
+func (c *HTTPClient) HistoryDownloadFills() HistoryDownloadFillServicer {
 	return c.HistoryDownloadFillSvc
 }
 
-func (c *HttpClient) InsuranceCompanies() InsuranceCompanyServicer {
+func (c *HTTPClient) InsuranceCompanies() InsuranceCompanyServicer {
 	return c.InsuranceCompanySvc
 }
 
-func (c *HttpClient) InsuranceEligibility() InsuranceEligibilityServicer {
+func (c *HTTPClient) InsuranceEligibility() InsuranceEligibilityServicer {
 	return c.InsuranceEligibilitySvc
 }
 
-func (c *HttpClient) InsurancePlans() InsurancePlanServicer {
+func (c *HTTPClient) InsurancePlans() InsurancePlanServicer {
 	return c.InsurancePlanSvc
 }
 
-func (c *HttpClient) Letters() LetterServicer {
+func (c *HTTPClient) Letters() LetterServicer {
 	return c.LetterSvc
 }
 
-func (c *HttpClient) Medications() MedicationServicer {
+func (c *HTTPClient) Medications() MedicationServicer {
 	return c.MedicationSvc
 }
 
-func (c *HttpClient) MessageThreads() MessageThreadServicer {
+func (c *HTTPClient) MessageThreads() MessageThreadServicer {
 	return c.MessageThreadSvc
 }
 
-func (c *HttpClient) NonVisitNotes() NonVisitNoteServicer {
+func (c *HTTPClient) NonVisitNotes() NonVisitNoteServicer {
 	return c.NonVisitNoteSvc
 }
 
-func (c *HttpClient) Patients() PatientServicer {
+func (c *HTTPClient) Patients() PatientServicer {
 	return c.PatientSvc
 }
 
-func (c *HttpClient) Physicians() PhysicianServicer {
+func (c *HTTPClient) Physicians() PhysicianServicer {
 	return c.PhysicianSvc
 }
 
-func (c *HttpClient) Practices() PracticeServicer {
+func (c *HTTPClient) Practices() PracticeServicer {
 	return c.PracticeSvc
 }
 
-func (c *HttpClient) PrescriptionFills() PrescriptionFillServicer {
+func (c *HTTPClient) PrescriptionFills() PrescriptionFillServicer {
 	return c.PrescriptionFillSvc
 }
 
-func (c *HttpClient) Problems() ProblemServicer {
+func (c *HTTPClient) Problems() ProblemServicer {
 	return c.ProblemSvc
 }
 
-func (c *HttpClient) RecurringEventGroups() RecurringEventGroupServicer {
+func (c *HTTPClient) RecurringEventGroups() RecurringEventGroupServicer {
 	return c.RecurringEventGroupService
 }
 
-func (c *HttpClient) ServiceLocations() ServiceLocationServicer {
+func (c *HTTPClient) ServiceLocations() ServiceLocationServicer {
 	return c.ServiceLocationSvc
 }
 
-func (c *HttpClient) Subscriptions() SubscriptionServicer {
+func (c *HTTPClient) Subscriptions() SubscriptionServicer {
 	return c.SubscriptionSvc
 }
 
-func (c *HttpClient) ThreadMembers() ThreadMemberServicer {
+func (c *HTTPClient) ThreadMembers() ThreadMemberServicer {
 	return c.ThreadMemberSvc
 }
 
@@ -259,7 +259,7 @@ func (e Error) Error() string {
 	return fmt.Sprintf("API error (status code %d)", e.StatusCode)
 }
 
-func (c *HttpClient) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
+func (c *HTTPClient) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(semconv.HTTPRequestMethodKey.String(method))
 
