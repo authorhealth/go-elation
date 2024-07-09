@@ -58,7 +58,7 @@ func TestInsuranceEligibilityService_Create(t *testing.T) {
 			}))
 			defer srv.Close()
 
-			client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 			svc := InsuranceEligibilityService{client}
 
 			created, res, err := svc.Create(context.Background(), id, testCase.create)
@@ -91,7 +91,7 @@ func TestInsuranceEligibilityService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := InsuranceEligibilityService{client}
 
 	found, res, err := svc.Get(context.Background(), id)
@@ -122,7 +122,7 @@ func TestInsuranceEligibilityService_GetFullReport(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := InsuranceEligibilityService{client}
 
 	found, res, err := svc.GetFullReport(context.Background(), id)

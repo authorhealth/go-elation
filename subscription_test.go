@@ -44,7 +44,7 @@ func TestSubscriptionService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := SubscriptionService{client}
 
 	found, res, err := svc.Find(context.Background())
@@ -90,7 +90,7 @@ func TestSubscriptionService_Subscribe(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := SubscriptionService{client}
 
 	found, res, err := svc.Subscribe(context.Background(), expected)
@@ -114,7 +114,7 @@ func TestSubscriptionService_Delete(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := SubscriptionService{client}
 
 	res, err := svc.Delete(context.Background(), id)

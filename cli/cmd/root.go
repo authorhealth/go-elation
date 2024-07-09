@@ -14,8 +14,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	paginationLimit  int
+	paginationOffset int
+)
+
 var rootCmd = &cobra.Command{
 	Use: "elation",
+}
+
+func init() {
+	rootCmd.PersistentFlags().IntVar(&paginationLimit, "limit", 0, "")
+	rootCmd.PersistentFlags().IntVar(&paginationOffset, "offset", 0, "")
 }
 
 func Execute() {
@@ -36,7 +46,7 @@ func wrapRunFunc(runFunc runFunc) func(cmd *cobra.Command, args []string) {
 		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 		slog.SetDefault(logger)
 
-		client := elation.NewHttpClient(
+		client := elation.NewHTTPClient(
 			&http.Client{
 				Timeout: 15 * time.Second,
 			},

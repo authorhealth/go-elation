@@ -20,7 +20,7 @@ type HistoryDownloadFillServicer interface {
 var _ HistoryDownloadFillServicer = (*HistoryDownloadFillService)(nil)
 
 type HistoryDownloadFillService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type HistoryDownloadFill struct {

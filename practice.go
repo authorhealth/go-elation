@@ -20,7 +20,7 @@ type PracticeServicer interface {
 var _ PracticeServicer = (*PracticeService)(nil)
 
 type PracticeService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type Practice struct {

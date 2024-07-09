@@ -53,7 +53,7 @@ func TestLetterService_Find(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := LetterService{client}
 
 	found, res, err := svc.Find(context.Background(), opts)
@@ -86,7 +86,7 @@ func TestLetterService_Get(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewHttpClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
 	svc := LetterService{client}
 
 	found, res, err := svc.Get(context.Background(), id)

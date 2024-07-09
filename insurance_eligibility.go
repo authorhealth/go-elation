@@ -20,7 +20,7 @@ type InsuranceEligibilityServicer interface {
 var _ InsuranceEligibilityServicer = (*InsuranceEligibilityService)(nil)
 
 type InsuranceEligibilityService struct {
-	client *HttpClient
+	client *HTTPClient
 }
 
 type InsuranceEligibilityCreate struct {
