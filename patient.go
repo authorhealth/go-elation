@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"cloud.google.com/go/civil"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -132,39 +133,39 @@ type PatientGuarantor struct {
 }
 
 type PatientInsurance struct {
-	ID                     int64      `json:"id"`
-	InsuranceCompany       int64      `json:"insurance_company,omitempty"`
-	InsurancePlan          int64      `json:"insurance_plan,omitempty"`
-	Rank                   string     `json:"rank"`
-	Carrier                string     `json:"carrier"`
-	MemberID               string     `json:"member_id"`
-	GroupID                string     `json:"group_id"`
-	Plan                   string     `json:"plan"`
-	Phone                  string     `json:"phone"`
-	Extension              string     `json:"extension"`
-	Address                string     `json:"address"`
-	Suite                  string     `json:"suite"`
-	City                   string     `json:"city"`
-	State                  string     `json:"state"`
-	Zip                    string     `json:"zip"`
-	Copay                  any        `json:"copay"`
-	Deductible             any        `json:"deductible"`
-	PaymentProgram         string     `json:"payment_program"`
-	InsuredPersonFirstName string     `json:"insured_person_first_name"`
-	InsuredPersonLastName  string     `json:"insured_person_last_name"`
-	InsuredPersonAddress   string     `json:"insured_person_address"`
-	InsuredPersonCity      string     `json:"insured_person_city"`
-	InsuredPersonState     string     `json:"insured_person_state"`
-	InsuredPersonZip       string     `json:"insured_person_zip"`
-	InsuredPersonID        string     `json:"insured_person_id"`
-	InsuredPersonDOB       string     `json:"insured_person_dob"`
-	InsuredPersonGender    string     `json:"insured_person_gender"`
-	InsuredPersonSSN       string     `json:"insured_person_ssn"`
-	RelationshipToInsured  string     `json:"relationship_to_insured"`
-	CreatedDate            time.Time  `json:"created_date"`
-	DeletedDate            *time.Time `json:"deleted_date"`
-	StartDate              string     `json:"start_date,omitempty"`
-	EndDate                string     `json:"end_date,omitempty"`
+	ID                     int64       `json:"id"`
+	InsuranceCompany       *int64      `json:"insurance_company"`
+	InsurancePlan          *int64      `json:"insurance_plan"`
+	Rank                   string      `json:"rank"`
+	Carrier                *string     `json:"carrier"`
+	MemberID               *string     `json:"member_id"`
+	GroupID                *string     `json:"group_id"`
+	Plan                   *string     `json:"plan"`
+	Phone                  *string     `json:"phone"`
+	Extension              *string     `json:"extension"`
+	Address                *string     `json:"address"`
+	Suite                  *string     `json:"suite"`
+	City                   *string     `json:"city"`
+	State                  *string     `json:"state"`
+	Zip                    *string     `json:"zip"`
+	Copay                  *string     `json:"copay"`
+	Deductible             *string     `json:"deductible"`
+	PaymentProgram         *string     `json:"payment_program"`
+	InsuredPersonFirstName *string     `json:"insured_person_first_name"`
+	InsuredPersonLastName  *string     `json:"insured_person_last_name"`
+	InsuredPersonAddress   *string     `json:"insured_person_address"`
+	InsuredPersonCity      *string     `json:"insured_person_city"`
+	InsuredPersonState     *string     `json:"insured_person_state"`
+	InsuredPersonZip       *string     `json:"insured_person_zip"`
+	InsuredPersonID        *string     `json:"insured_person_id"`
+	InsuredPersonDOB       *string     `json:"insured_person_dob"`
+	InsuredPersonGender    *string     `json:"insured_person_gender"`
+	InsuredPersonSSN       *string     `json:"insured_person_ssn"`
+	RelationshipToInsured  *string     `json:"relationship_to_insured"`
+	CreatedDate            time.Time   `json:"created_date"`
+	DeletedDate            *time.Time  `json:"deleted_date"`
+	StartDate              *civil.Date `json:"start_date"`
+	EndDate                *civil.Date `json:"end_date"`
 }
 
 type PatientStatus struct {
@@ -260,29 +261,62 @@ func (s *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Res
 }
 
 type PatientUpdate struct {
-	ActualName             *string              `json:"actual_name,omitempty"`
-	Address                *PatientAddress      `json:"address,omitempty"`
-	Consents               []*PatientConsent    `json:"consents,omitempty"`
-	DOB                    *string              `json:"dob,omitempty"`
-	Emails                 []*PatientEmail      `json:"emails,omitempty"`
-	Ethnicity              *string              `json:"ethnicity,omitempty"`
-	FirstName              *string              `json:"first_name,omitempty"`
-	GenderIdentity         *string              `json:"gender_identity,omitempty"`
-	Insurances             []*PatientInsurance  `json:"insurances,omitempty"`
-	LastName               *string              `json:"last_name,omitempty"`
-	LegalGenderMarker      *string              `json:"legal_gender_marker,omitempty"`
-	MiddleName             *string              `json:"middle_name,omitempty"`
-	Notes                  *string              `json:"notes,omitempty"`
-	PatientStatus          *PatientStatusUpdate `json:"patient_status,omitempty"`
-	Phones                 []*PatientPhone      `json:"phones,omitempty"`
-	PreferredLanguage      *string              `json:"preferred_language,omitempty"`
-	PrimaryCareProviderNPI *string              `json:"primary_care_provider_npi,omitempty"`
-	PrimaryPhysician       *int64               `json:"primary_physician,omitempty"`
-	Pronouns               *string              `json:"pronouns,omitempty"`
-	Race                   *string              `json:"race,omitempty"`
-	Sex                    *string              `json:"sex,omitempty"`
-	SexualOrientation      *string              `json:"sexual_orientation,omitempty"`
-	SSN                    *string              `json:"ssn,omitempty"`
+	ActualName             *string                   `json:"actual_name,omitempty"`
+	Address                *PatientAddress           `json:"address,omitempty"`
+	Consents               []*PatientConsent         `json:"consents,omitempty"`
+	DOB                    *string                   `json:"dob,omitempty"`
+	Emails                 []*PatientEmail           `json:"emails,omitempty"`
+	Ethnicity              *string                   `json:"ethnicity,omitempty"`
+	FirstName              *string                   `json:"first_name,omitempty"`
+	GenderIdentity         *string                   `json:"gender_identity,omitempty"`
+	Insurances             []*PatientInsuranceUpdate `json:"insurances,omitempty"`
+	LastName               *string                   `json:"last_name,omitempty"`
+	LegalGenderMarker      *string                   `json:"legal_gender_marker,omitempty"`
+	MiddleName             *string                   `json:"middle_name,omitempty"`
+	Notes                  *string                   `json:"notes,omitempty"`
+	PatientStatus          *PatientStatusUpdate      `json:"patient_status,omitempty"`
+	Phones                 []*PatientPhone           `json:"phones,omitempty"`
+	PreferredLanguage      *string                   `json:"preferred_language,omitempty"`
+	PrimaryCareProviderNPI *string                   `json:"primary_care_provider_npi,omitempty"`
+	PrimaryPhysician       *int64                    `json:"primary_physician,omitempty"`
+	Pronouns               *string                   `json:"pronouns,omitempty"`
+	Race                   *string                   `json:"race,omitempty"`
+	Sex                    *string                   `json:"sex,omitempty"`
+	SexualOrientation      *string                   `json:"sexual_orientation,omitempty"`
+	SSN                    *string                   `json:"ssn,omitempty"`
+}
+
+type PatientInsuranceUpdate struct {
+	InsuranceCompany       *int64      `json:"insurance_company,omitempty"`
+	InsurancePlan          *int64      `json:"insurance_plan,omitempty"`
+	Rank                   string      `json:"rank,omitempty"`
+	Carrier                *string     `json:"carrier,omitempty"`
+	MemberID               *string     `json:"member_id,omitempty"`
+	GroupID                *string     `json:"group_id,omitempty"`
+	Plan                   *string     `json:"plan,omitempty"`
+	Phone                  *string     `json:"phone,omitempty"`
+	Extension              *string     `json:"extension,omitempty"`
+	Address                *string     `json:"address,omitempty"`
+	Suite                  *string     `json:"suite,omitempty"`
+	City                   *string     `json:"city,omitempty"`
+	State                  *string     `json:"state,omitempty"`
+	Zip                    *string     `json:"zip,omitempty"`
+	Copay                  *string     `json:"copay,omitempty"`
+	Deductible             *string     `json:"deductible,omitempty"`
+	PaymentProgram         *string     `json:"payment_program,omitempty"`
+	InsuredPersonFirstName *string     `json:"insured_person_first_name,omitempty"`
+	InsuredPersonLastName  *string     `json:"insured_person_last_name,omitempty"`
+	InsuredPersonAddress   *string     `json:"insured_person_address,omitempty"`
+	InsuredPersonCity      *string     `json:"insured_person_city,omitempty"`
+	InsuredPersonState     *string     `json:"insured_person_state,omitempty"`
+	InsuredPersonZip       *string     `json:"insured_person_zip,omitempty"`
+	InsuredPersonID        *string     `json:"insured_person_id,omitempty"`
+	InsuredPersonDOB       *string     `json:"insured_person_dob,omitempty"`
+	InsuredPersonGender    *string     `json:"insured_person_gender,omitempty"`
+	InsuredPersonSSN       *string     `json:"insured_person_ssn,omitempty"`
+	RelationshipToInsured  *string     `json:"relationship_to_insured,omitempty"`
+	StartDate              *civil.Date `json:"start_date,omitempty"`
+	EndDate                *civil.Date `json:"end_date,omitempty"`
 }
 
 type PatientStatusUpdate struct {
