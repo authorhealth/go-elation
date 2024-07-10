@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"cloud.google.com/go/civil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -258,9 +259,44 @@ func TestPatientService_Update(t *testing.T) {
 				Email: "email",
 			},
 		},
-		Ethnicity:         Ptr("ethnicity"),
-		FirstName:         Ptr("first name"),
-		GenderIdentity:    Ptr("gender identity name"),
+		Ethnicity:      Ptr("ethnicity"),
+		FirstName:      Ptr("first name"),
+		GenderIdentity: Ptr("gender identity name"),
+		Insurances: []*PatientInsuranceUpdate{
+			{
+				InsuranceCompany:       Ptr[int64](1),
+				InsurancePlan:          Ptr[int64](2),
+				Rank:                   "rank",
+				Carrier:                Ptr("carrier"),
+				MemberID:               Ptr("member ID"),
+				GroupID:                Ptr("group ID"),
+				Plan:                   Ptr("plan"),
+				Phone:                  Ptr("phone"),
+				Extension:              Ptr("extension"),
+				Address:                Ptr("address"),
+				Suite:                  Ptr("suite"),
+				City:                   Ptr("city"),
+				State:                  Ptr("state"),
+				Zip:                    Ptr("zip"),
+				Copay:                  Ptr("co-pay"),
+				Deductible:             Ptr("deductable"),
+				PaymentProgram:         Ptr("payment program"),
+				InsuredPersonFirstName: Ptr("insured person first name"),
+				InsuredPersonLastName:  Ptr("insured person last name"),
+				InsuredPersonAddress:   Ptr("insured person address"),
+				InsuredPersonCity:      Ptr("insured person city"),
+				InsuredPersonState:     Ptr("insured person state"),
+				InsuredPersonZip:       Ptr("insured person zip"),
+				InsuredPersonID:        Ptr("insured person id"),
+				InsuredPersonDOB:       Ptr("insured person DOB"),
+				InsuredPersonGender:    Ptr("insured person gender"),
+				InsuredPersonSSN:       Ptr("insured person SSN"),
+				RelationshipToInsured:  Ptr("relationship to insured"),
+				StartDate:              &civil.Date{Year: 2024, Month: 5, Day: 15},
+				EndDate:                &civil.Date{Year: 3000, Month: 1, Day: 1},
+			},
+			{},
+		},
 		LastName:          Ptr("last name"),
 		LegalGenderMarker: Ptr("legal gender marker"),
 		MiddleName:        Ptr("middle name"),
