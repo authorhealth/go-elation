@@ -174,8 +174,9 @@ func TestAppointmentService_Update(t *testing.T) {
 
 	var id int64 = 1
 	expected := &AppointmentUpdate{
-		Duration: Ptr(30),
-		Mode:     Ptr(AppointmentModeVideo),
+		Duration:        Ptr(30),
+		Mode:            Ptr(AppointmentModeVideo),
+		ServiceLocation: Ptr(12345),
 		Status: &AppointmentUpdateStatus{
 			Status: "Confirmed",
 			Room:   "Room 1",
