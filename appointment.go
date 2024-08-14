@@ -172,6 +172,7 @@ type AppointmentUpdate struct {
 	Duration          *int                     `json:"duration,omitempty"`
 	Instructions      *string                  `json:"instructions,omitempty"`
 	Mode              *string                  `json:"mode,omitempty"`
+	ServiceLocation   *int                     `json:"service_location,omitempty"`
 	Status            *AppointmentUpdateStatus `json:"status,omitempty"`
 	TelehealthDetails *string                  `json:"telehealth_details,omitempty"`
 }
