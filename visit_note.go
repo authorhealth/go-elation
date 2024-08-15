@@ -27,7 +27,7 @@ type VisitNote struct {
 	Edits               []*VisitNoteEdit      `json:"edits"`                 //: [{}],
 	Signatures          []*VisitNoteSignature `json:"signatures"`            //: [{}],
 	Type                string                `json:"type"`                  //: "Office Visit Note",              // string(50).  This list is managed in the practice"s setting page
-	Template            string                `json:"template"`              //: "SOAP",
+	Template            string                `json:"template"`              //: "SOAP", ["Simple", "SOAP", "Complete H&P (1 col)", "Complete H&P (2 col)", "Complete H&P (2 col A/P)", "Pre-Op"]
 	AmendmentRequest    any                   `json:"amendment_request"`     //: null,
 	Patient             int64                 `json:"patient"`               //: 1638401,
 	Physician           int64                 `json:"physician"`             //: 131074,
@@ -46,11 +46,11 @@ type VisitNote struct {
 }
 
 type VisitNoteCreate struct {
-	Bullets      []*VisitNoteBullet    `json:"bullets"`       //: [{}], 				            // Required
-	ChartDate    time.Time             `json:"chart_date"`    //: "2010-06-10T11:05:08Z", 	// Required
-	DocumentDate time.Time             `json:"document_date"` //: "2010-06-10T11:05:08Z", 	// Required
-	Patient      int64                 `json:"patient"`       //: 1638401, 				          // Required
-	Template     string                `json:"template"`      //: "SOAP", 				          // Required
+	Bullets      []*VisitNoteBullet    `json:"bullets"`       //: [{}], 				                                                                                                     // Required
+	ChartDate    time.Time             `json:"chart_date"`    //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
+	DocumentDate time.Time             `json:"document_date"` //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
+	Patient      int64                 `json:"patient"`       //: 1638401, 				                                                                                                   // Required
+	Template     string                `json:"template"`      //: "SOAP", ["Simple", "SOAP", "Complete H&P (1 col)", "Complete H&P (2 col)", "Complete H&P (2 col A/P)", "Pre-Op"]   // Required
 	Physician    int64                 `json:"physician"`     //: 131074, 				          // Required
 	Type         string                `json:"type"`          //: "Office Visit Note",
 	Confidential bool                  `json:"confidential"`  //: false,
@@ -60,7 +60,7 @@ type VisitNoteCreate struct {
 }
 
 type VisitNoteBullet struct {
-	Category       string                 `json:"category"`         //: ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
+	Category       string                 `json:"category"`         //: "Problem", ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
 	Text           string                 `json:"text"`             //: "Dizziness" string(500),
 	Version        int64                  `json:"version"`          //: 1,
 	Sequence       int64                  `json:"sequence"`         //: 0,
@@ -77,8 +77,8 @@ type VisitNoteBullet struct {
 }
 
 type VisitNoteChild struct {
-	Category       string                 `json:"category"`         //: ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
-	Text           string                 `json:"text"`             //: "Dizziness" string(500),
+	Category       string                 `json:"category"`         //: "Problem", ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
+	Text           string                 `json:"text"`             //: "Dizziness", string(500),
 	Version        int64                  `json:"version"`          //: 1,
 	Sequence       int64                  `json:"sequence"`         //: 0,
 	Author         int64                  `json:"author"`           //: 10,
