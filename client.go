@@ -33,6 +33,7 @@ const (
 
 type Client interface {
 	Appointments() AppointmentServicer
+	Bill() BillServicer
 	ClinicalDocuments() ClinicalDocumentServicer
 	Contacts() ContactServicer
 	DiscontinuedMedications() DiscontinuedMedicationServicer
@@ -62,6 +63,7 @@ type HTTPClient struct {
 	tracer     trace.Tracer
 
 	AppointmentSvc             *AppointmentService
+	BillSvc                    *BillService
 	ClinicalDocumentSvc        *ClinicalDocumentService
 	ContactSvc                 *ContactService
 	DiscontinuedMedicationSvc  *DiscontinuedMedicationService
@@ -103,6 +105,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
+	client.BillSvc = &BillService{client}
 	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
 	client.ContactSvc = &ContactService{client}
 	client.DiscontinuedMedicationSvc = &DiscontinuedMedicationService{client}
@@ -130,6 +133,10 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 
 func (c *HTTPClient) Appointments() AppointmentServicer {
 	return c.AppointmentSvc
+}
+
+func (c *HTTPClient) Bill() BillServicer {
+	return c.BillSvc
 }
 
 func (c *HTTPClient) ClinicalDocuments() ClinicalDocumentServicer {
