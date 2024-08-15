@@ -53,6 +53,7 @@ type Client interface {
 	ServiceLocations() ServiceLocationServicer
 	Subscriptions() SubscriptionServicer
 	ThreadMembers() ThreadMemberServicer
+	VisitNote() VisitNoteServicer
 }
 
 type HTTPClient struct {
@@ -81,6 +82,7 @@ type HTTPClient struct {
 	ServiceLocationSvc         *ServiceLocationService
 	SubscriptionSvc            *SubscriptionService
 	ThreadMemberSvc            *ThreadMemberService
+	VisitNoteSvc               *VisitNoteService
 }
 
 var _ Client = (*HTTPClient)(nil)
@@ -121,6 +123,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
 	client.ThreadMemberSvc = &ThreadMemberService{client}
+	client.VisitNoteSvc = &VisitNoteService{client}
 
 	return client
 }
@@ -207,6 +210,10 @@ func (c *HTTPClient) Subscriptions() SubscriptionServicer {
 
 func (c *HTTPClient) ThreadMembers() ThreadMemberServicer {
 	return c.ThreadMemberSvc
+}
+
+func (c *HTTPClient) VisitNote() VisitNoteServicer {
+	return c.VisitNoteSvc
 }
 
 type Response[ResultsT any] struct {
