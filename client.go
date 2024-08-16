@@ -33,6 +33,7 @@ const (
 
 type Client interface {
 	Appointments() AppointmentServicer
+	Bill() BillServicer
 	ClinicalDocuments() ClinicalDocumentServicer
 	Contacts() ContactServicer
 	DiscontinuedMedications() DiscontinuedMedicationServicer
@@ -53,6 +54,7 @@ type Client interface {
 	ServiceLocations() ServiceLocationServicer
 	Subscriptions() SubscriptionServicer
 	ThreadMembers() ThreadMemberServicer
+	VisitNote() VisitNoteServicer
 }
 
 type HTTPClient struct {
@@ -61,6 +63,7 @@ type HTTPClient struct {
 	tracer     trace.Tracer
 
 	AppointmentSvc             *AppointmentService
+	BillSvc                    *BillService
 	ClinicalDocumentSvc        *ClinicalDocumentService
 	ContactSvc                 *ContactService
 	DiscontinuedMedicationSvc  *DiscontinuedMedicationService
@@ -81,6 +84,7 @@ type HTTPClient struct {
 	ServiceLocationSvc         *ServiceLocationService
 	SubscriptionSvc            *SubscriptionService
 	ThreadMemberSvc            *ThreadMemberService
+	VisitNoteSvc               *VisitNoteService
 }
 
 var _ Client = (*HTTPClient)(nil)
@@ -101,6 +105,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	}
 
 	client.AppointmentSvc = &AppointmentService{client}
+	client.BillSvc = &BillService{client}
 	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
 	client.ContactSvc = &ContactService{client}
 	client.DiscontinuedMedicationSvc = &DiscontinuedMedicationService{client}
@@ -121,12 +126,17 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	client.ServiceLocationSvc = &ServiceLocationService{client}
 	client.SubscriptionSvc = &SubscriptionService{client}
 	client.ThreadMemberSvc = &ThreadMemberService{client}
+	client.VisitNoteSvc = &VisitNoteService{client}
 
 	return client
 }
 
 func (c *HTTPClient) Appointments() AppointmentServicer {
 	return c.AppointmentSvc
+}
+
+func (c *HTTPClient) Bill() BillServicer {
+	return c.BillSvc
 }
 
 func (c *HTTPClient) ClinicalDocuments() ClinicalDocumentServicer {
@@ -207,6 +217,10 @@ func (c *HTTPClient) Subscriptions() SubscriptionServicer {
 
 func (c *HTTPClient) ThreadMembers() ThreadMemberServicer {
 	return c.ThreadMemberSvc
+}
+
+func (c *HTTPClient) VisitNote() VisitNoteServicer {
+	return c.VisitNoteSvc
 }
 
 type Response[ResultsT any] struct {
