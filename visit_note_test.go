@@ -18,7 +18,16 @@ func TestVisitNoteService_Create(t *testing.T) {
 	}{
 		"required fields only request": {
 			create: &VisitNoteCreate{
-				Bullets:      []*VisitNoteBullet{},
+				Bullets: []*VisitNoteBullet{
+					{
+						Category:    "Subjective",
+						Text:        "Patient",
+						Version:     1,
+						Sequence:    1,
+						Author:      12345,
+						UpdatedDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
+					},
+				},
 				ChartDate:    time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
 				DocumentDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
 				Patient:      12345,
@@ -28,7 +37,16 @@ func TestVisitNoteService_Create(t *testing.T) {
 		},
 		"all specified fields request": {
 			create: &VisitNoteCreate{
-				Bullets:      []*VisitNoteBullet{},
+				Bullets: []*VisitNoteBullet{
+					{
+						Category:    "Subjective",
+						Text:        "Patient",
+						Version:     1,
+						Sequence:    1,
+						Author:      12345,
+						UpdatedDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
+					},
+				},
 				ChartDate:    time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
 				DocumentDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
 				Patient:      12345,
@@ -38,7 +56,15 @@ func TestVisitNoteService_Create(t *testing.T) {
 				Confidential: true,
 				SignedBy:     12345,
 				SignedDate:   time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
-				Signatures:   []*VisitNoteSignature{},
+				Signatures: []*VisitNoteSignature{
+					{
+						User:       12345,
+						UserName:   "John Doe",
+						SignedDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
+						Role:       "Physician",
+						Comments:   "Signed",
+					},
+				},
 			},
 		},
 	}
