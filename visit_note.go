@@ -66,9 +66,9 @@ type VisitNoteBullet struct {
 	Sequence       int64                  `json:"sequence"`         //: 0,
 	Author         int64                  `json:"author"`           //: 10,
 	UpdatedDate    time.Time              `json:"updated_date"`     //: "2022-05-15T13:50:09"
-	ReplacedByEdit any                    `json:"replaced_by_edit"` //: null,
-	ReplacedBy     any                    `json:"replaced_by"`      //: null,
-	Edit           any                    `json:"edit"`             //: null,
+	ReplacedByEdit *string                `json:"replaced_by_edit"` //: null,
+	ReplacedBy     *string                `json:"replaced_by"`      //: null,
+	Edit           *string                `json:"edit"`             //: null,
 	DeletedDate    *time.Time             `json:"deleted_date"`     //: null,
 	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`    //: null,
 	NoteItem       *VisitNoteNoteItem     `json:"note_item"`        //: null,
@@ -83,9 +83,9 @@ type VisitNoteChild struct {
 	Sequence       int64                  `json:"sequence"`         //: 0,
 	Author         int64                  `json:"author"`           //: 10,
 	UpdatedDate    time.Time              `json:"updated_date"`     //: "2022-05-15T13:50:09"
-	ReplacedByEdit any                    `json:"replaced_by_edit"` //: null,
-	ReplacedBy     any                    `json:"replaced_by"`      //: null,
-	Edit           any                    `json:"edit"`             //: null,
+	ReplacedByEdit *string                `json:"replaced_by_edit"` //: null,
+	ReplacedBy     *string                `json:"replaced_by"`      //: null,
+	Edit           *string                `json:"edit"`             //: null,
 	DeletedDate    *time.Time             `json:"deleted_date"`     //: null,
 	NoteItem       *VisitNoteNoteItem     `json:"note_item"`        //: null,
 	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`    //: null,
@@ -110,7 +110,7 @@ type VisitNoteItem struct {
 type VisitNoteNoteDocument struct {
 	ID       int64              `json:"id"`       //: 99483787,
 	Document *VisitNoteDocument `json:"document"` //: {}
-	Summary  any                `json:"summary"`  //: null
+	Summary  *string            `json:"summary"`  //: null
 }
 
 type VisitNoteDocument struct {
@@ -161,7 +161,7 @@ type VisitNoteSignature struct {
 	UserName   string    `json:"user_name"`   //: "Douglas Ross, MD",
 	SignedDate time.Time `json:"signed_date"` //: "2022-10-31T12:30:00Z",
 	Role       string    `json:"role"`        //: "cosigner",
-	Comments   any       `json:"comments"`    //: null
+	Comments   *string   `json:"comments"`    //: null
 }
 
 func (v *VisitNoteService) Create(ctx context.Context, create *VisitNoteCreate) (*VisitNote, *http.Response, error) {

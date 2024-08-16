@@ -62,7 +62,7 @@ func TestVisitNoteService_Create(t *testing.T) {
 						UserName:   "John Doe",
 						SignedDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
 						Role:       "Physician",
-						Comments:   "Signed",
+						Comments:   new(string),
 					},
 				},
 			},
