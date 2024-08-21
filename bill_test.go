@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,44 +17,20 @@ func TestBillService_Create(t *testing.T) {
 	}{
 		"required fields only request": {
 			create: &BillCreate{
-				ServiceLocation: &BillServiceLocation{
-					ID:                 1,
-					Name:               "service location",
-					IsPrimary:          true,
-					PlaceOfService:     "office",
-					PlaceOfServiceCode: "11",
-					AddressLine1:       "123 Main St",
-					City:               "Schenectady",
-					State:              "NY",
-					Zip:                "12345",
-					Phone:              "555-234-5678",
-					CreatedDate:        time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
-				},
-				VisitNoteID: 64409108504,
-				Patient:     64901939201,
-				Practice:    65540,
-				Physician:   64811630594,
+				ServiceLocation: 10,
+				VisitNoteID:     64409108504,
+				Patient:         64901939201,
+				Practice:        65540,
+				Physician:       64811630594,
 			},
 		},
 		"all specified fields request": {
 			create: &BillCreate{
-				ServiceLocation: &BillServiceLocation{
-					ID:                 1,
-					Name:               "service location",
-					IsPrimary:          true,
-					PlaceOfService:     "office",
-					PlaceOfServiceCode: "11",
-					AddressLine1:       "123 Main St",
-					City:               "Schenectady",
-					State:              "NY",
-					Zip:                "12345",
-					Phone:              "555-234-5678",
-					CreatedDate:        time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
-				},
-				VisitNoteID: 64409108504,
-				Patient:     64901939201,
-				Practice:    65540,
-				Physician:   64811630594,
+				ServiceLocation: 10,
+				VisitNoteID:     64409108504,
+				Patient:         64901939201,
+				Practice:        65540,
+				Physician:       64811630594,
 				CPTs: []*BillCPT{
 					{
 						CPT:       12,
