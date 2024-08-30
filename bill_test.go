@@ -18,7 +18,7 @@ func TestBillService_Create(t *testing.T) {
 		"required fields only request": {
 			create: &BillCreate{
 				ServiceLocation: 10,
-				VisitNoteID:     64409108504,
+				VisitNote:       64409108504,
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
@@ -27,7 +27,7 @@ func TestBillService_Create(t *testing.T) {
 		"all specified fields request": {
 			create: &BillCreate{
 				ServiceLocation: 10,
-				VisitNoteID:     64409108504,
+				VisitNote:       64409108504,
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
