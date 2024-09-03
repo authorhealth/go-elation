@@ -33,10 +33,12 @@ func TestBillService_Create(t *testing.T) {
 				Physician:       64811630594,
 				CPTs: []*BillCPT{
 					{
-						CPT:       12,
-						Modifiers: []string{"modifier 1", "modifier 2"},
-						DXs:       []BillDX{{ICD10Code: "dx 1"}, {ICD10Code: "dx 2"}},
-						AltDXs:    []string{"alt dx 1", "alt dx 2"},
+						CPT:        "12",
+						Units:      "1.0",
+						UnitCharge: "122.0",
+						Modifiers:  []string{"modifier 1", "modifier 2"},
+						DXs:        []BillDX{{ICD10Code: "dx 1"}, {ICD10Code: "dx 2"}},
+						AltDXs:     []string{"alt dx 1", "alt dx 2"},
 					},
 				},
 				BillingProvider:     42120898,
