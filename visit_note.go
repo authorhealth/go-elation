@@ -60,12 +60,11 @@ type VisitNoteCreate struct {
 }
 
 type VisitNoteBullet struct {
-	Category string `json:"category"` //: "Problem", ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
-	Text     string `json:"text"`     //: "Dizziness" string(500),
-	Version  int64  `json:"version"`  //: 1,
-	Sequence int64  `json:"sequence"` //: 0,
-	Author   int64  `json:"author"`   //: 10,
-	// UpdatedDate    time.Time              `json:"updated_date"`       //: "2022-05-15T13:50:09"
+	Category       string                 `json:"category"`           //: "Problem", ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
+	Text           string                 `json:"text"`               //: "Dizziness" string(500),
+	Version        int64                  `json:"version"`            //: 1,
+	Sequence       int64                  `json:"sequence"`           //: 0,
+	Author         int64                  `json:"author"`             //: 10,
 	ReplacedByEdit *string                `json:"replaced_by_edit"`   //: null,
 	ReplacedBy     *string                `json:"replaced_by"`        //: null,
 	Edit           *string                `json:"edit"`               //: null,
