@@ -46,34 +46,33 @@ type VisitNote struct {
 }
 
 type VisitNoteCreate struct {
-	Bullets      []*VisitNoteBullet    `json:"bullets"`       //: [{}], 				                                                                                                     // Required
-	ChartDate    time.Time             `json:"chart_date"`    //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
-	DocumentDate time.Time             `json:"document_date"` //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
-	Patient      int64                 `json:"patient"`       //: 1638401, 				                                                                                                   // Required
-	Template     string                `json:"template"`      //: "SOAP", ["Simple", "SOAP", "Complete H&P (1 col)", "Complete H&P (2 col)", "Complete H&P (2 col A/P)", "Pre-Op"]   // Required
-	Physician    int64                 `json:"physician"`     //: 131074, 				          // Required
-	Type         string                `json:"type"`          //: "Office Visit Note",
-	Confidential bool                  `json:"confidential"`  //: false,
-	SignedBy     int64                 `json:"signed_by"`     //: 131074,
-	SignedDate   time.Time             `json:"signed_date"`   //: "2010-06-10T11:05:08Z",
-	Signatures   []*VisitNoteSignature `json:"signatures"`    //: [{}],
+	Bullets      []*VisitNoteBullet    `json:"bullets"`                //: [{}], 				                                                                                                     // Required
+	ChartDate    time.Time             `json:"chart_date"`             //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
+	DocumentDate time.Time             `json:"document_date"`          //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
+	Patient      int64                 `json:"patient"`                //: 1638401, 				                                                                                                   // Required
+	Template     string                `json:"template"`               //: "SOAP", ["Simple", "SOAP", "Complete H&P (1 col)", "Complete H&P (2 col)", "Complete H&P (2 col A/P)", "Pre-Op"]   // Required
+	Physician    int64                 `json:"physician"`              //: 131074, 				          // Required
+	Type         string                `json:"type,omitempty"`         //: "Office Visit Note",
+	Confidential bool                  `json:"confidential,omitempty"` //: false,
+	SignedBy     int64                 `json:"signed_by,omitempty"`    //: 131074,
+	SignedDate   *time.Time            `json:"signed_date,omitempty"`  //: "2010-06-10T11:05:08Z",
+	Signatures   []*VisitNoteSignature `json:"signatures,omitempty"`   //: [{}],
 }
 
 type VisitNoteBullet struct {
-	Category       string                 `json:"category"`         //: "Problem", ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
-	Text           string                 `json:"text"`             //: "Dizziness" string(500),
-	Version        int64                  `json:"version"`          //: 1,
-	Sequence       int64                  `json:"sequence"`         //: 0,
-	Author         int64                  `json:"author"`           //: 10,
-	UpdatedDate    time.Time              `json:"updated_date"`     //: "2022-05-15T13:50:09"
-	ReplacedByEdit *string                `json:"replaced_by_edit"` //: null,
-	ReplacedBy     *string                `json:"replaced_by"`      //: null,
-	Edit           *string                `json:"edit"`             //: null,
-	DeletedDate    *time.Time             `json:"deleted_date"`     //: null,
-	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`    //: null,
-	NoteItem       *VisitNoteNoteItem     `json:"note_item"`        //: null,
-	Handout        *int64                 `json:"handout"`          //: null,
-	Children       []*VisitNoteChild      `json:"children"`         //: [{}]          // Not visible in the Find Visit Notes endpoint
+	Category       string                 `json:"category"`           //: "Problem", ["Problem", "Past", "Family", "Social", "Instr", "PE", "ROS", "Med", "Data", "Assessment", "Test", "Tx", "Narrative", "Followup", "Reason", "Plan", "Objective", "Hpi", "Allergies", "Habits", "Assessplan", "Consultant", "Attending", "Dateprocedure", "Surgical", "Orders", "Referenced", "Procedure"],
+	Text           string                 `json:"text"`               //: "Dizziness" string(500),
+	Version        int64                  `json:"version"`            //: 1,
+	Sequence       int64                  `json:"sequence"`           //: 0,
+	Author         int64                  `json:"author"`             //: 10,
+	ReplacedByEdit *string                `json:"replaced_by_edit"`   //: null,
+	ReplacedBy     *string                `json:"replaced_by"`        //: null,
+	Edit           *string                `json:"edit"`               //: null,
+	DeletedDate    *time.Time             `json:"deleted_date"`       //: null,
+	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`      //: null,
+	NoteItem       *VisitNoteNoteItem     `json:"note_item"`          //: null,
+	Handout        *int64                 `json:"handout"`            //: null,
+	Children       []*VisitNoteChild      `json:"children,omitempty"` //: [{}]          // Not visible in the Find Visit Notes endpoint
 }
 
 type VisitNoteChild struct {

@@ -20,12 +20,11 @@ func TestVisitNoteService_Create(t *testing.T) {
 			create: &VisitNoteCreate{
 				Bullets: []*VisitNoteBullet{
 					{
-						Category:    "Subjective",
-						Text:        "Patient",
-						Version:     1,
-						Sequence:    1,
-						Author:      12345,
-						UpdatedDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
+						Category: "Subjective",
+						Text:     "Patient",
+						Version:  1,
+						Sequence: 1,
+						Author:   12345,
 					},
 				},
 				ChartDate:    time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
@@ -39,12 +38,11 @@ func TestVisitNoteService_Create(t *testing.T) {
 			create: &VisitNoteCreate{
 				Bullets: []*VisitNoteBullet{
 					{
-						Category:    "Subjective",
-						Text:        "Patient",
-						Version:     1,
-						Sequence:    1,
-						Author:      12345,
-						UpdatedDate: time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
+						Category: "Subjective",
+						Text:     "Patient",
+						Version:  1,
+						Sequence: 1,
+						Author:   12345,
 					},
 				},
 				ChartDate:    time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
@@ -55,7 +53,6 @@ func TestVisitNoteService_Create(t *testing.T) {
 				Type:         "Office Visit Note",
 				Confidential: true,
 				SignedBy:     12345,
-				SignedDate:   time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
 				Signatures: []*VisitNoteSignature{
 					{
 						User:       12345,

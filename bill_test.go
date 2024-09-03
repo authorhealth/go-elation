@@ -18,7 +18,7 @@ func TestBillService_Create(t *testing.T) {
 		"required fields only request": {
 			create: &BillCreate{
 				ServiceLocation: 10,
-				VisitNoteID:     64409108504,
+				VisitNote:       64409108504,
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
@@ -27,16 +27,18 @@ func TestBillService_Create(t *testing.T) {
 		"all specified fields request": {
 			create: &BillCreate{
 				ServiceLocation: 10,
-				VisitNoteID:     64409108504,
+				VisitNote:       64409108504,
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
 				CPTs: []*BillCPT{
 					{
-						CPT:       12,
-						Modifiers: []string{"modifier 1", "modifier 2"},
-						DXs:       []string{"dx 1", "dx 2"},
-						AltDXs:    []string{"alt dx 1", "alt dx 2"},
+						CPT:        "12",
+						Units:      "1.0",
+						UnitCharge: "122.0",
+						Modifiers:  []string{"modifier 1", "modifier 2"},
+						DXs:        []BillDX{{ICD10Code: "dx 1"}, {ICD10Code: "dx 2"}},
+						AltDXs:     []string{"alt dx 1", "alt dx 2"},
 					},
 				},
 				BillingProvider:     42120898,
