@@ -299,7 +299,7 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 		reader = bytes.NewReader(b)
 	}
 
-	req, err := http.NewRequest(method, u, reader)
+	req, err := http.NewRequestWithContext(ctx, method, u, reader)
 	if err != nil {
 		return nil, fmt.Errorf("making new HTTP request: %w", err)
 	}
