@@ -5,6 +5,11 @@ go 1.23
 require github.com/authorhealth/go-elation v0.0.0-20240903172029-5729dc168edf
 
 require (
+	github.com/felixge/httpsnoop v1.0.4 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
+)
+
+require (
 	cloud.google.com/go v0.115.1 // indirect
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-logr/logr v1.4.2 // indirect

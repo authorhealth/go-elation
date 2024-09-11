@@ -16,11 +16,13 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every week
       interval: weekly
-      day: thursday
+      day: tuesday
       time: "12:00"
 
   - package-ecosystem: gomod
-    directory: /
+    directories:
+      - /
+      - /cli
     groups:
       golang-org-x:
         patterns:
@@ -29,9 +31,6 @@ updates:
         patterns:
           - "go.opentelemetry.io/otel/*"
           - "go.opentelemetry.io/contrib/*"
-      google-cloud:
-        patterns:
-          - "cloud.google.com/go/*"
     labels:
       - dependencies
       - go
