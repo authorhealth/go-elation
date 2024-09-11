@@ -11,8 +11,9 @@ import (
 	"strconv"
 
 	querystring "github.com/google/go-querystring/query"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
@@ -95,6 +96,10 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 		ClientSecret: clientSecret,
 		TokenURL:     tokenURL,
 	}
+
+	httpClient.Transport = otelhttp.NewTransport(httpClient.Transport,
+		// Ensure that the trace context is not propagated by using an empty composite propagator.
+		otelhttp.WithPropagators(propagation.NewCompositeTextMapPropagator()))
 
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, httpClient)
 
@@ -274,9 +279,6 @@ func (e Error) Error() string {
 }
 
 func (c *HTTPClient) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
-	span := trace.SpanFromContext(ctx)
-	span.SetAttributes(semconv.HTTPRequestMethodKey.String(method))
-
 	q, err := querystring.Values(query)
 	if err != nil {
 		return nil, fmt.Errorf("encoding URL query: %w", err)
@@ -286,8 +288,6 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 	if len(q) > 0 {
 		u = u + "?" + q.Encode()
 	}
-
-	span.SetAttributes(semconv.URLFull(u))
 
 	reader := bytes.NewReader(nil)
 	if body != nil {
@@ -299,7 +299,7 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 		reader = bytes.NewReader(b)
 	}
 
-	req, err := http.NewRequest(method, u, reader)
+	req, err := http.NewRequestWithContext(ctx, method, u, reader)
 	if err != nil {
 		return nil, fmt.Errorf("making new HTTP request: %w", err)
 	}
@@ -310,8 +310,6 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 	if err != nil {
 		return nil, fmt.Errorf("doing HTTP request: %w", err)
 	}
-
-	span.SetAttributes(semconv.HTTPResponseStatusCode(res.StatusCode))
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
