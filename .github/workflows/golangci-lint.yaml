@@ -10,6 +10,11 @@ permissions:
   contents: read
   # Optional: allow read access to pull request. Use with `only-new-issues` option.
   pull-requests: read
+  # Optional: allow write access to checks to allow the action to annotate code in the PR.
+  checks: write
+
+env:
+  GOLANGCI_LINT_VERSION: v1.60.1
 
 jobs:
   golangci:
@@ -20,8 +25,11 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
-          cache: false
+          go-version-file: './go.mod'
+          cache: true
+          cache-dependency-path: |
+            go.sum
+            cli/go.sum
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
@@ -29,7 +37,7 @@ jobs:
           # Require: The version of golangci-lint to use.
           # When `install-mode` is `binary` (default) the value can be v1.2 or v1.2.3 or `latest` to use the latest version.
           # When `install-mode` is `goinstall` the value can be v1.2.3, `latest`, or the hash of a commit.
-          version: v1.60.1
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -45,13 +53,7 @@ jobs:
 
           # Optional: if set to true, then all caching functionality will be completely disabled,
           #           takes precedence over all other caching options.
-          skip-cache: true
-
-          # Optional: if set to true, then the action won't cache or restore ~/go/pkg.
-          # skip-pkg-cache: true
-
-          # Optional: if set to true, then the action won't cache or restore ~/.cache/go-build.
-          # skip-build-cache: true
+          skip-cache: false
 
           # Optional: The mode to install golangci-lint. It can be 'binary' or 'goinstall'.
           # install-mode: "goinstall"

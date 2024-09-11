@@ -1,6 +1,6 @@
 module github.com/authorhealth/go-elation/cli
 
-go 1.22.4
+go 1.23
 
 require github.com/authorhealth/go-elation v0.0.0-20240903172029-5729dc168edf
 
