@@ -11,7 +11,9 @@ import (
 	"strconv"
 
 	querystring "github.com/google/go-querystring/query"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/oauth2"
@@ -95,6 +97,10 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 		ClientSecret: clientSecret,
 		TokenURL:     tokenURL,
 	}
+
+	httpClient.Transport = otelhttp.NewTransport(httpClient.Transport,
+		// Ensure that the trace context is not propagated by using an empty composite propagator.
+		otelhttp.WithPropagators(propagation.NewCompositeTextMapPropagator()))
 
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, httpClient)
 
