@@ -14,7 +14,6 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
@@ -280,9 +279,6 @@ func (e Error) Error() string {
 }
 
 func (c *HTTPClient) request(ctx context.Context, method string, path string, query any, body any, out any) (*http.Response, error) {
-	span := trace.SpanFromContext(ctx)
-	span.SetAttributes(semconv.HTTPRequestMethodKey.String(method))
-
 	q, err := querystring.Values(query)
 	if err != nil {
 		return nil, fmt.Errorf("encoding URL query: %w", err)
@@ -292,8 +288,6 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 	if len(q) > 0 {
 		u = u + "?" + q.Encode()
 	}
-
-	span.SetAttributes(semconv.URLFull(u))
 
 	reader := bytes.NewReader(nil)
 	if body != nil {
@@ -316,8 +310,6 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 	if err != nil {
 		return nil, fmt.Errorf("doing HTTP request: %w", err)
 	}
-
-	span.SetAttributes(semconv.HTTPResponseStatusCode(res.StatusCode))
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
