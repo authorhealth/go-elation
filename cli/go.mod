@@ -6,7 +6,7 @@ require github.com/authorhealth/go-elation v0.0.0-20240903172029-5729dc168edf
 
 require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.55.0 // indirect
 )
 
 require (
