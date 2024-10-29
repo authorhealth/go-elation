@@ -21,15 +21,6 @@ import (
 
 const (
 	defaultPaginationLimit = 25
-
-	ResourceAppointments string = "appointments"
-	ResourceMedications  string = "medications"
-	ResourcePatients     string = "patients"
-	ResourcePhysicians   string = "physicians"
-	ResourceProblems     string = "problems"
-
-	WebhookEventActionSaved   string = "saved"
-	WebhookEventActionDeleted string = "deleted"
 )
 
 type Client interface {

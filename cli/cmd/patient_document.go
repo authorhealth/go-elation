@@ -9,6 +9,41 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var getDiscontinuedMedication = &cobra.Command{
+	Use:  "get-discontinued-medication [discontinued medication ID]",
+	Args: cobra.ExactArgs(1),
+	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
+		discontinuedMedicationID, _ := strconv.ParseInt(args[0], 10, 64)
+		response, _, err := client.DiscontinuedMedications().Get(ctx, discontinuedMedicationID)
+		if err != nil {
+			return err
+		}
+
+		spew.Dump(response)
+
+		return nil
+	}),
+}
+
+var findDiscontinuedMedications = &cobra.Command{
+	Use: "find-discontinued-medications",
+	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
+		response, _, err := client.DiscontinuedMedications().Find(ctx, &elation.FindDiscontinuedMedicationsOptions{
+			Pagination: &elation.Pagination{
+				Limit:  paginationLimit,
+				Offset: paginationOffset,
+			},
+		})
+		if err != nil {
+			return err
+		}
+
+		spew.Dump(response)
+
+		return nil
+	}),
+}
+
 var getMedication = &cobra.Command{
 	Use:  "get-medication [medication ID]",
 	Args: cobra.ExactArgs(1),
@@ -61,7 +96,9 @@ var getPrescriptionFill = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(findDiscontinuedMedications)
 	rootCmd.AddCommand(findPrescriptionFills)
+	rootCmd.AddCommand(getDiscontinuedMedication)
 	rootCmd.AddCommand(getMedication)
 	rootCmd.AddCommand(getPrescriptionFill)
 }

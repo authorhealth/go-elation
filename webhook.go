@@ -17,12 +17,23 @@ const (
 
 var ErrPublicKeyLength = errors.New("incorrect length of public key")
 
+type WebhookEventAction string
+
+const (
+	WebhookEventActionSaved   WebhookEventAction = "saved"
+	WebhookEventActionDeleted WebhookEventAction = "deleted"
+)
+
+func (a WebhookEventAction) String() string {
+	return string(a)
+}
+
 type Event struct {
-	Data          json.RawMessage `json:"data"`
-	Action        string          `json:"action"`
-	EventID       int64           `json:"event_id"`
-	ApplicationID string          `json:"application_id"`
-	Resource      string          `json:"resource"`
+	Data          json.RawMessage    `json:"data"`
+	Action        WebhookEventAction `json:"action"`
+	EventID       int64              `json:"event_id"`
+	ApplicationID string             `json:"application_id"`
+	Resource      Resource           `json:"resource"`
 }
 
 func VerifyWebhook(r *http.Request, publicKey []byte) (*Event, error) {

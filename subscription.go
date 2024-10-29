@@ -28,11 +28,26 @@ type SubscriptionService struct {
 
 type Subscription struct {
 	ID            int64                 `json:"id"`
-	Resource      string                `json:"resource"`
+	Resource      Resource              `json:"resource"`
 	Target        string                `json:"target"`
 	CreatedDate   SubscriptionJSONDate  `json:"created_date"`
 	DeletedDate   *SubscriptionJSONDate `json:"deleted_date"`
 	SigningPubKey string                `json:"signing_pub_key"`
+}
+
+type Resource string
+
+const (
+	ResourceAppointments            Resource = "appointments"
+	ResourceDiscontinuedMedications Resource = "discontinued_medications"
+	ResourceMedications             Resource = "medications"
+	ResourcePatients                Resource = "patients"
+	ResourcePhysicians              Resource = "physicians"
+	ResourceProblems                Resource = "problems"
+)
+
+func (r Resource) String() string {
+	return string(r)
 }
 
 type SubscriptionJSONDate time.Time
@@ -70,7 +85,7 @@ func (s *SubscriptionService) Find(ctx context.Context) ([]*Subscription, *http.
 }
 
 type Subscribe struct {
-	Resource   string          `json:"resource"`
+	Resource   Resource        `json:"resource"`
 	Target     string          `json:"target"`
 	Properties json.RawMessage `json:"properties"`
 }
