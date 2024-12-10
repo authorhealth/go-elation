@@ -100,3 +100,53 @@ func TestBillService_Create(t *testing.T) {
 		})
 	}
 }
+
+func TestBillService_Create_already_exists(t *testing.T) {
+	assert := assert.New(t)
+
+	billCreate := &BillCreate{
+		ServiceLocation: 10,
+		VisitNote:       64409108504,
+		Patient:         64901939201,
+		Practice:        65540,
+		Physician:       64811630594,
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if tokenRequest(w, r) {
+			return
+		}
+
+		assert.Equal(http.MethodPost, r.Method)
+		assert.Equal("/bills", r.URL.Path)
+
+		body, err := io.ReadAll(r.Body)
+		assert.NoError(err)
+
+		actualBillCreate := &BillCreate{}
+		err = json.Unmarshal(body, actualBillCreate)
+		assert.NoError(err)
+
+		assert.Equal(billCreate, actualBillCreate)
+
+		errorRes := map[string][]string{
+			"visit_note": {billExistError},
+		}
+		b, err := json.Marshal(errorRes)
+		assert.NoError(err)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		//nolint
+		w.Write(b)
+	}))
+	defer srv.Close()
+
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	svc := BillService{client}
+
+	created, res, err := svc.Create(context.Background(), billCreate)
+	assert.Nil(created)
+	assert.NotNil(res)
+	assert.ErrorIs(err, ErrBillExist)
+}

@@ -2,13 +2,20 @@ package elation
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
+
+const billExistError = "The visit note provided already has a bill associated with it."
+
+var ErrBillExist = errors.New("bill already exists for visit note")
 
 type BillServicer interface {
 	Create(ctx context.Context, create *BillCreate) (*Bill, *http.Response, error)
@@ -115,6 +122,20 @@ func (b *BillService) Create(ctx context.Context, create *BillCreate) (*Bill, *h
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "error making request")
+
+		var clientErr *Error
+		if errors.As(err, &clientErr) && clientErr.StatusCode == http.StatusBadRequest {
+			errorRes := map[string][]string{}
+			err := json.Unmarshal([]byte(clientErr.Body), &errorRes)
+			if err != nil {
+				return nil, res, fmt.Errorf("unmarshaling response body to error response: %w", err)
+			}
+
+			if len(errorRes["visit_note"]) > 0 && slices.Contains(errorRes["visit_note"], billExistError) {
+				return nil, res, ErrBillExist
+			}
+		}
+
 		return nil, res, fmt.Errorf("making request: %w", err)
 	}
 
