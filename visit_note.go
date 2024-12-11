@@ -187,10 +187,10 @@ type FindVisitNotesOptions struct {
 	Physician int64 `url:"physician,omitempty"`
 	Practice  int64 `url:"practice,omitempty"`
 
-	LastModifiedGT  time.Time `url:"last_modified_gt,omitempty"`
-	LastModifiedGTE time.Time `url:"last_modified_gte,omitempty"`
-	LastModifiedLT  time.Time `url:"last_modified_lt,omitempty"`
-	LastModifiedLTE time.Time `url:"last_modified_lte,omitempty"`
+	LastModifiedGT  time.Time `url:"last_modified__gt,omitempty"`
+	LastModifiedGTE time.Time `url:"last_modified__gte,omitempty"`
+	LastModifiedLT  time.Time `url:"last_modified__lt,omitempty"`
+	LastModifiedLTE time.Time `url:"last_modified__lte,omitempty"`
 
 	FromSignedDate time.Time `url:"from_signed_date,omitempty"`
 	ToSignedDate   time.Time `url:"to_signed_date,omitempty"`

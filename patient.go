@@ -222,10 +222,10 @@ type FindPatientsOptions struct {
 	MemberID         int64     `url:"member_id,omitempty"`
 	MasterPatient    int64     `url:"master_patient,omitempty"`
 	Practice         int64     `url:"practice,omitempty"`
-	LastModifiedGT   time.Time `url:"last_modified_gt,omitempty"`
-	LastModifiedGTE  time.Time `url:"last_modified_gte,omitempty"`
-	LastModifiedLT   time.Time `url:"last_modified_lt,omitempty"`
-	LastModifiedLTE  time.Time `url:"last_modified_lte,omitempty"`
+	LastModifiedGT   time.Time `url:"last_modified__gt,omitempty"`
+	LastModifiedGTE  time.Time `url:"last_modified__gte,omitempty"`
+	LastModifiedLT   time.Time `url:"last_modified__lt,omitempty"`
+	LastModifiedLTE  time.Time `url:"last_modified__lte,omitempty"`
 }
 
 func (s *PatientService) Find(ctx context.Context, opts *FindPatientsOptions) (*Response[[]*Patient], *http.Response, error) {

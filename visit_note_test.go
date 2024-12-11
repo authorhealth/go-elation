@@ -148,16 +148,16 @@ func TestVisitNoteService_Find(t *testing.T) {
 		actualPractice := r.URL.Query().Get("practice")
 		assert.Equal(opts.Practice, strToInt64(actualPractice))
 
-		actualLastModifiedGT := r.URL.Query().Get("last_modified_gt")
+		actualLastModifiedGT := r.URL.Query().Get("last_modified__gt")
 		assert.Equal(opts.LastModifiedGT.Format(time.RFC3339), actualLastModifiedGT)
 
-		actualLastModifiedGTE := r.URL.Query().Get("last_modified_gte")
+		actualLastModifiedGTE := r.URL.Query().Get("last_modified__gte")
 		assert.Equal(opts.LastModifiedGTE.Format(time.RFC3339), actualLastModifiedGTE)
 
-		actualLastModifiedLT := r.URL.Query().Get("last_modified_lt")
+		actualLastModifiedLT := r.URL.Query().Get("last_modified__lt")
 		assert.Equal(opts.LastModifiedLT.Format(time.RFC3339), actualLastModifiedLT)
 
-		actualLastModifiedLTE := r.URL.Query().Get("last_modified_lte")
+		actualLastModifiedLTE := r.URL.Query().Get("last_modified__lte")
 		assert.Equal(opts.LastModifiedLTE.Format(time.RFC3339), actualLastModifiedLTE)
 
 		actualFromSignedDate := r.URL.Query().Get("from_signed_date")
