@@ -12,6 +12,7 @@ import (
 
 type VisitNoteServicer interface {
 	Create(ctx context.Context, create *VisitNoteCreate) (*VisitNote, *http.Response, error)
+	Find(ctx context.Context, opts *FindVisitNotesOptions) (*Response[[]*VisitNote], *http.Response, error)
 }
 
 var _ VisitNoteServicer = (*VisitNoteService)(nil)
@@ -177,4 +178,37 @@ func (v *VisitNoteService) Create(ctx context.Context, create *VisitNoteCreate) 
 	}
 
 	return vn, res, nil
+}
+
+type FindVisitNotesOptions struct {
+	*Pagination
+
+	Patient   int64 `url:"patient,omitempty"`
+	Physician int64 `url:"physician,omitempty"`
+	Practice  int64 `url:"practice,omitempty"`
+
+	LastModifiedGT  time.Time `url:"last_modified_gt,omitempty"`
+	LastModifiedGTE time.Time `url:"last_modified_gte,omitempty"`
+	LastModifiedLT  time.Time `url:"last_modified_lt,omitempty"`
+	LastModifiedLTE time.Time `url:"last_modified_lte,omitempty"`
+
+	FromSignedDate time.Time `url:"from_signed_date,omitempty"`
+	ToSignedDate   time.Time `url:"to_signed_date,omitempty"`
+	Unsigned       bool      `url:"unsigned,omitempty"`
+}
+
+func (v *VisitNoteService) Find(ctx context.Context, opts *FindVisitNotesOptions) (*Response[[]*VisitNote], *http.Response, error) {
+	ctx, span := v.client.tracer.Start(ctx, "find visit notes", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
+	out := &Response[[]*VisitNote]{}
+
+	res, err := v.client.request(ctx, http.MethodGet, "/visit_notes", opts, nil, &out)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
 }
