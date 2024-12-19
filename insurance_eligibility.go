@@ -142,11 +142,11 @@ type IEFRPlanDetailsProvider struct {
 }
 
 type IEFRBenefits struct {
-	Copay       []any `json:"copay"`
-	Coinsurance []any `json:"coinsurance"`
-	Deductible  []any `json:"deductible"`
-	OutOfPocket []any `json:"out_of_pocket"`
-	Limitations []any `json:"limitations"`
+	Copay       []map[string]any `json:"copay"`
+	Coinsurance []any            `json:"coinsurance"`
+	Deductible  []any            `json:"deductible"`
+	OutOfPocket []any            `json:"out_of_pocket"`
+	Limitations []any            `json:"limitations"`
 }
 
 func (s *InsuranceEligibilityService) GetFullReport(ctx context.Context, patientInsuranceID int64) (*InsuranceEligibilityFullReport, *http.Response, error) {
