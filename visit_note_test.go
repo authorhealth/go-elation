@@ -25,7 +25,6 @@ func TestVisitNoteService_Create(t *testing.T) {
 						Version:  1,
 						Sequence: 1,
 						Author:   12345,
-						Edit:     Ptr(int64(123)),
 					},
 				},
 				ChartDate:    time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC),
