@@ -68,7 +68,7 @@ type VisitNoteBullet struct {
 	Author         int64                  `json:"author"`             //: 10,
 	ReplacedByEdit *string                `json:"replaced_by_edit"`   //: null,
 	ReplacedBy     *string                `json:"replaced_by"`        //: null,
-	Edit           *string                `json:"edit"`               //: null,
+	Edit           *int64                 `json:"edit"`               //: null,
 	DeletedDate    *time.Time             `json:"deleted_date"`       //: null,
 	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`      //: null,
 	NoteItem       *VisitNoteNoteItem     `json:"note_item"`          //: null,
