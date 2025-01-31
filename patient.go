@@ -265,7 +265,7 @@ type PatientUpdate struct {
 	Address                *PatientAddress           `json:"address,omitempty"`
 	Consents               []*PatientConsent         `json:"consents,omitempty"`
 	DOB                    *string                   `json:"dob,omitempty"`
-	Emails                 []*PatientEmail           `json:"emails,omitempty"`
+	Emails                 *[]*PatientEmail          `json:"emails,omitempty"`
 	Ethnicity              *string                   `json:"ethnicity,omitempty"`
 	FirstName              *string                   `json:"first_name,omitempty"`
 	GenderIdentity         *string                   `json:"gender_identity,omitempty"`
@@ -275,7 +275,7 @@ type PatientUpdate struct {
 	MiddleName             *string                   `json:"middle_name,omitempty"`
 	Notes                  *string                   `json:"notes,omitempty"`
 	PatientStatus          *PatientStatusUpdate      `json:"patient_status,omitempty"`
-	Phones                 []*PatientPhone           `json:"phones,omitempty"`
+	Phones                 *[]*PatientPhone          `json:"phones,omitempty"`
 	PreferredLanguage      *string                   `json:"preferred_language,omitempty"`
 	PrimaryCareProviderNPI *string                   `json:"primary_care_provider_npi,omitempty"`
 	PrimaryPhysician       *int64                    `json:"primary_physician,omitempty"`

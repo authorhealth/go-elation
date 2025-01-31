@@ -254,11 +254,11 @@ func TestPatientService_Update(t *testing.T) {
 			},
 		},
 		DOB: Ptr("dob"),
-		Emails: []*PatientEmail{
+		Emails: Ptr([]*PatientEmail{
 			{
 				Email: "email",
 			},
-		},
+		}),
 		Ethnicity:      Ptr("ethnicity"),
 		FirstName:      Ptr("first name"),
 		GenderIdentity: Ptr("gender identity name"),
@@ -305,12 +305,12 @@ func TestPatientService_Update(t *testing.T) {
 			InactiveReason: Ptr("other"),
 			Status:         Ptr("inactive"),
 		},
-		Phones: []*PatientPhone{
+		Phones: Ptr([]*PatientPhone{
 			{
 				Phone:     "phone",
 				PhoneType: "phone type",
 			},
-		},
+		}),
 		PreferredLanguage:      Ptr("preferred language"),
 		PrimaryCareProviderNPI: Ptr("primary care provider NPI"),
 		PrimaryPhysician:       Ptr[int64](1),
