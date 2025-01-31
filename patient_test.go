@@ -247,12 +247,12 @@ func TestPatientService_Update(t *testing.T) {
 			State:        "state",
 			Zip:          "zip",
 		},
-		Consents: []*PatientConsent{
+		Consents: Ptr([]*PatientConsent{
 			{
 				ConsentType: "consent type",
 				Expiration:  "expiration",
 			},
-		},
+		}),
 		DOB: Ptr("dob"),
 		Emails: Ptr([]*PatientEmail{
 			{
@@ -262,7 +262,7 @@ func TestPatientService_Update(t *testing.T) {
 		Ethnicity:      Ptr("ethnicity"),
 		FirstName:      Ptr("first name"),
 		GenderIdentity: Ptr("gender identity name"),
-		Insurances: []*PatientInsuranceUpdate{
+		Insurances: Ptr([]*PatientInsuranceUpdate{
 			{
 				InsuranceCompany:       Ptr[int64](1),
 				InsurancePlan:          Ptr[int64](2),
@@ -296,7 +296,7 @@ func TestPatientService_Update(t *testing.T) {
 				EndDate:                &civil.Date{Year: 3000, Month: 1, Day: 1},
 			},
 			{},
-		},
+		}),
 		LastName:          Ptr("last name"),
 		LegalGenderMarker: Ptr("legal gender marker"),
 		MiddleName:        Ptr("middle name"),
