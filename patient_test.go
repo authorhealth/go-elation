@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -247,14 +249,14 @@ func TestPatientService_Update(t *testing.T) {
 			State:        "state",
 			Zip:          "zip",
 		},
-		Consents: Ptr([]*PatientConsent{
+		Consents: Ptr(NonNullJSONArray[*PatientConsent]{
 			{
 				ConsentType: "consent type",
 				Expiration:  "expiration",
 			},
 		}),
 		DOB: Ptr("dob"),
-		Emails: Ptr([]*PatientEmail{
+		Emails: Ptr(NonNullJSONArray[*PatientEmail]{
 			{
 				Email: "email",
 			},
@@ -262,7 +264,7 @@ func TestPatientService_Update(t *testing.T) {
 		Ethnicity:      Ptr("ethnicity"),
 		FirstName:      Ptr("first name"),
 		GenderIdentity: Ptr("gender identity name"),
-		Insurances: Ptr([]*PatientInsuranceUpdate{
+		Insurances: Ptr(NonNullJSONArray[*PatientInsuranceUpdate]{
 			{
 				InsuranceCompany:       Ptr[int64](1),
 				InsurancePlan:          Ptr[int64](2),
@@ -305,7 +307,7 @@ func TestPatientService_Update(t *testing.T) {
 			InactiveReason: Ptr("other"),
 			Status:         Ptr("inactive"),
 		},
-		Phones: Ptr([]*PatientPhone{
+		Phones: Ptr(NonNullJSONArray[*PatientPhone]{
 			{
 				Phone:     "phone",
 				PhoneType: "phone type",
@@ -337,6 +339,188 @@ func TestPatientService_Update(t *testing.T) {
 		assert.NoError(err)
 
 		assert.Equal(expected, actual)
+
+		b, err := json.Marshal(&Patient{})
+		assert.NoError(err)
+
+		w.Header().Set("Content-Type", "application/json")
+		//nolint
+		w.Write(b)
+	}))
+	defer srv.Close()
+
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	svc := PatientService{client}
+
+	updated, res, err := svc.Update(context.Background(), id, expected)
+	assert.NotNil(updated)
+	assert.NotNil(res)
+	assert.NoError(err)
+}
+
+func TestPatientService_Update_empty_arrays(t *testing.T) {
+	testCases := map[string]struct {
+		consents   *NonNullJSONArray[*PatientConsent]
+		emails     *NonNullJSONArray[*PatientEmail]
+		insurances *NonNullJSONArray[*PatientInsuranceUpdate]
+		phones     *NonNullJSONArray[*PatientPhone]
+	}{
+		"pointers to nil slices": {
+			consents:   Ptr[NonNullJSONArray[*PatientConsent]](nil),
+			emails:     Ptr[NonNullJSONArray[*PatientEmail]](nil),
+			insurances: Ptr[NonNullJSONArray[*PatientInsuranceUpdate]](nil),
+			phones:     Ptr[NonNullJSONArray[*PatientPhone]](nil),
+		},
+		"pointers to non-nil, empty slices": {
+			consents:   &NonNullJSONArray[*PatientConsent]{},
+			emails:     &NonNullJSONArray[*PatientEmail]{},
+			insurances: &NonNullJSONArray[*PatientInsuranceUpdate]{},
+			phones:     &NonNullJSONArray[*PatientPhone]{},
+		},
+	}
+	for name, testCase := range testCases {
+		t.Run(name, func(t *testing.T) {
+			assert := assert.New(t)
+
+			var id int64 = 1
+			expected := &PatientUpdate{
+				ActualName: Ptr("actual name"),
+				Address: &PatientAddress{
+					AddressLine1: "address line 1",
+					AddressLine2: "address line 2",
+					City:         "city",
+					State:        "state",
+					Zip:          "zip",
+				},
+				Consents:          testCase.consents,
+				DOB:               Ptr("dob"),
+				Emails:            testCase.emails,
+				Ethnicity:         Ptr("ethnicity"),
+				FirstName:         Ptr("first name"),
+				GenderIdentity:    Ptr("gender identity name"),
+				Insurances:        testCase.insurances,
+				LastName:          Ptr("last name"),
+				LegalGenderMarker: Ptr("legal gender marker"),
+				MiddleName:        Ptr("middle name"),
+				Notes:             Ptr("notes"),
+				PatientStatus: &PatientStatusUpdate{
+					InactiveReason: Ptr("other"),
+					Status:         Ptr("inactive"),
+				},
+				Phones:                 testCase.phones,
+				PreferredLanguage:      Ptr("preferred language"),
+				PrimaryCareProviderNPI: Ptr("primary care provider NPI"),
+				PrimaryPhysician:       Ptr[int64](1),
+				Pronouns:               Ptr("pronouns"),
+				Race:                   Ptr("race"),
+				Sex:                    Ptr("sex"),
+				SexualOrientation:      Ptr("sexual orientation"),
+				SSN:                    Ptr("ssn"),
+			}
+
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if tokenRequest(w, r) {
+					return
+				}
+
+				assert.Equal(http.MethodPatch, r.Method)
+				assert.Equal("/patients/"+strconv.FormatInt(id, 10), r.URL.Path)
+
+				body, err := io.ReadAll(r.Body)
+				assert.NoError(err)
+
+				actual := &PatientUpdate{}
+				err = json.Unmarshal(body, actual)
+				assert.NoError(err)
+
+				assert.Empty(cmp.Diff(
+					expected,
+					actual,
+					// NonNullJSONArray always marshals empty JSON arrays to nil slices, so we want to equate nil and empty slices.
+					cmpopts.EquateEmpty(),
+				))
+
+				assert.Contains(string(body), `"consents":[]`)
+				assert.Contains(string(body), `"emails":[]`)
+				assert.Contains(string(body), `"insurances":[]`)
+				assert.Contains(string(body), `"phones":[]`)
+
+				b, err := json.Marshal(&Patient{})
+				assert.NoError(err)
+
+				w.Header().Set("Content-Type", "application/json")
+				//nolint
+				w.Write(b)
+			}))
+			defer srv.Close()
+
+			client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+			svc := PatientService{client}
+
+			updated, res, err := svc.Update(context.Background(), id, expected)
+			assert.NotNil(updated)
+			assert.NotNil(res)
+			assert.NoError(err)
+		})
+	}
+}
+
+func TestPatientService_Update_omitted_array_keys(t *testing.T) {
+	assert := assert.New(t)
+
+	var id int64 = 1
+	expected := &PatientUpdate{
+		ActualName: Ptr("actual name"),
+		Address: &PatientAddress{
+			AddressLine1: "address line 1",
+			AddressLine2: "address line 2",
+			City:         "city",
+			State:        "state",
+			Zip:          "zip",
+		},
+		DOB:               Ptr("dob"),
+		Ethnicity:         Ptr("ethnicity"),
+		FirstName:         Ptr("first name"),
+		GenderIdentity:    Ptr("gender identity name"),
+		LastName:          Ptr("last name"),
+		LegalGenderMarker: Ptr("legal gender marker"),
+		MiddleName:        Ptr("middle name"),
+		Notes:             Ptr("notes"),
+		PatientStatus: &PatientStatusUpdate{
+			InactiveReason: Ptr("other"),
+			Status:         Ptr("inactive"),
+		},
+		PreferredLanguage:      Ptr("preferred language"),
+		PrimaryCareProviderNPI: Ptr("primary care provider NPI"),
+		PrimaryPhysician:       Ptr[int64](1),
+		Pronouns:               Ptr("pronouns"),
+		Race:                   Ptr("race"),
+		Sex:                    Ptr("sex"),
+		SexualOrientation:      Ptr("sexual orientation"),
+		SSN:                    Ptr("ssn"),
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if tokenRequest(w, r) {
+			return
+		}
+
+		assert.Equal(http.MethodPatch, r.Method)
+		assert.Equal("/patients/"+strconv.FormatInt(id, 10), r.URL.Path)
+
+		body, err := io.ReadAll(r.Body)
+		assert.NoError(err)
+
+		actual := &PatientUpdate{}
+		err = json.Unmarshal(body, actual)
+		assert.NoError(err)
+
+		assert.Equal(expected, actual)
+
+		assert.NotContains(string(body), `"consents"`)
+		assert.NotContains(string(body), `"emails"`)
+		assert.NotContains(string(body), `"insurances"`)
+		assert.NotContains(string(body), `"phones"`)
 
 		b, err := json.Marshal(&Patient{})
 		assert.NoError(err)
