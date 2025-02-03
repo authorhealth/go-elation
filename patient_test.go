@@ -249,14 +249,14 @@ func TestPatientService_Update(t *testing.T) {
 			State:        "state",
 			Zip:          "zip",
 		},
-		Consents: Ptr(NonNullJSONArray[*PatientConsent]{
+		Consents: Ptr([]*PatientConsent{
 			{
 				ConsentType: "consent type",
 				Expiration:  "expiration",
 			},
 		}),
 		DOB: Ptr("dob"),
-		Emails: Ptr(NonNullJSONArray[*PatientEmail]{
+		Emails: Ptr([]*PatientEmail{
 			{
 				Email: "email",
 			},
@@ -264,7 +264,7 @@ func TestPatientService_Update(t *testing.T) {
 		Ethnicity:      Ptr("ethnicity"),
 		FirstName:      Ptr("first name"),
 		GenderIdentity: Ptr("gender identity name"),
-		Insurances: Ptr(NonNullJSONArray[*PatientInsuranceUpdate]{
+		Insurances: Ptr([]*PatientInsuranceUpdate{
 			{
 				InsuranceCompany:       Ptr[int64](1),
 				InsurancePlan:          Ptr[int64](2),
@@ -307,7 +307,7 @@ func TestPatientService_Update(t *testing.T) {
 			InactiveReason: Ptr("other"),
 			Status:         Ptr("inactive"),
 		},
-		Phones: Ptr(NonNullJSONArray[*PatientPhone]{
+		Phones: Ptr([]*PatientPhone{
 			{
 				Phone:     "phone",
 				PhoneType: "phone type",
@@ -360,22 +360,22 @@ func TestPatientService_Update(t *testing.T) {
 
 func TestPatientService_Update_empty_arrays(t *testing.T) {
 	testCases := map[string]struct {
-		consents   *NonNullJSONArray[*PatientConsent]
-		emails     *NonNullJSONArray[*PatientEmail]
-		insurances *NonNullJSONArray[*PatientInsuranceUpdate]
-		phones     *NonNullJSONArray[*PatientPhone]
+		consents   *[]*PatientConsent
+		emails     *[]*PatientEmail
+		insurances *[]*PatientInsuranceUpdate
+		phones     *[]*PatientPhone
 	}{
 		"pointers to nil slices": {
-			consents:   Ptr[NonNullJSONArray[*PatientConsent]](nil),
-			emails:     Ptr[NonNullJSONArray[*PatientEmail]](nil),
-			insurances: Ptr[NonNullJSONArray[*PatientInsuranceUpdate]](nil),
-			phones:     Ptr[NonNullJSONArray[*PatientPhone]](nil),
+			consents:   Ptr([]*PatientConsent(nil)),
+			emails:     Ptr([]*PatientEmail(nil)),
+			insurances: Ptr([]*PatientInsuranceUpdate(nil)),
+			phones:     Ptr([]*PatientPhone(nil)),
 		},
 		"pointers to non-nil, empty slices": {
-			consents:   &NonNullJSONArray[*PatientConsent]{},
-			emails:     &NonNullJSONArray[*PatientEmail]{},
-			insurances: &NonNullJSONArray[*PatientInsuranceUpdate]{},
-			phones:     &NonNullJSONArray[*PatientPhone]{},
+			consents:   &[]*PatientConsent{},
+			emails:     &[]*PatientEmail{},
+			insurances: &[]*PatientInsuranceUpdate{},
+			phones:     &[]*PatientPhone{},
 		},
 	}
 	for name, testCase := range testCases {
