@@ -2,6 +2,7 @@ package elation
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -261,29 +262,53 @@ func (s *PatientService) Get(ctx context.Context, id int64) (*Patient, *http.Res
 }
 
 type PatientUpdate struct {
-	ActualName             *string                                    `json:"actual_name,omitempty"`
-	Address                *PatientAddress                            `json:"address,omitempty"`
-	Consents               *NonNullJSONArray[*PatientConsent]         `json:"consents,omitempty"`
-	DOB                    *string                                    `json:"dob,omitempty"`
-	Emails                 *NonNullJSONArray[*PatientEmail]           `json:"emails,omitempty"`
-	Ethnicity              *string                                    `json:"ethnicity,omitempty"`
-	FirstName              *string                                    `json:"first_name,omitempty"`
-	GenderIdentity         *string                                    `json:"gender_identity,omitempty"`
-	Insurances             *NonNullJSONArray[*PatientInsuranceUpdate] `json:"insurances,omitempty"`
-	LastName               *string                                    `json:"last_name,omitempty"`
-	LegalGenderMarker      *string                                    `json:"legal_gender_marker,omitempty"`
-	MiddleName             *string                                    `json:"middle_name,omitempty"`
-	Notes                  *string                                    `json:"notes,omitempty"`
-	PatientStatus          *PatientStatusUpdate                       `json:"patient_status,omitempty"`
-	Phones                 *NonNullJSONArray[*PatientPhone]           `json:"phones,omitempty"`
-	PreferredLanguage      *string                                    `json:"preferred_language,omitempty"`
-	PrimaryCareProviderNPI *string                                    `json:"primary_care_provider_npi,omitempty"`
-	PrimaryPhysician       *int64                                     `json:"primary_physician,omitempty"`
-	Pronouns               *string                                    `json:"pronouns,omitempty"`
-	Race                   *string                                    `json:"race,omitempty"`
-	Sex                    *string                                    `json:"sex,omitempty"`
-	SexualOrientation      *string                                    `json:"sexual_orientation,omitempty"`
-	SSN                    *string                                    `json:"ssn,omitempty"`
+	ActualName             *string                    `json:"actual_name,omitempty"`
+	Address                *PatientAddress            `json:"address,omitempty"`
+	Consents               *[]*PatientConsent         `json:"consents,omitempty"`
+	DOB                    *string                    `json:"dob,omitempty"`
+	Emails                 *[]*PatientEmail           `json:"emails,omitempty"`
+	Ethnicity              *string                    `json:"ethnicity,omitempty"`
+	FirstName              *string                    `json:"first_name,omitempty"`
+	GenderIdentity         *string                    `json:"gender_identity,omitempty"`
+	Insurances             *[]*PatientInsuranceUpdate `json:"insurances,omitempty"`
+	LastName               *string                    `json:"last_name,omitempty"`
+	LegalGenderMarker      *string                    `json:"legal_gender_marker,omitempty"`
+	MiddleName             *string                    `json:"middle_name,omitempty"`
+	Notes                  *string                    `json:"notes,omitempty"`
+	PatientStatus          *PatientStatusUpdate       `json:"patient_status,omitempty"`
+	Phones                 *[]*PatientPhone           `json:"phones,omitempty"`
+	PreferredLanguage      *string                    `json:"preferred_language,omitempty"`
+	PrimaryCareProviderNPI *string                    `json:"primary_care_provider_npi,omitempty"`
+	PrimaryPhysician       *int64                     `json:"primary_physician,omitempty"`
+	Pronouns               *string                    `json:"pronouns,omitempty"`
+	Race                   *string                    `json:"race,omitempty"`
+	Sex                    *string                    `json:"sex,omitempty"`
+	SexualOrientation      *string                    `json:"sexual_orientation,omitempty"`
+	SSN                    *string                    `json:"ssn,omitempty"`
+}
+
+func (u *PatientUpdate) MarshalJSON() ([]byte, error) {
+	// Ensure that the array fields, if not nil, always marshal to "[]" instead of "null" when empty.
+	if u.Consents != nil && *u.Consents == nil {
+		*u.Consents = make([]*PatientConsent, 0)
+	}
+
+	if u.Emails != nil && *u.Emails == nil {
+		*u.Emails = make([]*PatientEmail, 0)
+	}
+
+	if u.Insurances != nil && *u.Insurances == nil {
+		*u.Insurances = make([]*PatientInsuranceUpdate, 0)
+	}
+
+	if u.Phones != nil && *u.Phones == nil {
+		*u.Phones = make([]*PatientPhone, 0)
+	}
+
+	// Aliasing the type is necessary to prevent infinite recursion of MarshalJSON.
+	type alias PatientUpdate
+
+	return json.Marshal((*alias)(u))
 }
 
 type PatientInsuranceUpdate struct {
