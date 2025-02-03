@@ -436,7 +436,8 @@ func TestPatientService_Update_empty_arrays(t *testing.T) {
 				assert.Empty(cmp.Diff(
 					expected,
 					actual,
-					// NonNullJSONArray always marshals empty JSON arrays to nil slices, so we want to equate nil and empty slices.
+					// NonNullJSONArray always marshals empty JSON arrays to nil slices, so we want to equate nil and
+					// empty slices for the "pointers to non-nil, empty slices" test case.
 					cmpopts.EquateEmpty(),
 				))
 
