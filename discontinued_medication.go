@@ -16,7 +16,6 @@ type DiscontinuedMedicationServicer interface {
 	Create(ctx context.Context, create *DiscontinuedMedicationCreate) (*DiscontinuedMedication, *http.Response, error)
 	Find(ctx context.Context, opts *FindDiscontinuedMedicationsOptions) (*Response[[]*DiscontinuedMedication], *http.Response, error)
 	Get(ctx context.Context, id int64) (*DiscontinuedMedication, *http.Response, error)
-	Update(ctx context.Context, id int64, update *DiscontinuedMedicationUpdate) (*DiscontinuedMedication, *http.Response, error)
 }
 
 var _ DiscontinuedMedicationServicer = (*DiscontinuedMedicationService)(nil)
@@ -119,28 +118,6 @@ func (s *DiscontinuedMedicationService) Get(ctx context.Context, id int64) (*Dis
 	out := &DiscontinuedMedication{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/discontinued_medications/"+strconv.FormatInt(id, 10), nil, nil, &out)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, "error making request")
-		return nil, res, fmt.Errorf("making request: %w", err)
-	}
-
-	return out, res, nil
-}
-
-type DiscontinuedMedicationUpdate struct {
-	Reason               string `json:"reason,omitempty"`
-	DiscontinueDate      string `json:"discontinue_date,omitempty"`
-	DocumentingPersonnel int64  `json:"documenting_personnel,omitempty"`
-}
-
-func (s *DiscontinuedMedicationService) Update(ctx context.Context, id int64, update *DiscontinuedMedicationUpdate) (*DiscontinuedMedication, *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "update discontinued medication", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.discontinued_medication_id", id)))
-	defer span.End()
-
-	out := &DiscontinuedMedication{}
-
-	res, err := s.client.request(ctx, http.MethodPatch, "/discontinued_medications/"+strconv.FormatInt(id, 10), nil, update, &out)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "error making request")

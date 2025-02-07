@@ -105,3 +105,95 @@ func TestVisitNoteService_Create(t *testing.T) {
 		})
 	}
 }
+
+func TestVisitNoteService_Find(t *testing.T) {
+	assert := assert.New(t)
+
+	opts := &FindVisitNotesOptions{
+		Patient:         123,
+		Physician:       456,
+		Practice:        789,
+		LastModifiedGT:  time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		LastModifiedGTE: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
+		LastModifiedLT:  time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC),
+		LastModifiedLTE: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC),
+		FromSignedDate:  time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC),
+		ToSignedDate:    time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC),
+		Unsigned:        true,
+	}
+
+	visitNotes := []*VisitNote{
+		{
+			ID: 1,
+		},
+		{
+			ID: 2,
+		},
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if tokenRequest(w, r) {
+			return
+		}
+
+		assert.Equal(http.MethodGet, r.Method)
+		assert.Equal("/visit_notes", r.URL.Path)
+
+		actualPatient := r.URL.Query().Get("patient")
+		assert.Equal(opts.Patient, strToInt64(actualPatient))
+
+		actualPhysician := r.URL.Query().Get("physician")
+		assert.Equal(opts.Physician, strToInt64(actualPhysician))
+
+		actualPractice := r.URL.Query().Get("practice")
+		assert.Equal(opts.Practice, strToInt64(actualPractice))
+
+		actualLastModifiedGT := r.URL.Query().Get("last_modified__gt")
+		assert.Equal(opts.LastModifiedGT.Format(time.RFC3339), actualLastModifiedGT)
+
+		actualLastModifiedGTE := r.URL.Query().Get("last_modified__gte")
+		assert.Equal(opts.LastModifiedGTE.Format(time.RFC3339), actualLastModifiedGTE)
+
+		actualLastModifiedLT := r.URL.Query().Get("last_modified__lt")
+		assert.Equal(opts.LastModifiedLT.Format(time.RFC3339), actualLastModifiedLT)
+
+		actualLastModifiedLTE := r.URL.Query().Get("last_modified__lte")
+		assert.Equal(opts.LastModifiedLTE.Format(time.RFC3339), actualLastModifiedLTE)
+
+		actualFromSignedDate := r.URL.Query().Get("from_signed_date")
+		assert.Equal(opts.FromSignedDate.Format(time.RFC3339), actualFromSignedDate)
+
+		actualToSignedDate := r.URL.Query().Get("to_signed_date")
+		assert.Equal(opts.ToSignedDate.Format(time.RFC3339), actualToSignedDate)
+
+		actualUnsigned := r.URL.Query().Get("unsigned")
+		assert.Equal(opts.Unsigned, strToBool(actualUnsigned))
+
+		b, err := json.Marshal(Response[[]*VisitNote]{
+			Results: []*VisitNote{
+				{
+					ID: 1,
+				},
+				{
+					ID: 2,
+				},
+			},
+		})
+		assert.NoError(err)
+
+		w.Header().Set("Content-Type", "application/json")
+		//nolint
+		w.Write(b)
+	}))
+	defer srv.Close()
+
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	svc := VisitNoteService{client}
+
+	visitNotesRes, res, err := svc.Find(context.Background(), opts)
+	assert.NotEmpty(visitNotesRes)
+	assert.NotNil(res)
+	assert.NoError(err)
+
+	assert.Equal(visitNotes, visitNotesRes.Results)
+}

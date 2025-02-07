@@ -12,6 +12,7 @@ import (
 
 type VisitNoteServicer interface {
 	Create(ctx context.Context, create *VisitNoteCreate) (*VisitNote, *http.Response, error)
+	Find(ctx context.Context, opts *FindVisitNotesOptions) (*Response[[]*VisitNote], *http.Response, error)
 }
 
 var _ VisitNoteServicer = (*VisitNoteService)(nil)
@@ -65,9 +66,9 @@ type VisitNoteBullet struct {
 	Version        int64                  `json:"version"`            //: 1,
 	Sequence       int64                  `json:"sequence"`           //: 0,
 	Author         int64                  `json:"author"`             //: 10,
-	ReplacedByEdit *string                `json:"replaced_by_edit"`   //: null,
-	ReplacedBy     *string                `json:"replaced_by"`        //: null,
-	Edit           *string                `json:"edit"`               //: null,
+	ReplacedByEdit any                    `json:"replaced_by_edit"`   //: null,
+	ReplacedBy     any                    `json:"replaced_by"`        //: null,
+	Edit           any                    `json:"edit"`               //: null,
 	DeletedDate    *time.Time             `json:"deleted_date"`       //: null,
 	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`      //: null,
 	NoteItem       *VisitNoteNoteItem     `json:"note_item"`          //: null,
@@ -82,9 +83,9 @@ type VisitNoteChild struct {
 	Sequence       int64                  `json:"sequence"`         //: 0,
 	Author         int64                  `json:"author"`           //: 10,
 	UpdatedDate    time.Time              `json:"updated_date"`     //: "2022-05-15T13:50:09"
-	ReplacedByEdit *string                `json:"replaced_by_edit"` //: null,
-	ReplacedBy     *string                `json:"replaced_by"`      //: null,
-	Edit           *string                `json:"edit"`             //: null,
+	ReplacedByEdit any                    `json:"replaced_by_edit"` //: null,
+	ReplacedBy     any                    `json:"replaced_by"`      //: null,
+	Edit           any                    `json:"edit"`             //: null,
 	DeletedDate    *time.Time             `json:"deleted_date"`     //: null,
 	NoteItem       *VisitNoteNoteItem     `json:"note_item"`        //: null,
 	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`    //: null,
@@ -177,4 +178,37 @@ func (v *VisitNoteService) Create(ctx context.Context, create *VisitNoteCreate) 
 	}
 
 	return vn, res, nil
+}
+
+type FindVisitNotesOptions struct {
+	*Pagination
+
+	Patient   int64 `url:"patient,omitempty"`
+	Physician int64 `url:"physician,omitempty"`
+	Practice  int64 `url:"practice,omitempty"`
+
+	LastModifiedGT  time.Time `url:"last_modified__gt,omitempty"`
+	LastModifiedGTE time.Time `url:"last_modified__gte,omitempty"`
+	LastModifiedLT  time.Time `url:"last_modified__lt,omitempty"`
+	LastModifiedLTE time.Time `url:"last_modified__lte,omitempty"`
+
+	FromSignedDate time.Time `url:"from_signed_date,omitempty"`
+	ToSignedDate   time.Time `url:"to_signed_date,omitempty"`
+	Unsigned       bool      `url:"unsigned,omitempty"`
+}
+
+func (v *VisitNoteService) Find(ctx context.Context, opts *FindVisitNotesOptions) (*Response[[]*VisitNote], *http.Response, error) {
+	ctx, span := v.client.tracer.Start(ctx, "find visit notes", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
+	out := &Response[[]*VisitNote]{}
+
+	res, err := v.client.request(ctx, http.MethodGet, "/visit_notes", opts, nil, &out)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
 }
