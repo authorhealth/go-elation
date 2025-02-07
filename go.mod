@@ -23,6 +23,7 @@ require (
 require (
 	cloud.google.com/go v0.115.1
 	github.com/google/go-querystring v1.1.0
+	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0
 )
