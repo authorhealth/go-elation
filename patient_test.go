@@ -301,8 +301,15 @@ func TestPatientService_Update(t *testing.T) {
 		}),
 		LastName:          Ptr("last name"),
 		LegalGenderMarker: Ptr("legal gender marker"),
-		MiddleName:        Ptr("middle name"),
-		Notes:             Ptr("notes"),
+		Metadata: &PatientMetadata{
+			Data: Ptr(map[string]string{
+				"foo": "bar",
+			}),
+			ObjectID:      Ptr("object-id"),
+			ObjectWebLink: Ptr("object-web-link"),
+		},
+		MiddleName: Ptr("middle name"),
+		Notes:      Ptr("notes"),
 		PatientStatus: &PatientStatusUpdate{
 			InactiveReason: Ptr("other"),
 			Status:         Ptr("inactive"),

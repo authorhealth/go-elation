@@ -93,7 +93,7 @@ type Patient struct {
 	MasterPatient          *int64              `json:"master_patient"`
 	Employer               *PatientEmployer    `json:"employer"`
 	Consents               []*PatientConsent   `json:"consents"`
-	Metadata               any                 `json:"metadata"`
+	Metadata               *PatientMetadata    `json:"metadata"`
 	CreatedDate            time.Time           `json:"created_date"`
 	DeletedDate            *time.Time          `json:"deleted_date"`
 	MergedIntoChart        int64               `json:"merged_into_chart"`
@@ -167,6 +167,12 @@ type PatientInsurance struct {
 	DeletedDate            *time.Time  `json:"deleted_date"`
 	StartDate              *civil.Date `json:"start_date"`
 	EndDate                *civil.Date `json:"end_date"`
+}
+
+type PatientMetadata struct {
+	Data          *map[string]string `json:"data"`
+	ObjectID      *string            `json:"object_id"`
+	ObjectWebLink *string            `json:"object_web_link"`
 }
 
 type PatientStatus struct {
@@ -273,6 +279,7 @@ type PatientUpdate struct {
 	Insurances             *[]*PatientInsuranceUpdate `json:"insurances,omitempty"`
 	LastName               *string                    `json:"last_name,omitempty"`
 	LegalGenderMarker      *string                    `json:"legal_gender_marker,omitempty"`
+	Metadata               *PatientMetadata           `json:"metadata,omitempty"`
 	MiddleName             *string                    `json:"middle_name,omitempty"`
 	Notes                  *string                    `json:"notes,omitempty"`
 	PatientStatus          *PatientStatusUpdate       `json:"patient_status,omitempty"`
