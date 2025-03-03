@@ -1,9 +1,6 @@
 module github.com/authorhealth/go-elation
 
 go 1.23
-
-toolchain go1.23.0
-
 require (
 	go.opentelemetry.io/otel v1.34.0
 	go.opentelemetry.io/otel/trace v1.34.0
@@ -22,7 +19,7 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.118.2
+	cloud.google.com/go v0.118.3
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-querystring v1.1.0
 	github.com/stretchr/testify v1.10.0
