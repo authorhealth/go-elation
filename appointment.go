@@ -169,6 +169,7 @@ func (s *AppointmentService) Get(ctx context.Context, id int64) (*Appointment, *
 }
 
 type AppointmentUpdate struct {
+	Description       *string                  `json:"description,omitempty"`
 	Duration          *int                     `json:"duration,omitempty"`
 	Instructions      *string                  `json:"instructions,omitempty"`
 	Mode              *string                  `json:"mode,omitempty"`
