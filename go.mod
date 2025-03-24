@@ -1,13 +1,12 @@
 module github.com/authorhealth/go-elation
 
 go 1.23
-
-toolchain go1.23.0
+toolchain go1.24.1
 
 require (
 	go.opentelemetry.io/otel v1.35.0
 	go.opentelemetry.io/otel/trace v1.35.0
-	golang.org/x/oauth2 v0.26.0
+	golang.org/x/oauth2 v0.28.0
 )
 
 require (
