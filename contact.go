@@ -24,35 +24,51 @@ type ContactService struct {
 }
 
 type Contact struct {
-	ID                   int64          `json:"id"`
-	AcceptingInsurance   bool           `json:"accepting_insurance"`
-	AcceptingNewPatients bool           `json:"accepting_new_patients"`
-	Address              string         `json:"address"`
-	BackOfficePhone      string         `json:"back_office_phone"`
-	CellPhone            string         `json:"cell_phone"`
-	City                 string         `json:"city"`
-	ContactType          string         `json:"contact_type"`
-	CreatedDate          time.Time      `json:"created_date"`
-	Credentials          string         `json:"credentials"`
-	DeletedDate          *time.Time     `json:"deleted_date"`
-	DirectAddress        string         `json:"direct_address"`
-	Email                string         `json:"email"`
-	Fax                  string         `json:"fax"`
-	FirstName            string         `json:"first_name"`
-	IsElationConfirmed   bool           `json:"is_elation_confirmed"`
-	IsVerified           bool           `json:"is_verified"`
-	LastName             string         `json:"last_name"`
-	MiddleName           string         `json:"middle_name"`
-	NPI                  string         `json:"npi"`
-	OrgName              string         `json:"org_name"`
-	OtherSpecialties     []any          `json:"other_specialties"`
-	Phone                string         `json:"phone"`
-	Practice             int64          `json:"practice"`
-	Specialty            map[string]any `json:"specialty"`
-	State                string         `json:"state"`
-	Suite                string         `json:"suite"`
-	User                 int64          `json:"user"`
-	Zip                  string         `json:"zip"`
+	ID                   int64               `json:"id"`
+	AcceptingInsurance   *bool               `json:"accepting_insurance"`
+	AcceptingNewPatients *bool               `json:"accepting_new_patients"`
+	Address              string              `json:"address"`
+	BackOfficePhone      string              `json:"back_office_phone"`
+	CellPhone            string              `json:"cell_phone"`
+	City                 string              `json:"city"`
+	ContactType          string              `json:"contact_type"`
+	CreatedDate          time.Time           `json:"created_date"`
+	Credentials          string              `json:"credentials"`
+	DeletedDate          *time.Time          `json:"deleted_date"`
+	DirectAddress        string              `json:"direct_address"`
+	Email                string              `json:"email"`
+	Fax                  string              `json:"fax"`
+	FirstName            string              `json:"first_name"`
+	IsElationConfirmed   bool                `json:"is_elation_confirmed"`
+	IsVerified           bool                `json:"is_verified"`
+	LastName             string              `json:"last_name"`
+	MiddleName           string              `json:"middle_name"`
+	NPI                  string              `json:"npi"`
+	OrgName              string              `json:"org_name"`
+	OtherSpecialties     []*ContactSpecialty `json:"other_specialties"`
+	Phone                string              `json:"phone"`
+	Practice             int64               `json:"practice"`
+	Specialty            *ContactSpecialty   `json:"specialty"`
+	State                string              `json:"state"`
+	Suite                string              `json:"suite"`
+	User                 int64               `json:"user"`
+	Zip                  string              `json:"zip"`
+}
+
+type ContactSpecialty struct {
+	ID              int64                     `json:"id"`
+	Name            string                    `json:"name"`
+	Abbreviation    string                    `json:"abbreviation"`
+	PracticeCreated int64                     `json:"practice_created"`
+	Category        *ContactSpecialtyCategory `json:"category"`
+	CreatedDate     time.Time                 `json:"created_date"`
+}
+
+type ContactSpecialtyCategory struct {
+	ID           int64     `json:"id"`
+	Name         string    `json:"name"`
+	Abbreviation string    `json:"abbreviation"`
+	CreatedDate  time.Time `json:"created_date"`
 }
 
 type ListContactsOptions struct {
