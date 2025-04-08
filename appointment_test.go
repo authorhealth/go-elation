@@ -21,6 +21,7 @@ func TestAppointmentService_Create(t *testing.T) {
 	expected := &AppointmentCreate{
 		Description:     Ptr("description"),
 		Duration:        60,
+		Mode:            "IN_PERSON",
 		Patient:         1,
 		Physician:       2,
 		Practice:        3,
