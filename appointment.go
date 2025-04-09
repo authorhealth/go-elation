@@ -42,7 +42,7 @@ type AppointmentService struct {
 type AppointmentCreate struct {
 	Description     *string   `json:"description"`
 	Duration        int64     `json:"duration"`
-	Mode            *string   `json:"mode"`
+	Mode            *string   `json:"mode,omitempty"`
 	Patient         int64     `json:"patient"`
 	Physician       int64     `json:"physician"`
 	Practice        int64     `json:"practice"`
