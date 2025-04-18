@@ -184,8 +184,8 @@ type PatientStatus struct {
 }
 
 type PatientPreference struct {
-	PreferredPharmacy1 any `json:"preferred_pharmacy_1"`
-	PreferredPharmacy2 any `json:"preferred_pharmacy_2"`
+	PreferredPharmacy1 *string `json:"preferred_pharmacy_1"`
+	PreferredPharmacy2 *string `json:"preferred_pharmacy_2"`
 }
 
 type PatientContact struct {
