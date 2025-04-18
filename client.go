@@ -38,6 +38,7 @@ type Client interface {
 	MessageThreads() MessageThreadServicer
 	NonVisitNotes() NonVisitNoteServicer
 	Patients() PatientServicer
+	Pharmacies() PharmacyServicer
 	Physicians() PhysicianServicer
 	Practices() PracticeServicer
 	PrescriptionFills() PrescriptionFillServicer
@@ -68,6 +69,7 @@ type HTTPClient struct {
 	MessageThreadSvc           *MessageThreadService
 	NonVisitNoteSvc            *NonVisitNoteService
 	PatientSvc                 *PatientService
+	PharmacySvc                *PharmacyService
 	PhysicianSvc               *PhysicianService
 	PracticeSvc                *PracticeService
 	PrescriptionFillSvc        *PrescriptionFillService
@@ -114,6 +116,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	client.MessageThreadSvc = &MessageThreadService{client}
 	client.NonVisitNoteSvc = &NonVisitNoteService{client}
 	client.PatientSvc = &PatientService{client}
+	client.PharmacySvc = &PharmacyService{client}
 	client.PhysicianSvc = &PhysicianService{client}
 	client.PracticeSvc = &PracticeService{client}
 	client.PrescriptionFillSvc = &PrescriptionFillService{client}
@@ -181,6 +184,10 @@ func (c *HTTPClient) NonVisitNotes() NonVisitNoteServicer {
 
 func (c *HTTPClient) Patients() PatientServicer {
 	return c.PatientSvc
+}
+
+func (c *HTTPClient) Pharmacies() PharmacyServicer {
+	return c.PharmacySvc
 }
 
 func (c *HTTPClient) Physicians() PhysicianServicer {
