@@ -37,8 +37,8 @@ func TestAllergyService_Find(t *testing.T) {
 		offset := r.URL.Query().Get("offset")
 
 		assert.Equal(opts.Patient, sliceStrToInt64(patient))
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Allergy]{
 			Results: []*Allergy{
