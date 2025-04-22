@@ -39,6 +39,7 @@ type Resource string
 
 const (
 	ResourceAppointments            Resource = "appointments"
+	ResourceAllergies               Resource = "allergies"
 	ResourceDiscontinuedMedications Resource = "discontinued_medications"
 	ResourceMedications             Resource = "medications"
 	ResourcePatients                Resource = "patients"
