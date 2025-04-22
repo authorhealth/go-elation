@@ -24,6 +24,7 @@ const (
 )
 
 type Client interface {
+	Allergies() AllergyServicer
 	Appointments() AppointmentServicer
 	Bill() BillServicer
 	ClinicalDocuments() ClinicalDocumentServicer
@@ -55,6 +56,7 @@ type HTTPClient struct {
 	baseURL    string
 	tracer     trace.Tracer
 
+	AllergySvc                 *AllergyService
 	AppointmentSvc             *AppointmentService
 	BillSvc                    *BillService
 	ClinicalDocumentSvc        *ClinicalDocumentService
@@ -102,6 +104,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 		tracer:     otel.GetTracerProvider().Tracer("github.com/authorhealth/go-elation"),
 	}
 
+	client.AllergySvc = &AllergyService{client}
 	client.AppointmentSvc = &AppointmentService{client}
 	client.BillSvc = &BillService{client}
 	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
@@ -128,6 +131,10 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	client.VisitNoteSvc = &VisitNoteService{client}
 
 	return client
+}
+
+func (c *HTTPClient) Allergies() AllergyServicer {
+	return c.AllergySvc
 }
 
 func (c *HTTPClient) Appointments() AppointmentServicer {
