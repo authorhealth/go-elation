@@ -26,12 +26,12 @@ type AllergyService struct {
 type Allergy struct {
 	ID          int64      `json:"id"`
 	Status      string     `json:"status"`
-	StartDate   time.Time  `json:"start_date"`
+	StartDate   string     `json:"start_date"`
 	Reaction    string     `json:"reaction"`
 	Name        string     `json:"name"`
 	Severity    string     `json:"severity"`
-	MedispanID  *int64     `json:"medispanid"`
-	MedispanNID *int64     `json:"medispandnid"`
+	MedispanID  *string    `json:"medispanid"`
+	MedispanNID *string    `json:"medispandnid"`
 	Patient     int64      `json:"patient"`
 	CreatedDate time.Time  `json:"created_date"`
 	DeletedDate *time.Time `json:"deleted_date"`
