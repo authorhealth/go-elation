@@ -37,12 +37,12 @@ type FindAllergiesDocumentationOptions struct {
 }
 
 func (s *AllergyDocumentationService) Find(ctx context.Context, opts *FindAllergiesDocumentationOptions) (*Response[[]*AllergyDocumentation], *http.Response, error) {
-	ctx, span := s.client.tracer.Start(ctx, "find allergies documentation", trace.WithSpanKind(trace.SpanKindClient))
+	ctx, span := s.client.tracer.Start(ctx, "find allergy documentation", trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	out := &Response[[]*AllergyDocumentation]{}
 
-	res, err := s.client.request(ctx, http.MethodGet, "/allergies_documentation", opts, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/allergy_documentation", opts, nil, &out)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "error making request")
@@ -58,7 +58,7 @@ func (s *AllergyDocumentationService) Get(ctx context.Context, id int64) (*Aller
 
 	out := &AllergyDocumentation{}
 
-	res, err := s.client.request(ctx, http.MethodGet, "/allergies_documentation/"+strconv.FormatInt(id, 10), nil, nil, &out)
+	res, err := s.client.request(ctx, http.MethodGet, "/allergy_documentation/"+strconv.FormatInt(id, 10), nil, nil, &out)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "error making request")
