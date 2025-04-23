@@ -26,7 +26,7 @@ type AllergyService struct {
 type Allergy struct {
 	ID          int64      `json:"id"`
 	Status      string     `json:"status"`
-	StartDate   string     `json:"start_date"`
+	StartDate   *string    `json:"start_date"`
 	Reaction    string     `json:"reaction"`
 	Name        string     `json:"name"`
 	Severity    string     `json:"severity"`
