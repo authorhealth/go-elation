@@ -29,7 +29,7 @@ func TestAllergyDocumentationService_Find(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodGet, r.Method)
-		assert.Equal("/allergies_documentation", r.URL.Path)
+		assert.Equal("/allergy_documentation", r.URL.Path)
 
 		patient := r.URL.Query()["patient"]
 
@@ -78,7 +78,7 @@ func TestAllergyDocumentationService_Get(t *testing.T) {
 		}
 
 		assert.Equal(http.MethodGet, r.Method)
-		assert.Equal("/allergies_documentation/"+strconv.FormatInt(id, 10), r.URL.Path)
+		assert.Equal("/allergy_documentation/"+strconv.FormatInt(id, 10), r.URL.Path)
 
 		b, err := json.Marshal(&AllergyDocumentation{
 			ID: id,
