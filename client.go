@@ -25,6 +25,7 @@ const (
 
 type Client interface {
 	Allergies() AllergyServicer
+	AllergyDocumentation() AllergyDocumentationServicer
 	Appointments() AppointmentServicer
 	Bill() BillServicer
 	ClinicalDocuments() ClinicalDocumentServicer
@@ -57,6 +58,7 @@ type HTTPClient struct {
 	tracer     trace.Tracer
 
 	AllergySvc                 *AllergyService
+	AllergyDocumentationSvc    *AllergyDocumentationService
 	AppointmentSvc             *AppointmentService
 	BillSvc                    *BillService
 	ClinicalDocumentSvc        *ClinicalDocumentService
@@ -105,6 +107,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	}
 
 	client.AllergySvc = &AllergyService{client}
+	client.AllergyDocumentationSvc = &AllergyDocumentationService{client}
 	client.AppointmentSvc = &AppointmentService{client}
 	client.BillSvc = &BillService{client}
 	client.ClinicalDocumentSvc = &ClinicalDocumentService{client}
@@ -135,6 +138,10 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 
 func (c *HTTPClient) Allergies() AllergyServicer {
 	return c.AllergySvc
+}
+
+func (c *HTTPClient) AllergyDocumentation() AllergyDocumentationServicer {
+	return c.AllergyDocumentationSvc
 }
 
 func (c *HTTPClient) Appointments() AppointmentServicer {
