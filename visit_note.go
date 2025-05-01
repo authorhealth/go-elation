@@ -4,14 +4,17 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
 type VisitNoteServicer interface {
 	Create(ctx context.Context, create *VisitNoteCreate) (*VisitNote, *http.Response, error)
+	Delete(ctx context.Context, id int64) (*http.Response, error)
 	Find(ctx context.Context, opts *FindVisitNotesOptions) (*Response[[]*VisitNote], *http.Response, error)
 }
 
@@ -211,4 +214,18 @@ func (v *VisitNoteService) Find(ctx context.Context, opts *FindVisitNotesOptions
 	}
 
 	return out, res, nil
+}
+
+func (v *VisitNoteService) Delete(ctx context.Context, id int64) (*http.Response, error) {
+	ctx, span := v.client.tracer.Start(ctx, "delete visit note", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.visit_note_id", id)))
+	defer span.End()
+
+	res, err := v.client.request(ctx, http.MethodDelete, "/visit_notes/"+strconv.FormatInt(id, 10), nil, nil, nil)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+		return res, fmt.Errorf("making request: %w", err)
+	}
+
+	return res, nil
 }

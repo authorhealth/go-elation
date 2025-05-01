@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 	"time"
 
@@ -196,4 +197,27 @@ func TestVisitNoteService_Find(t *testing.T) {
 	assert.NoError(err)
 
 	assert.Equal(visitNotes, visitNotesRes.Results)
+}
+
+func TestVisitNoteService_Delete(t *testing.T) {
+	assert := assert.New(t)
+
+	var id int64 = 1
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if tokenRequest(w, r) {
+			return
+		}
+
+		assert.Equal(http.MethodDelete, r.Method)
+		assert.Equal("/visit_notes/"+strconv.FormatInt(id, 10), r.URL.Path)
+	}))
+	defer srv.Close()
+
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	svc := VisitNoteService{client}
+
+	res, err := svc.Delete(context.Background(), id)
+	assert.NotNil(res)
+	assert.NoError(err)
 }
