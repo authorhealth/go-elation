@@ -10,9 +10,6 @@ updates:
     labels:
       - dependencies
       - ci/cd
-    reviewers:
-      - authorhealth/backend
-      - authorhealth/infrastructure
     schedule:
       # Check for updates to GitHub Actions every week
       interval: weekly
@@ -35,8 +32,6 @@ updates:
     labels:
       - dependencies
       - go
-    reviewers:
-      - authorhealth/backend
     schedule:
       interval: weekly
       day: wednesday
