@@ -301,7 +301,7 @@ func TestPatientService_Update(t *testing.T) {
 		}),
 		LastName:          Ptr("last name"),
 		LegalGenderMarker: Ptr("legal gender marker"),
-		Metadata: &PatientMetadata{
+		Metadata: &Metadata{
 			Data: Ptr(map[string]string{
 				"foo": "bar",
 			}),

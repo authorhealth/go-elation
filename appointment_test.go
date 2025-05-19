@@ -19,8 +19,15 @@ func TestAppointmentService_Create(t *testing.T) {
 	var serviceLocation int64 = 4
 
 	expected := &AppointmentCreate{
-		Description:     Ptr("description"),
-		Duration:        60,
+		Description: Ptr("description"),
+		Duration:    60,
+		Metadata: &Metadata{
+			Data: Ptr(map[string]string{
+				"foo": "bar",
+			}),
+			ObjectID:      Ptr("object-id"),
+			ObjectWebLink: Ptr("object-web-link"),
+		},
 		Mode:            Ptr("IN_PERSON"),
 		Patient:         1,
 		Physician:       2,
