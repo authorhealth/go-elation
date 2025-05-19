@@ -42,6 +42,7 @@ type AppointmentService struct {
 type AppointmentCreate struct {
 	Description     *string   `json:"description"`
 	Duration        int64     `json:"duration"`
+	Metadata        *Metadata `json:"metadata,omitempty"`
 	Mode            *string   `json:"mode,omitempty"`
 	Patient         int64     `json:"patient"`
 	Physician       int64     `json:"physician"`
@@ -84,7 +85,7 @@ type Appointment struct {
 	RecurringEventSchedule any                         `json:"recurring_event_schedule"`
 	BillingDetails         *AppointmentBillingDetails  `json:"billing_details"`
 	Payment                *AppointmentPayment         `json:"payment"`
-	Metadata               any                         `json:"metadata"`
+	Metadata               *Metadata                   `json:"metadata"`
 	CreatedDate            time.Time                   `json:"created_date"`
 	LastModifiedDate       time.Time                   `json:"last_modified_date"`
 	DeletedDate            *time.Time                  `json:"deleted_date"`
