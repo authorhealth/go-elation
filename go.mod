@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	go.opentelemetry.io/otel v1.35.0
 	go.opentelemetry.io/otel/trace v1.35.0
-	golang.org/x/oauth2 v0.29.0
+	golang.org/x/oauth2 v0.30.0
 )
 
 require (
@@ -20,7 +20,7 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.120.1
+	cloud.google.com/go v0.121.1
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-querystring v1.1.0
 	github.com/stretchr/testify v1.10.0
