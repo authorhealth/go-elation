@@ -16,6 +16,7 @@ type VisitNoteServicer interface {
 	Create(ctx context.Context, create *VisitNoteCreate) (*VisitNote, *http.Response, error)
 	Delete(ctx context.Context, id int64) (*http.Response, error)
 	Find(ctx context.Context, opts *FindVisitNotesOptions) (*Response[[]*VisitNote], *http.Response, error)
+	Get(ctx context.Context, id int64) (*VisitNote, *http.Response, error)
 }
 
 var _ VisitNoteServicer = (*VisitNoteService)(nil)
@@ -228,4 +229,20 @@ func (v *VisitNoteService) Delete(ctx context.Context, id int64) (*http.Response
 	}
 
 	return res, nil
+}
+
+func (v *VisitNoteService) Get(ctx context.Context, id int64) (*VisitNote, *http.Response, error) {
+	ctx, span := v.client.tracer.Start(ctx, "get visit note", trace.WithSpanKind(trace.SpanKindClient), trace.WithAttributes(attribute.Int64("elation.visit_note_id", id)))
+	defer span.End()
+
+	out := &VisitNote{}
+
+	res, err := v.client.request(ctx, http.MethodGet, "/visit_notes/"+strconv.FormatInt(id, 10), nil, nil, &out)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return out, res, nil
 }
