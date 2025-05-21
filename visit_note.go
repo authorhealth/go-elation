@@ -93,7 +93,7 @@ type VisitNoteChild struct {
 	DeletedDate    *time.Time             `json:"deleted_date"`     //: null,
 	NoteItem       *VisitNoteNoteItem     `json:"note_item"`        //: null,
 	NoteDocument   *VisitNoteNoteDocument `json:"note_document"`    //: null,
-	Handout        int64                  `json:"handout"`          //: 140758529736869
+	Handout        *int64                 `json:"handout"`          //: 140758529736869
 }
 
 type VisitNoteNoteItem struct {
