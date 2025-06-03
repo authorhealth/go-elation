@@ -24,5 +24,5 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-querystring v1.1.0
 	github.com/stretchr/testify v1.10.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0
 )
