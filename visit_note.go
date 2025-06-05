@@ -86,7 +86,7 @@ type VisitNoteChild struct {
 	Version        int64                  `json:"version"`          //: 1,
 	Sequence       int64                  `json:"sequence"`         //: 0,
 	Author         int64                  `json:"author"`           //: 10,
-	UpdatedDate    time.Time              `json:"updated_date"`     //: "2022-05-15T13:50:09"
+	UpdatedDate    string                 `json:"updated_date"`     //: "2022-05-15T13:50:09" (Missing TZ offset, but can assume PT)
 	ReplacedByEdit any                    `json:"replaced_by_edit"` //: null,
 	ReplacedBy     any                    `json:"replaced_by"`      //: null,
 	Edit           any                    `json:"edit"`             //: null,
