@@ -13,6 +13,7 @@ import (
 )
 
 type NonVisitNoteServicer interface {
+	Create(ctx context.Context, create *NonVisitNoteCreate) (*NonVisitNote, *http.Response, error)
 	Find(ctx context.Context, opts *FindNonVisitNotesOptions) (*Response[[]*NonVisitNote], *http.Response, error)
 	Get(ctx context.Context, id int64) (*NonVisitNote, *http.Response, error)
 }
@@ -21,6 +22,17 @@ var _ NonVisitNoteServicer = (*NonVisitNoteService)(nil)
 
 type NonVisitNoteService struct {
 	client *HTTPClient
+}
+
+type NonVisitNoteCreate struct {
+	Bullets      []*NonVisitNoteBullet `json:"bullets"`               //: [{}], 				                                                                                                     // Required
+	ChartDate    time.Time             `json:"chart_date"`            //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
+	DocumentDate time.Time             `json:"document_date"`         //: "2010-06-10T11:05:08Z", 	                                                                                         // Required
+	Patient      int64                 `json:"patient"`               //: 1638401, 				                                                                                                   // Required
+	SignedBy     int64                 `json:"signed_by,omitempty"`   //: 131074,
+	SignedDate   *time.Time            `json:"signed_date,omitempty"` //: "2010-06-10T11:05:08Z",
+	Type         string                `json:"type,omitempty"`        //: "nonvisit", ["email", "nonvisit", "phone"]
+	Tags         []*NonVisitNoteTag    `json:"tags"`                  //: [{}],
 }
 
 type NonVisitNote struct {
@@ -108,6 +120,22 @@ type FindNonVisitNotesOptions struct {
 	*Pagination
 
 	Patient int64 `url:"patient,omitempty"`
+}
+
+func (s *NonVisitNoteService) Create(ctx context.Context, create *NonVisitNoteCreate) (*NonVisitNote, *http.Response, error) {
+	ctx, span := s.client.tracer.Start(ctx, "create non visit note", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
+	nvn := &NonVisitNote{}
+
+	res, err := s.client.request(ctx, http.MethodPost, "/non_visit_notes", nil, create, &nvn)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+		return nil, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return nvn, res, nil
 }
 
 func (s *NonVisitNoteService) Find(ctx context.Context, opts *FindNonVisitNotesOptions) (*Response[[]*NonVisitNote], *http.Response, error) {
