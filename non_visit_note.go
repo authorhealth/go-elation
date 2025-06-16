@@ -32,7 +32,7 @@ type NonVisitNoteCreate struct {
 	SignedBy     int64                 `json:"signed_by,omitempty"`   //: 131074,
 	SignedDate   *time.Time            `json:"signed_date,omitempty"` //: "2010-06-10T11:05:08Z",
 	Type         string                `json:"type,omitempty"`        //: "nonvisit", ["email", "nonvisit", "phone"]
-	Tags         []*NonVisitNoteTag    `json:"tags"`                  //: [{}],
+	Tags         []*NonVisitNoteTag    `json:"tags,omitempty"`        //: [{}],
 }
 
 type NonVisitNote struct {
