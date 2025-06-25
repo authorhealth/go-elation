@@ -46,7 +46,7 @@ func (s *InsuranceEligibilityService) Create(ctx context.Context, patientInsuran
 
 type InsuranceEligibility struct {
 	EligibilityDetails        *InsuranceEligibilityDetails `json:"eligibility_details"`
-	EligibilityCheckTimestamp timeWithOptionalZone         `json:"eligibility_check_timestamp"`
+	EligibilityCheckTimestamp TimeWithOptionalZone         `json:"eligibility_check_timestamp"`
 	EligibilityStatus         string                       `json:"eligibility_status"`
 	PatientID                 int64                        `json:"patient_id"`
 	PatientInsuranceID        int64                        `json:"patient_insurance_id"`
@@ -82,7 +82,7 @@ func (s *InsuranceEligibilityService) Get(ctx context.Context, patientInsuranceI
 }
 
 type InsuranceEligibilityFullReport struct {
-	EligibilityCheckTimestamp timeWithOptionalZone    `json:"eligibility_check_timestamp"`
+	EligibilityCheckTimestamp TimeWithOptionalZone    `json:"eligibility_check_timestamp"`
 	PatientID                 int64                   `json:"patient_id"`
 	PatientInsuranceID        int64                   `json:"patient_insurance_id"`
 	PracticeID                int64                   `json:"practice_id"`

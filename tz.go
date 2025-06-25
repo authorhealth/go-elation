@@ -1,52 +1,52 @@
 package elation
 
 import (
+	"encoding/json"
 	"fmt"
+	"log/slog"
 	"time"
 )
 
 var defaultTimezone *time.Location
 
-type timeWithOptionalZone struct {
-	time.Time
-}
-
 func init() {
 	loc, err := time.LoadLocation("America/Los_Angeles")
 	if err != nil {
+		slog.Error("could not load location America/Los_Angeles, falling back to UTC as default timezone", "error", err)
 		defaultTimezone = time.UTC
 	} else {
 		defaultTimezone = loc
 	}
 }
 
-func (t *timeWithOptionalZone) UnmarshalJSON(b []byte) (err error) {
-	s := string(b)
+type TimeWithOptionalZone time.Time
 
-	if s == "null" {
-		t.Time = time.Time{}
-		return nil
+func (t TimeWithOptionalZone) Time() time.Time {
+	return time.Time(t)
+}
+
+func (t *TimeWithOptionalZone) MarshalJSON() ([]byte, error) {
+	return t.Time().MarshalJSON()
+}
+
+func (t *TimeWithOptionalZone) UnmarshalJSON(b []byte) error {
+	var parsedTime time.Time
+	rfc3339Err := parsedTime.UnmarshalJSON(b)
+	if rfc3339Err != nil {
+		// If RFC3339 parsing fails, try parsing as ISO8601 without zone
+		var rawTime string
+		err := json.Unmarshal(b, &rawTime)
+		if err != nil {
+			return fmt.Errorf("parsing raw time as JSON string: %w", err)
+		}
+
+		var noZoneErr error
+		parsedTime, noZoneErr = time.ParseInLocation("2006-01-02T15:04:05", rawTime, defaultTimezone)
+		if noZoneErr != nil {
+			return fmt.Errorf("parsing time: RFC3339 %w or ISO8061 with no zone %w", rfc3339Err, noZoneErr)
+		}
 	}
 
-	if len(s) < 2 || s[0] != '"' || s[len(s)-1] != '"' {
-		return fmt.Errorf("invalid time string format: %s", s)
-	}
-
-	s = s[1 : len(s)-1]
-
-	// If RFC3339 fails, try parsing ISO8601 without zone
-	var rfc3339Err error
-	t.Time, rfc3339Err = time.Parse(time.RFC3339, s)
-	if rfc3339Err == nil {
-		return nil
-	}
-
-	var noZoneErr error
-	parsedTime, errNoZone := time.ParseInLocation("2006-01-02T15:04:05", s, defaultTimezone)
-	if errNoZone == nil {
-		t.Time = parsedTime
-		return nil
-	}
-
-	return fmt.Errorf("parsing time: RFC3339 %w or ISO8061 with no zone %w", rfc3339Err, noZoneErr)
+	*t = TimeWithOptionalZone(parsedTime)
+	return nil
 }
