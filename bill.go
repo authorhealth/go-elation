@@ -62,7 +62,7 @@ type BillCreate struct {
 	Patient             int64         `json:"patient"`                        //: 64901939201, // required
 	Practice            int64         `json:"practice"`                       //: 65540, 		   // required
 	Physician           int64         `json:"physician"`                      //: 64811630594, // required
-	CPTs                []*BillCPT    `json:"cpts,omitempty"`                 //: [{}],
+	CPTs                []*BillCPT    `json:"cpts"`                           //: [{}],        // required
 	BillingProvider     int64         `json:"billing_provider,omitempty"`     //: 42120898,
 	RenderingProvider   int64         `json:"rendering_provider,omitempty"`   //: 68382673,
 	SupervisingProvider int64         `json:"supervising_provider,omitempty"` //: 52893234,
