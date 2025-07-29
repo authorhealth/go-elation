@@ -328,6 +328,7 @@ func TestPatientService_Update(t *testing.T) {
 		Sex:                    Ptr("sex"),
 		SexualOrientation:      Ptr("sexual orientation"),
 		SSN:                    Ptr("ssn"),
+		Tags:                   []string{"PAID", "Test Patient"},
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

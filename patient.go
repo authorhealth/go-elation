@@ -286,6 +286,7 @@ type PatientUpdate struct {
 	Sex                    *string                    `json:"sex,omitempty"`
 	SexualOrientation      *string                    `json:"sexual_orientation,omitempty"`
 	SSN                    *string                    `json:"ssn,omitempty"`
+	Tags                   []string                   `json:"tags,omitempty"`
 }
 
 func (u *PatientUpdate) MarshalJSON() ([]byte, error) {
