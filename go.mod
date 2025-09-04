@@ -23,6 +23,6 @@ require (
 	cloud.google.com/go v0.121.6
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-querystring v1.1.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
 )
