@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -46,7 +47,7 @@ func (s *InsuranceEligibilityService) Create(ctx context.Context, patientInsuran
 
 type InsuranceEligibility struct {
 	EligibilityDetails        *InsuranceEligibilityDetails `json:"eligibility_details"`
-	EligibilityCheckTimestamp TimeWithOptionalZone         `json:"eligibility_check_timestamp"`
+	EligibilityCheckTimestamp time.Time                    `json:"eligibility_check_timestamp"`
 	EligibilityStatus         string                       `json:"eligibility_status"`
 	PatientID                 int64                        `json:"patient_id"`
 	PatientInsuranceID        int64                        `json:"patient_insurance_id"`
@@ -82,7 +83,7 @@ func (s *InsuranceEligibilityService) Get(ctx context.Context, patientInsuranceI
 }
 
 type InsuranceEligibilityFullReport struct {
-	EligibilityCheckTimestamp TimeWithOptionalZone    `json:"eligibility_check_timestamp"`
+	EligibilityCheckTimestamp time.Time               `json:"eligibility_check_timestamp"`
 	PatientID                 int64                   `json:"patient_id"`
 	PatientInsuranceID        int64                   `json:"patient_insurance_id"`
 	PracticeID                int64                   `json:"practice_id"`
