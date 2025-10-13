@@ -96,7 +96,7 @@ func TestInsurancePolicyService_Find(t *testing.T) {
 
 		assert.Equal(*opts.ActiveOnly, activeOnly)
 
-		b, err := json.Marshal(InsurancePolicyResponse{
+		b, err := json.Marshal(FindInsurancePoliciesResponse{
 			Results: []*InsurancePolicy{
 				{ID: 101, Status: "active", PatientID: patientID, Rank: Ptr[int64](1)},
 				{ID: 102, Status: "inactive", PatientID: patientID, Rank: Ptr[int64](4)},
@@ -169,7 +169,7 @@ func TestInsurancePolicyService_Update(t *testing.T) {
 	var patientID int64 = 500
 	var id int64 = 42
 
-	expectedUpdate := &InsurancePolicy{
+	expectedUpdate := &InsurancePolicyUpdate{
 		ID:     id,
 		Status: "active",
 		Copay:  Ptr("50.00"),
@@ -187,7 +187,7 @@ func TestInsurancePolicyService_Update(t *testing.T) {
 		body, err := io.ReadAll(r.Body)
 		assert.NoError(err)
 
-		actual := &InsurancePolicy{}
+		actual := &InsurancePolicyUpdate{}
 		err = json.Unmarshal(body, actual)
 		assert.NoError(err)
 

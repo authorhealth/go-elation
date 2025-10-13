@@ -13,9 +13,9 @@ import (
 
 type InsurancePolicyServicer interface {
 	Create(ctx context.Context, patientID int64, create *InsurancePolicyCreate) (*InsurancePolicy, *http.Response, error)
-	Find(ctx context.Context, patientID int64, opts *FindInsurancePoliciesOptions) (*InsurancePolicyResponse, *http.Response, error)
+	Find(ctx context.Context, patientID int64, opts *FindInsurancePoliciesOptions) (*FindInsurancePoliciesResponse, *http.Response, error)
 	Get(ctx context.Context, patientID int64, id int64) (*InsurancePolicy, *http.Response, error)
-	Update(ctx context.Context, patientID int64, id int64, update *InsurancePolicy) (*InsurancePolicy, *http.Response, error)
+	Update(ctx context.Context, patientID int64, id int64, update *InsurancePolicyUpdate) (*InsurancePolicy, *http.Response, error)
 	Delete(ctx context.Context, patientID int64, id int64) (*http.Response, error)
 }
 
@@ -25,7 +25,7 @@ type InsurancePolicyService struct {
 	client *HTTPClient
 }
 
-type InsurancePolicyResponse struct {
+type FindInsurancePoliciesResponse struct {
 	// TODO: Determine how the pagination fields here work / if they work yet
 
 	Results []*InsurancePolicy `json:"results"`
@@ -48,8 +48,8 @@ type InsurancePolicy struct {
 	PlanName    *string `json:"plan_name"`
 	GroupID     *string `json:"group_id"`
 	MemberID    *string `json:"member_id"`
-	Copay       *string `json:"copay"`
-	Deductible  *string `json:"deductible"`
+	Copay       *string `json:"copay"`      // e.g. "20.00"
+	Deductible  *string `json:"deductible"` // e.g. "5000.00"
 	StartDate   *string `json:"start_date"` // Format: YYYY-MM-DD
 	EndDate     *string `json:"end_date"`   // Format: YYYY-MM-DD
 
@@ -69,13 +69,19 @@ type InsurancePolicy struct {
 	InsuredPersonState      *string `json:"insured_person_state"`
 	InsuredPersonZip        *string `json:"insured_person_zip"`
 	InsuredPersonID         *string `json:"insured_person_id"`
-	InsuredPersonDOB        *string `json:"insured_person_dob"` // date format: YYYY-MM-DD
+	InsuredPersonDOB        *string `json:"insured_person_dob"` // Format: YYYY-MM-DD
 	InsuredPersonSexAtBirth *string `json:"insured_person_sex_at_birth"`
 	InsuredPersonSSN        *string `json:"insured_person_ssn"`
 	RelationshipToInsured   *string `json:"relationship_to_insured"` // enum: "self", "child", "spouse", "other", default: "self"
 
 	PaymentProgram        *string `json:"payment_program"` // enum: "medicare_part_b", "medicare_advantage", "medicaid", "commercial_hmsa", "commercial_sfhp", "commercial_other", "workers_compensation"
 	MedicareSecondaryCode *string `json:"medicare_secondary_code"`
+
+	FrontImagePath *string `json:"front_image_path"` // Insurance card front image
+	BackImagePath  *string `json:"back_image_path"`  // Insurance card back image
+
+	CanCheckEligibility *bool `json:"can_check_eligibility"`
+	IsLegacyInsurance   bool  `json:"is_legacy_insurance"`
 }
 
 type InsurancePolicyCreate struct {
@@ -93,8 +99,8 @@ type InsurancePolicyCreate struct {
 	PlanName                *string `json:"plan_name,omitempty"`
 	GroupID                 *string `json:"group_id,omitempty"`
 	MemberID                *string `json:"member_id,omitempty"`
-	Copay                   *string `json:"copay,omitempty"`
-	Deductible              *string `json:"deductible,omitempty"`
+	Copay                   *string `json:"copay"`                 // e.g. "20.00"
+	Deductible              *string `json:"deductible"`            // e.g. "5000.00"
 	StartDate               *string `json:"start_date,omitempty"`  // Format: YYYY-MM-DD
 	EndDate                 *string `json:"end_date,omitempty"`    // Format: YYYY-MM-DD
 	Phone                   *string `json:"phone,omitempty"`       // Carrier phone
@@ -118,6 +124,53 @@ type InsurancePolicyCreate struct {
 	RelationshipToInsured   *string `json:"relationship_to_insured,omitempty"`
 	PaymentProgram          *string `json:"payment_program,omitempty"`
 	MedicareSecondaryCode   *string `json:"medicare_secondary_code,omitempty"`
+}
+
+type InsurancePolicyUpdate struct {
+	ID int64 `json:"id"`
+
+	PracticeID       int64  `json:"practice_id"`
+	PatientID        int64  `json:"patient_id"`
+	PatientFirstName string `json:"patient_first_name"`
+	PatientLastName  string `json:"patient_last_name"`
+	PatientDOB       string `json:"patient_dob"` // Format: YYYY-MM-DD
+
+	Status      string  `json:"status"` // enum: "active", "inactive"
+	Rank        *int64  `json:"rank"`   // enum: 1=primary, 2=secondary, 3=tertiary
+	CarrierID   *int64  `json:"carrier_id"`
+	CarrierName *string `json:"carrier_name"`
+	PlanID      *int64  `json:"plan_id"`
+	PlanName    *string `json:"plan_name"`
+	GroupID     *string `json:"group_id"`
+	MemberID    *string `json:"member_id"`
+	Copay       *string `json:"copay"`      // e.g. "20.00"
+	Deductible  *string `json:"deductible"` // e.g. "5000.00"
+	StartDate   *string `json:"start_date"` // Format: YYYY-MM-DD
+	EndDate     *string `json:"end_date"`   // Format: YYYY-MM-DD
+
+	Phone      *string `json:"phone"`       // Carrier phone
+	Extension  *string `json:"extension"`   // Carrier phone extension
+	Address    *string `json:"address"`     // Carrier address
+	Suite      *string `json:"suite"`       // Carrier suite
+	City       *string `json:"city"`        // Carrier city
+	State      *string `json:"state"`       // Carrier state
+	Zip        *string `json:"zip"`         // Carrier zip code
+	CountyCode *string `json:"county_code"` // Carrier phone country code
+
+	InsuredPersonFirstName  *string `json:"insured_person_first_name"`
+	InsuredPersonLastName   *string `json:"insured_person_last_name"`
+	InsuredPersonAddress    *string `json:"insured_person_address"`
+	InsuredPersonCity       *string `json:"insured_person_city"`
+	InsuredPersonState      *string `json:"insured_person_state"`
+	InsuredPersonZip        *string `json:"insured_person_zip"`
+	InsuredPersonID         *string `json:"insured_person_id"`
+	InsuredPersonDOB        *string `json:"insured_person_dob"` // Format: YYYY-MM-DD
+	InsuredPersonSexAtBirth *string `json:"insured_person_sex_at_birth"`
+	InsuredPersonSSN        *string `json:"insured_person_ssn"`
+	RelationshipToInsured   *string `json:"relationship_to_insured"` // enum: "self", "child", "spouse", "other", default: "self"
+
+	PaymentProgram        *string `json:"payment_program"` // enum: "medicare_part_b", "medicare_advantage", "medicaid", "commercial_hmsa", "commercial_sfhp", "commercial_other", "workers_compensation"
+	MedicareSecondaryCode *string `json:"medicare_secondary_code"`
 }
 
 type FindInsurancePoliciesOptions struct {
@@ -147,7 +200,7 @@ func (s *InsurancePolicyService) Create(ctx context.Context, patientID int64, cr
 	return out, res, nil
 }
 
-func (s *InsurancePolicyService) Find(ctx context.Context, patientID int64, opts *FindInsurancePoliciesOptions) (*InsurancePolicyResponse, *http.Response, error) {
+func (s *InsurancePolicyService) Find(ctx context.Context, patientID int64, opts *FindInsurancePoliciesOptions) (*FindInsurancePoliciesResponse, *http.Response, error) {
 	ctx, span := s.client.tracer.Start(
 		ctx,
 		"find insurance policies",
@@ -156,7 +209,7 @@ func (s *InsurancePolicyService) Find(ctx context.Context, patientID int64, opts
 	)
 	defer span.End()
 
-	out := &InsurancePolicyResponse{}
+	out := &FindInsurancePoliciesResponse{}
 
 	res, err := s.client.request(ctx, http.MethodGet, "/patients/"+strconv.FormatInt(patientID, 10)+"/policies", opts, nil, &out)
 	if err != nil {
@@ -190,7 +243,7 @@ func (s *InsurancePolicyService) Get(ctx context.Context, patientID int64, id in
 	return out, res, nil
 }
 
-func (s *InsurancePolicyService) Update(ctx context.Context, patientID int64, id int64, update *InsurancePolicy) (*InsurancePolicy, *http.Response, error) {
+func (s *InsurancePolicyService) Update(ctx context.Context, patientID int64, id int64, update *InsurancePolicyUpdate) (*InsurancePolicy, *http.Response, error) {
 	ctx, span := s.client.tracer.Start(
 		ctx,
 		"update insurance policy",
