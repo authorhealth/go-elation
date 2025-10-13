@@ -35,6 +35,7 @@ type Client interface {
 	InsuranceCompanies() InsuranceCompanyServicer
 	InsuranceEligibility() InsuranceEligibilityServicer
 	InsurancePlans() InsurancePlanServicer
+	InsurancePolicies() InsurancePolicyServicer
 	Letters() LetterServicer
 	Medications() MedicationServicer
 	MessageThreads() MessageThreadServicer
@@ -68,6 +69,7 @@ type HTTPClient struct {
 	InsuranceCompanySvc        *InsuranceCompanyService
 	InsuranceEligibilitySvc    *InsuranceEligibilityService
 	InsurancePlanSvc           *InsurancePlanService
+	InsurancePolicySvc         *InsurancePolicyService
 	LetterSvc                  *LetterService
 	MedicationSvc              *MedicationService
 	MessageThreadSvc           *MessageThreadService
@@ -117,6 +119,7 @@ func NewHTTPClient(httpClient *http.Client, tokenURL, clientID, clientSecret, ba
 	client.InsuranceCompanySvc = &InsuranceCompanyService{client}
 	client.InsuranceEligibilitySvc = &InsuranceEligibilityService{client}
 	client.InsurancePlanSvc = &InsurancePlanService{client}
+	client.InsurancePolicySvc = &InsurancePolicyService{client}
 	client.LetterSvc = &LetterService{client}
 	client.MedicationSvc = &MedicationService{client}
 	client.MessageThreadSvc = &MessageThreadService{client}
@@ -178,6 +181,10 @@ func (c *HTTPClient) InsuranceEligibility() InsuranceEligibilityServicer {
 
 func (c *HTTPClient) InsurancePlans() InsurancePlanServicer {
 	return c.InsurancePlanSvc
+}
+
+func (c *HTTPClient) InsurancePolicies() InsurancePolicyServicer {
+	return c.InsurancePolicySvc
 }
 
 func (c *HTTPClient) Letters() LetterServicer {
