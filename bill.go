@@ -169,7 +169,7 @@ type Bill struct {
 	Notes                string          `json:"notes"`                   //: "patient has not paid yet"
 	CPTs                 []*BillCPT      `json:"cpts"`                    //: [{}]
 	Payment              BillPayment     `json:"payment"`                 //: {}
-	VisitNote            int64           `json:"visit_note"`              //: 64409108504
+	VisitNoteID          int64           `json:"visit_note_id"`           //: 64409108504
 	VisitNoteSignedDate  time.Time       `json:"visit_note_signed_date"`  //: "2016-10-12T22:11:01Z"
 	VisitNoteDeletedDate *time.Time      `json:"visit_note_deleted_date"` //: null
 	ReferringProvider    *BillProvider   `json:"referring_provider"`      //: {}
