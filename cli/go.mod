@@ -5,9 +5,10 @@ go 1.24.0
 require github.com/authorhealth/go-elation v0.0.0-20250324132626-bc6dc6aa1c21
 
 require (
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0 // indirect
+	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.65.0 // indirect
 )
 
 require (
@@ -20,9 +21,9 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.9 // indirect
-	go.opentelemetry.io/otel v1.38.0 // indirect
-	go.opentelemetry.io/otel/metric v1.38.0 // indirect
-	go.opentelemetry.io/otel/trace v1.38.0 // indirect
+	go.opentelemetry.io/otel v1.40.0 // indirect
+	go.opentelemetry.io/otel/metric v1.40.0 // indirect
+	go.opentelemetry.io/otel/trace v1.40.0 // indirect
 	golang.org/x/oauth2 v0.33.0 // indirect
 )
 
