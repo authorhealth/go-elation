@@ -27,7 +27,7 @@ func TestDiscontinuedMedicationService_Create(t *testing.T) {
 				MedOrder:             12345,
 				DiscontinueDate:      "2024-04-15",
 				Reason:               "a very good reason",
-				IsDocumented:         Ptr(true),
+				IsDocumented:         new(true),
 				DocumentingPersonnel: 67890,
 			},
 		},

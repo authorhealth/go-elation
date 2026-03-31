@@ -46,7 +46,7 @@ func TestNonVisitNoteService_Create(t *testing.T) {
 				Patient:      12345,
 				Type:         "nonvisit",
 				SignedBy:     12345,
-				SignedDate:   Ptr(time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC)),
+				SignedDate:   new(time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC)),
 			},
 		},
 	}

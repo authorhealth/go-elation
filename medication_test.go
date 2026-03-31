@@ -49,7 +49,7 @@ func TestMedicationService_Create(t *testing.T) {
 				Notes:                "some notes",
 				PharmacyInstructions: "some instructions to the pharmacy",
 				NumSamples:           "5",
-				DocumentDate:         Ptr(time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC)),
+				DocumentDate:         new(time.Date(2024, 4, 15, 0, 0, 0, 0, time.UTC)),
 				DocumentingPersonnel: 12345,
 			},
 		},

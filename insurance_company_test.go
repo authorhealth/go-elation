@@ -35,7 +35,7 @@ func TestInsuranceCompanyService_Create(t *testing.T) {
 				Extension:        "x1234",
 				PayerID:          "67890",
 				ExternalVendorID: "ABC123",
-				IsCredentialed:   Ptr(true),
+				IsCredentialed:   new(true),
 				Aliases:          "InsuranceCo., The Grand Insurance Company",
 				InsuranceType:    "commercial",
 			},
@@ -190,7 +190,7 @@ func TestInsuranceCompanyService_Update(t *testing.T) {
 		Extension:        "x1234",
 		PayerID:          "67890",
 		ExternalVendorID: "ABC123",
-		IsCredentialed:   Ptr(true),
+		IsCredentialed:   new(true),
 		Aliases:          "InsuranceCo., The Grand Insurance Company",
 		InsuranceType:    "commercial",
 	}
