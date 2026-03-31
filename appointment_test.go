@@ -19,22 +19,22 @@ func TestAppointmentService_Create(t *testing.T) {
 	var serviceLocation int64 = 4
 
 	expected := &AppointmentCreate{
-		Description: Ptr("description"),
+		Description: new("description"),
 		Duration:    60,
 		Metadata: &Metadata{
-			Data: Ptr(map[string]string{
+			Data: new(map[string]string{
 				"foo": "bar",
 			}),
-			ObjectID:      Ptr("object-id"),
-			ObjectWebLink: Ptr("object-web-link"),
+			ObjectID:      new("object-id"),
+			ObjectWebLink: new("object-web-link"),
 		},
-		Mode:            Ptr("IN_PERSON"),
+		Mode:            new("IN_PERSON"),
 		Patient:         1,
 		Physician:       2,
 		Practice:        3,
 		Reason:          "reason",
 		ScheduledDate:   time.Date(2023, 5, 15, 0, 0, 0, 0, time.UTC),
-		ServiceLocation: Ptr(serviceLocation),
+		ServiceLocation: new(serviceLocation),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -182,16 +182,16 @@ func TestAppointmentService_Update(t *testing.T) {
 
 	var id int64 = 1
 	expected := &AppointmentUpdate{
-		Description:     Ptr("description"),
-		Duration:        Ptr(30),
-		Mode:            Ptr(AppointmentModeVideo),
-		ServiceLocation: Ptr(12345),
+		Description:     new("description"),
+		Duration:        new(30),
+		Mode:            new(AppointmentModeVideo),
+		ServiceLocation: new(12345),
 		Status: &AppointmentUpdateStatus{
 			Status: "Confirmed",
 			Room:   "Room 1",
 		},
-		TelehealthDetails: Ptr("telehealth details"),
-		Instructions:      Ptr("instructions"),
+		TelehealthDetails: new("telehealth details"),
+		Instructions:      new("instructions"),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

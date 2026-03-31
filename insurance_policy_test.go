@@ -24,9 +24,9 @@ func TestInsurancePolicyService_Create(t *testing.T) {
 		PatientLastName:       "Smith",
 		PatientDOB:            "1955-01-01",
 		Status:                "active",
-		Rank:                  Ptr[int64](1),
-		MemberID:              Ptr("MEMBER123"),
-		RelationshipToInsured: Ptr("self"),
+		Rank:                  new(int64(1)),
+		MemberID:              new("MEMBER123"),
+		RelationshipToInsured: new("self"),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func TestInsurancePolicyService_Find(t *testing.T) {
 	var patientID int64 = 500
 
 	opts := &FindInsurancePoliciesOptions{
-		ActiveOnly: Ptr(true),
+		ActiveOnly: new(true),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -98,8 +98,8 @@ func TestInsurancePolicyService_Find(t *testing.T) {
 
 		b, err := json.Marshal(FindInsurancePoliciesResponse{
 			Results: []*InsurancePolicy{
-				{ID: 101, Status: "active", PatientID: patientID, Rank: Ptr[int64](1)},
-				{ID: 102, Status: "inactive", PatientID: patientID, Rank: Ptr[int64](4)},
+				{ID: 101, Status: "active", PatientID: patientID, Rank: new(int64(1))},
+				{ID: 102, Status: "inactive", PatientID: patientID, Rank: new(int64(4))},
 			},
 		})
 		assert.NoError(err)
@@ -131,7 +131,7 @@ func TestInsurancePolicyService_Get(t *testing.T) {
 		ID:        id,
 		Status:    "inactive",
 		PatientID: patientID,
-		MemberID:  Ptr("MEMBER123"),
+		MemberID:  new("MEMBER123"),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -172,8 +172,8 @@ func TestInsurancePolicyService_Update(t *testing.T) {
 	expectedUpdate := &InsurancePolicyUpdate{
 		ID:     id,
 		Status: "active",
-		Copay:  Ptr("50.00"),
-		Rank:   Ptr[int64](2),
+		Copay:  new("50.00"),
+		Rank:   new(int64(2)),
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
