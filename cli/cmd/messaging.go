@@ -18,6 +18,11 @@ var findThreadMembersCmd = &cobra.Command{
 	Use: "find-thread-members",
 	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
 		response, _, err := client.ThreadMembers().Find(ctx, &elation.FindThreadMembersOptions{
+			Pagination: &elation.Pagination{
+				Cursor: paginationCursor,
+				Limit:  paginationLimit,
+				Offset: paginationOffset,
+			},
 			Patient: findThreadMembersPatients,
 			User:    findThreadMembersUsers,
 		})

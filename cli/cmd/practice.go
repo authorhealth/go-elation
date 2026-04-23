@@ -19,7 +19,13 @@ var (
 var findPhysiciansCmd = &cobra.Command{
 	Use: "find-physicians",
 	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
-		response, _, err := client.Physicians().Find(ctx, &elation.FindPhysiciansOptions{})
+		response, _, err := client.Physicians().Find(ctx, &elation.FindPhysiciansOptions{
+			Pagination: &elation.Pagination{
+				Cursor: paginationCursor,
+				Limit:  paginationLimit,
+				Offset: paginationOffset,
+			},
+		})
 		if err != nil {
 			return err
 		}
@@ -56,6 +62,7 @@ var listContactsCmd = &cobra.Command{
 	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
 		response, _, err := client.Contacts().List(ctx, &elation.ListContactsOptions{
 			Pagination: &elation.Pagination{
+				Cursor: paginationCursor,
 				Limit:  paginationLimit,
 				Offset: paginationOffset,
 			},

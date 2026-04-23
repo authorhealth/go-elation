@@ -263,24 +263,18 @@ func (r *Response[ResultsT]) HasNext() bool {
 }
 
 func (r *Response[ResultsT]) PaginationNext() *Pagination {
-	return &Pagination{
-		Limit:  parseLimit(r.Next),
-		Offset: parseOffset(r.Next),
-	}
+	return parsePagination(r.Next)
 }
 
 func (r *Response[ResultsT]) PaginationPrevious() *Pagination {
-	return &Pagination{
-		Limit:  parseLimit(r.Previous),
-		Offset: parseOffset(r.Previous),
-	}
+	return parsePagination(r.Previous)
 }
 
 func (r *Response[ResultsT]) PaginationNextWithLimit(limit int) *Pagination {
-	return &Pagination{
-		Limit:  limit,
-		Offset: parseOffset(r.Next),
-	}
+	p := parsePagination(r.Next)
+	p.Limit = limit
+
+	return p
 }
 
 type Error struct {
@@ -289,8 +283,9 @@ type Error struct {
 }
 
 type Pagination struct {
-	Limit  int `url:"limit,omitempty"`
-	Offset int `url:"offset,omitempty"`
+	Cursor string `url:"cursor,omitempty"`
+	Limit  int    `url:"limit,omitempty"`
+	Offset int    `url:"offset,omitempty"`
 }
 
 func (e Error) Error() string {
@@ -356,30 +351,27 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 	return res, nil
 }
 
-func parseLimit(v string) int {
-	u, err := url.Parse(v)
-	if err != nil {
-		return defaultPaginationLimit
+func parsePagination(v string) *Pagination {
+	p := &Pagination{
+		Limit: defaultPaginationLimit,
 	}
 
-	offset, err := strconv.Atoi(u.Query().Get("limit"))
-	if err != nil {
-		return defaultPaginationLimit
-	}
-
-	return offset
-}
-
-func parseOffset(v string) int {
 	u, err := url.Parse(v)
 	if err != nil {
-		return 0
+		return p
+	}
+
+	p.Cursor = u.Query().Get("cursor")
+
+	limit, err := strconv.Atoi(u.Query().Get("limit"))
+	if err == nil {
+		p.Limit = limit
 	}
 
 	offset, err := strconv.Atoi(u.Query().Get("offset"))
-	if err != nil {
-		return 0
+	if err == nil {
+		p.Offset = offset
 	}
 
-	return offset
+	return p
 }

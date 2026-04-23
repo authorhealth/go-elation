@@ -15,6 +15,7 @@ import (
 )
 
 var (
+	paginationCursor string
 	paginationLimit  int
 	paginationOffset int
 )
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVar(&paginationCursor, "cursor", "", "")
 	rootCmd.PersistentFlags().IntVar(&paginationLimit, "limit", 0, "")
 	rootCmd.PersistentFlags().IntVar(&paginationOffset, "offset", 0, "")
 }
