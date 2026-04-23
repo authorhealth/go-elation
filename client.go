@@ -264,6 +264,7 @@ func (r *Response[ResultsT]) HasNext() bool {
 
 func (r *Response[ResultsT]) PaginationNext() *Pagination {
 	return &Pagination{
+		Cursor: parseCursor(r.Next),
 		Limit:  parseLimit(r.Next),
 		Offset: parseOffset(r.Next),
 	}
@@ -271,6 +272,7 @@ func (r *Response[ResultsT]) PaginationNext() *Pagination {
 
 func (r *Response[ResultsT]) PaginationPrevious() *Pagination {
 	return &Pagination{
+		Cursor: parseCursor(r.Previous),
 		Limit:  parseLimit(r.Previous),
 		Offset: parseOffset(r.Previous),
 	}
@@ -278,6 +280,7 @@ func (r *Response[ResultsT]) PaginationPrevious() *Pagination {
 
 func (r *Response[ResultsT]) PaginationNextWithLimit(limit int) *Pagination {
 	return &Pagination{
+		Cursor: parseCursor(r.Next),
 		Limit:  limit,
 		Offset: parseOffset(r.Next),
 	}
@@ -289,8 +292,9 @@ type Error struct {
 }
 
 type Pagination struct {
-	Limit  int `url:"limit,omitempty"`
-	Offset int `url:"offset,omitempty"`
+	Cursor string `url:"cursor,omitempty"`
+	Limit  int    `url:"limit,omitempty"`
+	Offset int    `url:"offset,omitempty"`
 }
 
 func (e Error) Error() string {
@@ -354,6 +358,15 @@ func (c *HTTPClient) request(ctx context.Context, method string, path string, qu
 	}
 
 	return res, nil
+}
+
+func parseCursor(v string) string {
+	u, err := url.Parse(v)
+	if err != nil {
+		return ""
+	}
+
+	return u.Query().Get("cursor")
 }
 
 func parseLimit(v string) int {

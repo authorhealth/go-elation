@@ -30,6 +30,7 @@ var findDiscontinuedMedications = &cobra.Command{
 	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
 		response, _, err := client.DiscontinuedMedications().Find(ctx, &elation.FindDiscontinuedMedicationsOptions{
 			Pagination: &elation.Pagination{
+				Cursor: paginationCursor,
 				Limit:  paginationLimit,
 				Offset: paginationOffset,
 			},
@@ -65,6 +66,7 @@ var findPrescriptionFills = &cobra.Command{
 	Run: wrapRunFunc(func(ctx context.Context, client elation.Client, args []string) error {
 		response, _, err := client.PrescriptionFills().Find(ctx, &elation.FindPrescriptionFillsOptions{
 			Pagination: &elation.Pagination{
+				Cursor: paginationCursor,
 				Limit:  paginationLimit,
 				Offset: paginationOffset,
 			},
