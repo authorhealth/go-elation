@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"reflect"
@@ -66,7 +67,7 @@ type updateArgs[BodyT any] struct {
 func main() {
 	opts, err := parseServerOptions(os.Args[1:])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "Error: failed to parse server options: %v\n", err)
 		os.Exit(2)
 	}
 
@@ -82,7 +83,8 @@ func main() {
 	registerTools(s, client, opts.allowUnsafeTools)
 
 	if err := server.ServeStdio(s); err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -958,23 +960,31 @@ func requireInt64(req mcp.CallToolRequest, key string) (int64, error) {
 
 	switch v := raw.(type) {
 	case float64:
+		// Reject NaN and Infinity before converting to int64
+		if math.IsNaN(v) || math.IsInf(v, 0) {
+			return 0, fmt.Errorf("argument %q: invalid float value", key)
+		}
+		// Reject out-of-range values
+		if v > float64(^uint64(0)>>1) || v < -float64(^uint64(0)>>1) {
+			return 0, fmt.Errorf("argument %q: value out of range for int64", key)
+		}
 		// Reject non-integral floats (e.g., 42.9)
 		if v != float64(int64(v)) {
 			return 0, fmt.Errorf("argument %q must be an integer (got non-integral float)", key)
 		}
-		// Reject NaN and Infinity
-		if v != v || v > float64(^uint64(0)>>1) || v < -float64(^uint64(0)>>1) {
-			return 0, fmt.Errorf("argument %q: invalid float value", key)
-		}
 		return int64(v), nil
 	case float32:
+		// Reject NaN and Infinity before converting to int64
+		if math.IsNaN(float64(v)) || math.IsInf(float64(v), 0) {
+			return 0, fmt.Errorf("argument %q: invalid float value", key)
+		}
+		// Reject out-of-range values
+		if float64(v) > float64(^uint64(0)>>1) || float64(v) < -float64(^uint64(0)>>1) {
+			return 0, fmt.Errorf("argument %q: value out of range for int64", key)
+		}
 		// Reject non-integral floats (e.g., 42.9)
 		if v != float32(int64(v)) {
 			return 0, fmt.Errorf("argument %q must be an integer (got non-integral float)", key)
-		}
-		// Reject NaN and Infinity
-		if v != v || v > float32(^uint32(0)>>1) || v < -float32(^uint32(0)>>1) {
-			return 0, fmt.Errorf("argument %q: invalid float value", key)
 		}
 		return int64(v), nil
 	case int:
