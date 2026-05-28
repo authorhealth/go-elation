@@ -9,7 +9,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"reflect"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/authorhealth/go-elation"
@@ -41,6 +44,23 @@ var unsafeToolNames = []string{
 
 type serverOptions struct {
 	allowUnsafeTools bool
+}
+
+type idArgs struct {
+	ID int64 `json:"id"`
+}
+
+type findArgs[OptionsT any] struct {
+	Options *OptionsT `json:"options,omitempty"`
+}
+
+type createArgs[BodyT any] struct {
+	Body BodyT `json:"body"`
+}
+
+type updateArgs[BodyT any] struct {
+	ID   int64 `json:"id"`
+	Body BodyT `json:"body"`
 }
 
 func main() {
@@ -81,7 +101,7 @@ func parseServerOptions(args []string) (serverOptions, error) {
 }
 
 func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools bool) {
-	registerFindTool[elation.FindAllergiesOptions](s, "allergies_find", "Find allergies", func(ctx context.Context, opts *elation.FindAllergiesOptions) (any, error) {
+	registerFindTool(s, "allergies_find", "Find allergies", func(ctx context.Context, opts *elation.FindAllergiesOptions) (any, error) {
 		out, _, err := client.Allergies().Find(ctx, opts)
 		return out, err
 	})
@@ -90,7 +110,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindAllergiesDocumentationOptions](s, "allergy_documentation_find", "Find allergy documentation", func(ctx context.Context, opts *elation.FindAllergiesDocumentationOptions) (any, error) {
+	registerFindTool(s, "allergy_documentation_find", "Find allergy documentation", func(ctx context.Context, opts *elation.FindAllergiesDocumentationOptions) (any, error) {
 		out, _, err := client.AllergyDocumentation().Find(ctx, opts)
 		return out, err
 	})
@@ -99,11 +119,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.AppointmentCreate](s, "appointments_create", "Create an appointment", func(ctx context.Context, body *elation.AppointmentCreate) (any, error) {
+	registerCreateTool(s, "appointments_create", "Create an appointment", func(ctx context.Context, body *elation.AppointmentCreate) (any, error) {
 		out, _, err := client.Appointments().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindAppointmentsOptions](s, "appointments_find", "Find appointments", func(ctx context.Context, opts *elation.FindAppointmentsOptions) (any, error) {
+	registerFindTool(s, "appointments_find", "Find appointments", func(ctx context.Context, opts *elation.FindAppointmentsOptions) (any, error) {
 		out, _, err := client.Appointments().Find(ctx, opts)
 		return out, err
 	})
@@ -111,7 +131,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.Appointments().Get(ctx, id)
 		return out, err
 	})
-	registerUpdateTool[elation.AppointmentUpdate](s, "appointments_update", "Update an appointment", func(ctx context.Context, id int64, body *elation.AppointmentUpdate) (any, error) {
+	registerUpdateTool(s, "appointments_update", "Update an appointment", func(ctx context.Context, id int64, body *elation.AppointmentUpdate) (any, error) {
 		out, _, err := client.Appointments().Update(ctx, id, body)
 		return out, err
 	})
@@ -119,11 +139,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return client.Appointments().Delete(ctx, id)
 	})
 
-	registerCreateTool[elation.BillCreate](s, "bills_create", "Create a bill", func(ctx context.Context, body *elation.BillCreate) (any, error) {
+	registerCreateTool(s, "bills_create", "Create a bill", func(ctx context.Context, body *elation.BillCreate) (any, error) {
 		out, _, err := client.Bill().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindBillOptions](s, "bills_find", "Find bills", func(ctx context.Context, opts *elation.FindBillOptions) (any, error) {
+	registerFindTool(s, "bills_find", "Find bills", func(ctx context.Context, opts *elation.FindBillOptions) (any, error) {
 		out, _, err := client.Bill().Find(ctx, opts)
 		return out, err
 	})
@@ -132,7 +152,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindClinicalDocumentsOptions](s, "clinical_documents_find", "Find clinical documents", func(ctx context.Context, opts *elation.FindClinicalDocumentsOptions) (any, error) {
+	registerFindTool(s, "clinical_documents_find", "Find clinical documents", func(ctx context.Context, opts *elation.FindClinicalDocumentsOptions) (any, error) {
 		out, _, err := client.ClinicalDocuments().Find(ctx, opts)
 		return out, err
 	})
@@ -145,16 +165,16 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.Contacts().Get(ctx, id)
 		return out, err
 	})
-	registerFindTool[elation.ListContactsOptions](s, "contacts_list", "List contacts", func(ctx context.Context, opts *elation.ListContactsOptions) (any, error) {
+	registerFindTool(s, "contacts_list", "List contacts", func(ctx context.Context, opts *elation.ListContactsOptions) (any, error) {
 		out, _, err := client.Contacts().List(ctx, opts)
 		return out, err
 	})
 
-	registerCreateTool[elation.DiscontinuedMedicationCreate](s, "discontinued_medications_create", "Create discontinued medication", func(ctx context.Context, body *elation.DiscontinuedMedicationCreate) (any, error) {
+	registerCreateTool(s, "discontinued_medications_create", "Create discontinued medication", func(ctx context.Context, body *elation.DiscontinuedMedicationCreate) (any, error) {
 		out, _, err := client.DiscontinuedMedications().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindDiscontinuedMedicationsOptions](s, "discontinued_medications_find", "Find discontinued medications", func(ctx context.Context, opts *elation.FindDiscontinuedMedicationsOptions) (any, error) {
+	registerFindTool(s, "discontinued_medications_find", "Find discontinued medications", func(ctx context.Context, opts *elation.FindDiscontinuedMedicationsOptions) (any, error) {
 		out, _, err := client.DiscontinuedMedications().Find(ctx, opts)
 		return out, err
 	})
@@ -163,7 +183,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindHistoryDownloadFillsOptions](s, "history_download_fills_find", "Find history download fills", func(ctx context.Context, opts *elation.FindHistoryDownloadFillsOptions) (any, error) {
+	registerFindTool(s, "history_download_fills_find", "Find history download fills", func(ctx context.Context, opts *elation.FindHistoryDownloadFillsOptions) (any, error) {
 		out, _, err := client.HistoryDownloadFills().Find(ctx, opts)
 		return out, err
 	})
@@ -172,11 +192,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.InsuranceCompanyCreate](s, "insurance_companies_create", "Create an insurance company", func(ctx context.Context, body *elation.InsuranceCompanyCreate) (any, error) {
+	registerCreateTool(s, "insurance_companies_create", "Create an insurance company", func(ctx context.Context, body *elation.InsuranceCompanyCreate) (any, error) {
 		out, _, err := client.InsuranceCompanies().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindInsuranceCompaniesOptions](s, "insurance_companies_find", "Find insurance companies", func(ctx context.Context, opts *elation.FindInsuranceCompaniesOptions) (any, error) {
+	registerFindTool(s, "insurance_companies_find", "Find insurance companies", func(ctx context.Context, opts *elation.FindInsuranceCompaniesOptions) (any, error) {
 		out, _, err := client.InsuranceCompanies().Find(ctx, opts)
 		return out, err
 	})
@@ -184,7 +204,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.InsuranceCompanies().Get(ctx, id)
 		return out, err
 	})
-	registerUpdateTool[elation.InsuranceCompanyUpdate](s, "insurance_companies_update", "Update an insurance company", func(ctx context.Context, id int64, body *elation.InsuranceCompanyUpdate) (any, error) {
+	registerUpdateTool(s, "insurance_companies_update", "Update an insurance company", func(ctx context.Context, id int64, body *elation.InsuranceCompanyUpdate) (any, error) {
 		out, _, err := client.InsuranceCompanies().Update(ctx, id, body)
 		return out, err
 	})
@@ -192,7 +212,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return client.InsuranceCompanies().Delete(ctx, id)
 	})
 
-	registerScopedCreateTool[elation.InsuranceEligibilityCreate](s, "insurance_eligibility_create", "Create insurance eligibility for a patient insurance", "patient_insurance_id", func(ctx context.Context, patientInsuranceID int64, body *elation.InsuranceEligibilityCreate) (any, error) {
+	registerScopedCreateTool(s, "insurance_eligibility_create", "Create insurance eligibility for a patient insurance", "patient_insurance_id", func(ctx context.Context, patientInsuranceID int64, body *elation.InsuranceEligibilityCreate) (any, error) {
 		out, _, err := client.InsuranceEligibility().Create(ctx, patientInsuranceID, body)
 		return out, err
 	})
@@ -205,11 +225,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.InsurancePlanCreate](s, "insurance_plans_create", "Create an insurance plan", func(ctx context.Context, body *elation.InsurancePlanCreate) (any, error) {
+	registerCreateTool(s, "insurance_plans_create", "Create an insurance plan", func(ctx context.Context, body *elation.InsurancePlanCreate) (any, error) {
 		out, _, err := client.InsurancePlans().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindInsurancePlansOptions](s, "insurance_plans_find", "Find insurance plans", func(ctx context.Context, opts *elation.FindInsurancePlansOptions) (any, error) {
+	registerFindTool(s, "insurance_plans_find", "Find insurance plans", func(ctx context.Context, opts *elation.FindInsurancePlansOptions) (any, error) {
 		out, _, err := client.InsurancePlans().Find(ctx, opts)
 		return out, err
 	})
@@ -217,7 +237,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.InsurancePlans().Get(ctx, id)
 		return out, err
 	})
-	registerUpdateTool[elation.InsurancePlanUpdate](s, "insurance_plans_update", "Update an insurance plan", func(ctx context.Context, id int64, body *elation.InsurancePlanUpdate) (any, error) {
+	registerUpdateTool(s, "insurance_plans_update", "Update an insurance plan", func(ctx context.Context, id int64, body *elation.InsurancePlanUpdate) (any, error) {
 		out, _, err := client.InsurancePlans().Update(ctx, id, body)
 		return out, err
 	})
@@ -225,11 +245,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return client.InsurancePlans().Delete(ctx, id)
 	})
 
-	registerParentCreateTool[elation.InsurancePolicyCreate](s, "insurance_policies_create", "Create a patient insurance policy", "patient_id", func(ctx context.Context, patientID int64, body *elation.InsurancePolicyCreate) (any, error) {
+	registerParentCreateTool(s, "insurance_policies_create", "Create a patient insurance policy", "patient_id", func(ctx context.Context, patientID int64, body *elation.InsurancePolicyCreate) (any, error) {
 		out, _, err := client.InsurancePolicies().Create(ctx, patientID, body)
 		return out, err
 	})
-	registerParentFindTool[elation.FindInsurancePoliciesOptions](s, "insurance_policies_find", "Find insurance policies for a patient", "patient_id", func(ctx context.Context, patientID int64, opts *elation.FindInsurancePoliciesOptions) (any, error) {
+	registerParentFindTool(s, "insurance_policies_find", "Find insurance policies for a patient", "patient_id", func(ctx context.Context, patientID int64, opts *elation.FindInsurancePoliciesOptions) (any, error) {
 		out, _, err := client.InsurancePolicies().Find(ctx, patientID, opts)
 		return out, err
 	})
@@ -237,7 +257,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.InsurancePolicies().Get(ctx, patientID, id)
 		return out, err
 	})
-	registerParentUpdateTool[elation.InsurancePolicyUpdate](s, "insurance_policies_update", "Update an insurance policy by patient and policy ID", "patient_id", func(ctx context.Context, patientID int64, id int64, body *elation.InsurancePolicyUpdate) (any, error) {
+	registerParentUpdateTool(s, "insurance_policies_update", "Update an insurance policy by patient and policy ID", "patient_id", func(ctx context.Context, patientID int64, id int64, body *elation.InsurancePolicyUpdate) (any, error) {
 		out, _, err := client.InsurancePolicies().Update(ctx, patientID, id, body)
 		return out, err
 	})
@@ -245,7 +265,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return client.InsurancePolicies().Delete(ctx, patientID, id)
 	})
 
-	registerFindTool[elation.FindLettersOptions](s, "letters_find", "Find letters", func(ctx context.Context, opts *elation.FindLettersOptions) (any, error) {
+	registerFindTool(s, "letters_find", "Find letters", func(ctx context.Context, opts *elation.FindLettersOptions) (any, error) {
 		out, _, err := client.Letters().Find(ctx, opts)
 		return out, err
 	})
@@ -254,11 +274,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.PatientMedicationCreate](s, "medications_create", "Create a medication", func(ctx context.Context, body *elation.PatientMedicationCreate) (any, error) {
+	registerCreateTool(s, "medications_create", "Create a medication", func(ctx context.Context, body *elation.PatientMedicationCreate) (any, error) {
 		out, _, err := client.Medications().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindPatientMedicationsOptions](s, "medications_find", "Find medications", func(ctx context.Context, opts *elation.FindPatientMedicationsOptions) (any, error) {
+	registerFindTool(s, "medications_find", "Find medications", func(ctx context.Context, opts *elation.FindPatientMedicationsOptions) (any, error) {
 		out, _, err := client.Medications().Find(ctx, opts)
 		return out, err
 	})
@@ -267,7 +287,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindMessageThreadsOptions](s, "message_threads_find", "Find message threads", func(ctx context.Context, opts *elation.FindMessageThreadsOptions) (any, error) {
+	registerFindTool(s, "message_threads_find", "Find message threads", func(ctx context.Context, opts *elation.FindMessageThreadsOptions) (any, error) {
 		out, _, err := client.MessageThreads().Find(ctx, opts)
 		return out, err
 	})
@@ -276,11 +296,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.NonVisitNoteCreate](s, "non_visit_notes_create", "Create a non-visit note", func(ctx context.Context, body *elation.NonVisitNoteCreate) (any, error) {
+	registerCreateTool(s, "non_visit_notes_create", "Create a non-visit note", func(ctx context.Context, body *elation.NonVisitNoteCreate) (any, error) {
 		out, _, err := client.NonVisitNotes().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindNonVisitNotesOptions](s, "non_visit_notes_find", "Find non-visit notes", func(ctx context.Context, opts *elation.FindNonVisitNotesOptions) (any, error) {
+	registerFindTool(s, "non_visit_notes_find", "Find non-visit notes", func(ctx context.Context, opts *elation.FindNonVisitNotesOptions) (any, error) {
 		out, _, err := client.NonVisitNotes().Find(ctx, opts)
 		return out, err
 	})
@@ -289,11 +309,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.PatientCreate](s, "patients_create", "Create a patient", func(ctx context.Context, body *elation.PatientCreate) (any, error) {
+	registerCreateTool(s, "patients_create", "Create a patient", func(ctx context.Context, body *elation.PatientCreate) (any, error) {
 		out, _, err := client.Patients().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindPatientsOptions](s, "patients_find", "Find patients", func(ctx context.Context, opts *elation.FindPatientsOptions) (any, error) {
+	registerFindTool(s, "patients_find", "Find patients", func(ctx context.Context, opts *elation.FindPatientsOptions) (any, error) {
 		out, _, err := client.Patients().Find(ctx, opts)
 		return out, err
 	})
@@ -301,7 +321,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.Patients().Get(ctx, id)
 		return out, err
 	})
-	registerUpdateTool[elation.PatientUpdate](s, "patients_update", "Update a patient", func(ctx context.Context, id int64, body *elation.PatientUpdate) (any, error) {
+	registerUpdateTool(s, "patients_update", "Update a patient", func(ctx context.Context, id int64, body *elation.PatientUpdate) (any, error) {
 		out, _, err := client.Patients().Update(ctx, id, body)
 		return out, err
 	})
@@ -314,7 +334,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindPhysiciansOptions](s, "physicians_find", "Find physicians", func(ctx context.Context, opts *elation.FindPhysiciansOptions) (any, error) {
+	registerFindTool(s, "physicians_find", "Find physicians", func(ctx context.Context, opts *elation.FindPhysiciansOptions) (any, error) {
 		out, _, err := client.Physicians().Find(ctx, opts)
 		return out, err
 	})
@@ -323,7 +343,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindPracticesOptions](s, "practices_find", "Find practices", func(ctx context.Context, opts *elation.FindPracticesOptions) (any, error) {
+	registerFindTool(s, "practices_find", "Find practices", func(ctx context.Context, opts *elation.FindPracticesOptions) (any, error) {
 		out, _, err := client.Practices().Find(ctx, opts)
 		return out, err
 	})
@@ -332,7 +352,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindPrescriptionFillsOptions](s, "prescription_fills_find", "Find prescription fills", func(ctx context.Context, opts *elation.FindPrescriptionFillsOptions) (any, error) {
+	registerFindTool(s, "prescription_fills_find", "Find prescription fills", func(ctx context.Context, opts *elation.FindPrescriptionFillsOptions) (any, error) {
 		out, _, err := client.PrescriptionFills().Find(ctx, opts)
 		return out, err
 	})
@@ -341,7 +361,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerFindTool[elation.FindPatientProblemsOptions](s, "problems_find", "Find patient problems", func(ctx context.Context, opts *elation.FindPatientProblemsOptions) (any, error) {
+	registerFindTool(s, "problems_find", "Find patient problems", func(ctx context.Context, opts *elation.FindPatientProblemsOptions) (any, error) {
 		out, _, err := client.Problems().Find(ctx, opts)
 		return out, err
 	})
@@ -350,11 +370,11 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.RecurringEventGroupCreate](s, "recurring_event_groups_create", "Create a recurring event group", func(ctx context.Context, body *elation.RecurringEventGroupCreate) (any, error) {
+	registerCreateTool(s, "recurring_event_groups_create", "Create a recurring event group", func(ctx context.Context, body *elation.RecurringEventGroupCreate) (any, error) {
 		out, _, err := client.RecurringEventGroups().Create(ctx, body)
 		return out, err
 	})
-	registerFindTool[elation.FindRecurringEventGroupsOptions](s, "recurring_event_groups_find", "Find recurring event groups", func(ctx context.Context, opts *elation.FindRecurringEventGroupsOptions) (any, error) {
+	registerFindTool(s, "recurring_event_groups_find", "Find recurring event groups", func(ctx context.Context, opts *elation.FindRecurringEventGroupsOptions) (any, error) {
 		out, _, err := client.RecurringEventGroups().Find(ctx, opts)
 		return out, err
 	})
@@ -362,7 +382,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.RecurringEventGroups().Get(ctx, id)
 		return out, err
 	})
-	registerUpdateTool[elation.RecurringEventGroupUpdate](s, "recurring_event_groups_update", "Update a recurring event group", func(ctx context.Context, id int64, body *elation.RecurringEventGroupUpdate) (any, error) {
+	registerUpdateTool(s, "recurring_event_groups_update", "Update a recurring event group", func(ctx context.Context, id int64, body *elation.RecurringEventGroupUpdate) (any, error) {
 		out, _, err := client.RecurringEventGroups().Update(ctx, id, body)
 		return out, err
 	})
@@ -370,7 +390,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return client.RecurringEventGroups().Delete(ctx, id)
 	})
 
-	registerFindTool[elation.FindServiceLocationOptions](s, "service_locations_find", "Find service locations", func(ctx context.Context, opts *elation.FindServiceLocationOptions) (any, error) {
+	registerFindTool(s, "service_locations_find", "Find service locations", func(ctx context.Context, opts *elation.FindServiceLocationOptions) (any, error) {
 		out, _, err := client.ServiceLocations().Find(ctx, opts)
 		return out, err
 	})
@@ -379,7 +399,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		out, _, err := client.Subscriptions().Find(ctx)
 		return out, err
 	})
-	registerCreateTool[elation.Subscribe](s, "subscriptions_subscribe", "Create a subscription", func(ctx context.Context, body *elation.Subscribe) (any, error) {
+	registerCreateTool(s, "subscriptions_subscribe", "Create a subscription", func(ctx context.Context, body *elation.Subscribe) (any, error) {
 		out, _, err := client.Subscriptions().Subscribe(ctx, body)
 		return out, err
 	})
@@ -387,7 +407,7 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return client.Subscriptions().Delete(ctx, id)
 	})
 
-	registerFindTool[elation.FindThreadMembersOptions](s, "thread_members_find", "Find thread members", func(ctx context.Context, opts *elation.FindThreadMembersOptions) (any, error) {
+	registerFindTool(s, "thread_members_find", "Find thread members", func(ctx context.Context, opts *elation.FindThreadMembersOptions) (any, error) {
 		out, _, err := client.ThreadMembers().Find(ctx, opts)
 		return out, err
 	})
@@ -396,14 +416,14 @@ func registerTools(s *server.MCPServer, client elation.Client, allowUnsafeTools 
 		return out, err
 	})
 
-	registerCreateTool[elation.VisitNoteCreate](s, "visit_notes_create", "Create a visit note", func(ctx context.Context, body *elation.VisitNoteCreate) (any, error) {
+	registerCreateTool(s, "visit_notes_create", "Create a visit note", func(ctx context.Context, body *elation.VisitNoteCreate) (any, error) {
 		out, _, err := client.VisitNote().Create(ctx, body)
 		return out, err
 	})
 	registerDeleteTool(s, "visit_notes_delete", "Delete a visit note", func(ctx context.Context, id int64) (*http.Response, error) {
 		return client.VisitNote().Delete(ctx, id)
 	})
-	registerFindTool[elation.FindVisitNotesOptions](s, "visit_notes_find", "Find visit notes", func(ctx context.Context, opts *elation.FindVisitNotesOptions) (any, error) {
+	registerFindTool(s, "visit_notes_find", "Find visit notes", func(ctx context.Context, opts *elation.FindVisitNotesOptions) (any, error) {
 		out, _, err := client.VisitNote().Find(ctx, opts)
 		return out, err
 	})
@@ -435,7 +455,7 @@ func registerGetTool(s *server.MCPServer, name, description string, fn func(cont
 	s.AddTool(
 		mcp.NewTool(name,
 			mcp.WithDescription(description),
-			mcp.WithNumber("id", mcp.Description("Resource ID"), mcp.Required()),
+			mcp.WithInputSchema[idArgs](),
 		),
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			id, err := requireInt64(req, "id")
@@ -498,11 +518,17 @@ func registerScopedGetTool(s *server.MCPServer, name, description, scopeKey stri
 }
 
 func registerFindTool[OptionsT any](s *server.MCPServer, name, description string, fn func(context.Context, *OptionsT) (any, error)) {
+	tool := mcp.NewTool(name,
+		mcp.WithDescription(description),
+		mcp.WithInputSchema[findArgs[OptionsT]](),
+	)
+
+	if schema, ok := findInputSchemaFromURLTags[OptionsT](); ok {
+		tool = mcp.NewToolWithRawSchema(name, description, schema)
+	}
+
 	s.AddTool(
-		mcp.NewTool(name,
-			mcp.WithDescription(description),
-			mcp.WithObject("options", mcp.Description("Query options object")),
-		),
+		tool,
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			opts, err := decodeObjectArg[OptionsT](req, "options", false)
 			if err != nil {
@@ -519,11 +545,124 @@ func registerFindTool[OptionsT any](s *server.MCPServer, name, description strin
 	)
 }
 
+func findInputSchemaFromURLTags[OptionsT any]() (json.RawMessage, bool) {
+	schema := mcp.SchemaFor[findArgs[OptionsT]]()
+	if schema == nil {
+		return nil, false
+	}
+
+	rootProps, ok := schema["properties"].(map[string]any)
+	if !ok {
+		return nil, false
+	}
+
+	rawOptionsSchema, ok := rootProps["options"].(map[string]any)
+	if !ok {
+		return nil, false
+	}
+
+	optionProps, ok := rawOptionsSchema["properties"].(map[string]any)
+	if !ok {
+		return nil, false
+	}
+
+	type optionTag struct {
+		name      string
+		omitempty bool
+	}
+
+	urlTags := map[string]optionTag{}
+	var collectURLTags func(reflect.Type)
+	collectURLTags = func(t reflect.Type) {
+		if t.Kind() == reflect.Pointer {
+			t = t.Elem()
+		}
+		if t.Kind() != reflect.Struct {
+			return
+		}
+
+		for field := range t.Fields() {
+			field := field
+			if field.PkgPath != "" {
+				continue
+			}
+			if field.Anonymous {
+				collectURLTags(field.Type)
+				continue
+			}
+
+			tag := field.Tag.Get("url")
+			if tag == "" {
+				continue
+			}
+
+			parts := strings.Split(tag, ",")
+			if len(parts) == 0 || parts[0] == "" || parts[0] == "-" {
+				continue
+			}
+
+			spec := optionTag{name: parts[0]}
+			if slices.Contains(parts[1:], "omitempty") {
+				spec.omitempty = true
+			}
+
+			urlTags[field.Name] = spec
+		}
+	}
+
+	collectURLTags(reflect.TypeFor[OptionsT]())
+	if len(urlTags) == 0 {
+		return nil, false
+	}
+
+	requiredSet := map[string]bool{}
+	if requiredValues, ok := rawOptionsSchema["required"].([]any); ok {
+		for _, value := range requiredValues {
+			if name, ok := value.(string); ok {
+				requiredSet[name] = true
+			}
+		}
+	}
+
+	renamedProps := make(map[string]any, len(optionProps))
+	renamedRequired := make([]any, 0, len(requiredSet))
+
+	for propName, propSchema := range optionProps {
+		tag, hasTag := urlTags[propName]
+		if !hasTag {
+			renamedProps[propName] = propSchema
+			if requiredSet[propName] {
+				renamedRequired = append(renamedRequired, propName)
+			}
+			continue
+		}
+
+		renamedProps[tag.name] = propSchema
+		if requiredSet[propName] && !tag.omitempty {
+			renamedRequired = append(renamedRequired, tag.name)
+		}
+	}
+
+	rawOptionsSchema["properties"] = renamedProps
+	if len(renamedRequired) > 0 {
+		rawOptionsSchema["required"] = renamedRequired
+	} else {
+		delete(rawOptionsSchema, "required")
+	}
+
+	b, err := json.Marshal(schema)
+	if err != nil {
+		return nil, false
+	}
+
+	return b, true
+}
+
 func registerCreateTool[BodyT any](s *server.MCPServer, name, description string, fn func(context.Context, *BodyT) (any, error)) {
 	s.AddTool(
 		mcp.NewTool(name,
 			mcp.WithDescription(description),
-			mcp.WithObject("body", mcp.Description("Request body object"), mcp.Required()),
+			mcp.WithInputSchema[createArgs[BodyT]](),
 		),
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			body, err := decodeObjectArg[BodyT](req, "body", true)
@@ -545,8 +684,7 @@ func registerUpdateTool[BodyT any](s *server.MCPServer, name, description string
 	s.AddTool(
 		mcp.NewTool(name,
 			mcp.WithDescription(description),
-			mcp.WithNumber("id", mcp.Description("Resource ID"), mcp.Required()),
-			mcp.WithObject("body", mcp.Description("Update body object"), mcp.Required()),
+			mcp.WithInputSchema[updateArgs[BodyT]](),
 		),
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			id, err := requireInt64(req, "id")
@@ -573,7 +711,7 @@ func registerDeleteTool(s *server.MCPServer, name, description string, fn func(c
 	s.AddTool(
 		mcp.NewTool(name,
 			mcp.WithDescription(description),
-			mcp.WithNumber("id", mcp.Description("Resource ID"), mcp.Required()),
+			mcp.WithInputSchema[idArgs](),
 		),
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			id, err := requireInt64(req, "id")

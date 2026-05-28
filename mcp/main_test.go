@@ -71,6 +71,80 @@ func TestRegisterTools_SafeByDefault(t *testing.T) {
 	assert.Contains(tools, "patients_get")
 }
 
+func TestRegisterTools_InputSchemasPublished(t *testing.T) {
+	assert := assert.New(t)
+	s := server.NewMCPServer("test", "0.0.0")
+
+	registerTools(s, nil, true)
+
+	tools := s.ListTools()
+
+	getTool := tools["patients_get"]
+	assert.NotNil(getTool)
+	getSchema := toolInputSchema(t, getTool.Tool)
+	assert.Contains(toolInputSchemaProperties(t, getSchema), "id")
+	assert.Contains(toolInputSchemaRequired(getSchema), "id")
+
+	findTool := tools["patients_find"]
+	assert.NotNil(findTool)
+	findSchema := toolInputSchema(t, findTool.Tool)
+	assert.Contains(toolInputSchemaProperties(t, findSchema), "options")
+	assert.NotContains(toolInputSchemaRequired(findSchema), "options")
+
+	createTool := tools["patients_create"]
+	assert.NotNil(createTool)
+	createSchema := toolInputSchema(t, createTool.Tool)
+	assert.Contains(toolInputSchemaProperties(t, createSchema), "body")
+	assert.Contains(toolInputSchemaRequired(createSchema), "body")
+
+	updateTool := tools["patients_update"]
+	assert.NotNil(updateTool)
+	updateSchema := toolInputSchema(t, updateTool.Tool)
+	assert.Contains(toolInputSchemaProperties(t, updateSchema), "id")
+	assert.Contains(toolInputSchemaProperties(t, updateSchema), "body")
+	assert.Contains(toolInputSchemaRequired(updateSchema), "id")
+	assert.Contains(toolInputSchemaRequired(updateSchema), "body")
+
+	deleteTool := tools["patients_delete"]
+	assert.NotNil(deleteTool)
+	deleteSchema := toolInputSchema(t, deleteTool.Tool)
+	assert.Contains(toolInputSchemaProperties(t, deleteSchema), "id")
+	assert.Contains(toolInputSchemaRequired(deleteSchema), "id")
+}
+
+func TestRegisterTools_FindOptionsSchemaUsesURLTagsAndOmitempty(t *testing.T) {
+	assert := assert.New(t)
+	s := server.NewMCPServer("test", "0.0.0")
+
+	registerTools(s, nil, true)
+
+	tools := s.ListTools()
+	medsFind := tools["medications_find"]
+	assert.NotNil(medsFind)
+
+	schema := toolInputSchema(t, medsFind.Tool)
+	rootProps := toolInputSchemaProperties(t, schema)
+	optionsProp, ok := rootProps["options"]
+	assert.True(ok)
+
+	optionsSchema, ok := optionsProp.(map[string]any)
+	assert.True(ok)
+	optionsProps := toolInputSchemaProperties(t, optionsSchema)
+
+	// URL-tag names should be exposed to MCP clients, not Go field names.
+	assert.Contains(optionsProps, "patient")
+	assert.Contains(optionsProps, "practice")
+	assert.Contains(optionsProps, "cursor")
+	assert.NotContains(optionsProps, "Patient")
+	assert.NotContains(optionsProps, "Practice")
+	assert.NotContains(optionsProps, "Cursor")
+
+	// `url:",omitempty"` should not be represented as required.
+	assert.NotContains(toolInputSchemaRequired(optionsSchema), "patient")
+	assert.NotContains(toolInputSchemaRequired(optionsSchema), "practice")
+	assert.NotContains(toolInputSchemaRequired(optionsSchema), "cursor")
+}
+
 func TestRequireInt64(t *testing.T) {
 	t.Run("success from multiple numeric representations", func(t *testing.T) {
 		assert := assert.New(t)
@@ -89,7 +163,6 @@ func TestRequireInt64(t *testing.T) {
 		}
 
 		for _, tc := range cases {
-			tc := tc
 			t.Run(tc.name, func(t *testing.T) {
 				got, err := requireInt64(toolReq(map[string]any{"id": tc.value}), "id")
 				assert.NoError(err)
@@ -236,4 +309,68 @@ func resultText(t *testing.T, res *mcp.CallToolResult) string {
 	}
 
 	return textContent.Text
+}
+
+func toolInputSchema(t *testing.T, tool mcp.Tool) map[string]any {
+	t.Helper()
+
+	b, err := json.Marshal(tool)
+	if err != nil {
+		t.Fatalf("marshaling tool: %v", err)
+	}
+
+	var payload map[string]any
+	if err := json.Unmarshal(b, &payload); err != nil {
+		t.Fatalf("unmarshaling tool json: %v", err)
+	}
+
+	rawSchema, ok := payload["inputSchema"]
+	if !ok {
+		t.Fatal("tool json missing inputSchema")
+	}
+
+	schema, ok := rawSchema.(map[string]any)
+	if !ok {
+		t.Fatalf("inputSchema has unexpected type %T", rawSchema)
+	}
+
+	return schema
+}
+
+func toolInputSchemaProperties(t *testing.T, schema map[string]any) map[string]any {
+	t.Helper()
+
+	rawProps, ok := schema["properties"]
+	if !ok {
+		t.Fatal("input schema missing properties")
+	}
+
+	props, ok := rawProps.(map[string]any)
+	if !ok {
+		t.Fatalf("properties has unexpected type %T", rawProps)
+	}
+
+	return props
+}
+
+func toolInputSchemaRequired(schema map[string]any) []string {
+	rawRequired, ok := schema["required"]
+	if !ok {
+		return nil
+	}
+
+	requiredValues, ok := rawRequired.([]any)
+	if !ok {
+		return nil
+	}
+
+	required := make([]string, 0, len(requiredValues))
+	for _, value := range requiredValues {
+		str, ok := value.(string)
+		if ok {
+			required = append(required, str)
+		}
+	}
+
+	return required
 }
