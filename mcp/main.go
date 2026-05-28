@@ -582,7 +582,6 @@ func findInputSchemaFromURLTags[OptionsT any]() (json.RawMessage, bool) {
 		}
 
 		for field := range t.Fields() {
-			field := field
 			if field.PkgPath != "" {
 				continue
 			}
