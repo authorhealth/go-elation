@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"flag"
-	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -25,7 +27,7 @@ type serverOptions struct {
 func main() {
 	opts, err := parseServerOptions(os.Args[1:])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: failed to parse server options: %v\n", err)
+		slog.Error("failed to parse server options", "error", err)
 		os.Exit(2)
 	}
 
@@ -41,7 +43,12 @@ func main() {
 	registerTools(s, client, opts.allowUnsafeTools)
 
 	if err := server.ServeStdio(s); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		if errors.Is(err, context.Canceled) {
+			slog.Info("server stopped")
+			os.Exit(0)
+		}
+
+		slog.Error("server error", "error", err)
 		os.Exit(1)
 	}
 }
