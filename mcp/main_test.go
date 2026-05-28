@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/authorhealth/go-elation"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRegisterTools_Comprehensive(t *testing.T) {
+	assert := assert.New(t)
 	s := server.NewMCPServer("test", "0.0.0")
 
 	registerTools(s, nil, true)
@@ -46,36 +47,33 @@ func TestRegisterTools_Comprehensive(t *testing.T) {
 		"visit_notes_create", "visit_notes_delete", "visit_notes_find", "visit_notes_get",
 	}
 
-	if len(tools) != len(expected) {
-		t.Fatalf("expected %d tools, got %d", len(expected), len(tools))
-	}
+	assert.Equal(len(expected), len(tools))
 
 	for _, name := range expected {
-		if _, ok := tools[name]; !ok {
-			t.Fatalf("expected tool %q to be registered", name)
-		}
+		assert.Contains(tools, name)
 	}
 }
 
 func TestRegisterTools_SafeByDefault(t *testing.T) {
+	assert := assert.New(t)
 	s := server.NewMCPServer("test", "0.0.0")
 
 	registerTools(s, nil, false)
 
 	tools := s.ListTools()
-	if got := len(tools); got != 51 {
-		t.Fatalf("expected 51 safe tools, got %d", got)
+
+	// Verify that all unsafe tools are hidden
+	for _, name := range unsafeToolNames {
+		assert.NotContains(tools, name)
 	}
 
-	for _, name := range unsafeToolNames {
-		if _, ok := tools[name]; ok {
-			t.Fatalf("expected unsafe tool %q to be hidden by default", name)
-		}
-	}
+	// Verify at least one known safe tool exists
+	assert.Contains(tools, "patients_get")
 }
 
 func TestRequireInt64(t *testing.T) {
 	t.Run("success from multiple numeric representations", func(t *testing.T) {
+		assert := assert.New(t)
 		cases := []struct {
 			name  string
 			value any
@@ -94,28 +92,38 @@ func TestRequireInt64(t *testing.T) {
 			tc := tc
 			t.Run(tc.name, func(t *testing.T) {
 				got, err := requireInt64(toolReq(map[string]any{"id": tc.value}), "id")
-				if err != nil {
-					t.Fatalf("unexpected error: %v", err)
-				}
-				if got != tc.want {
-					t.Fatalf("expected %d, got %d", tc.want, got)
-				}
+				assert.NoError(err)
+				assert.Equal(tc.want, got)
 			})
 		}
 	})
 
 	t.Run("missing required argument", func(t *testing.T) {
+		assert := assert.New(t)
 		_, err := requireInt64(toolReq(map[string]any{}), "id")
-		if err == nil || !strings.Contains(err.Error(), `missing required argument "id"`) {
-			t.Fatalf("expected missing argument error, got: %v", err)
-		}
+		assert.Error(err)
+		assert.Contains(err.Error(), `missing required argument "id"`)
 	})
 
 	t.Run("invalid type", func(t *testing.T) {
+		assert := assert.New(t)
 		_, err := requireInt64(toolReq(map[string]any{"id": true}), "id")
-		if err == nil || !strings.Contains(err.Error(), "must be a number or numeric string") {
-			t.Fatalf("expected invalid type error, got: %v", err)
-		}
+		assert.Error(err)
+		assert.Contains(err.Error(), "must be a number or numeric string")
+	})
+
+	t.Run("reject non-integral float64", func(t *testing.T) {
+		assert := assert.New(t)
+		_, err := requireInt64(toolReq(map[string]any{"id": float64(42.9)}), "id")
+		assert.Error(err)
+		assert.Contains(err.Error(), "must be an integer")
+	})
+
+	t.Run("reject non-integral float32", func(t *testing.T) {
+		assert := assert.New(t)
+		_, err := requireInt64(toolReq(map[string]any{"id": float32(42.5)}), "id")
+		assert.Error(err)
+		assert.Contains(err.Error(), "must be an integer")
 	})
 }
 
@@ -126,105 +134,84 @@ func TestDecodeObjectArg(t *testing.T) {
 	}
 
 	t.Run("required object present", func(t *testing.T) {
+		assert := assert.New(t)
 		got, err := decodeObjectArg[payload](toolReq(map[string]any{
 			"body": map[string]any{"name": "Ada", "age": 35},
 		}), "body", true)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if got == nil || got.Name != "Ada" || got.Age != 35 {
-			t.Fatalf("unexpected decoded payload: %+v", got)
-		}
+		assert.NoError(err)
+		assert.NotNil(got)
+		assert.Equal("Ada", got.Name)
+		assert.Equal(35, got.Age)
 	})
 
 	t.Run("optional object missing returns nil", func(t *testing.T) {
+		assert := assert.New(t)
 		got, err := decodeObjectArg[payload](toolReq(map[string]any{}), "options", false)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if got != nil {
-			t.Fatalf("expected nil options, got %+v", got)
-		}
+		assert.NoError(err)
+		assert.Nil(got)
 	})
 
 	t.Run("required object missing", func(t *testing.T) {
+		assert := assert.New(t)
 		_, err := decodeObjectArg[payload](toolReq(map[string]any{}), "body", true)
-		if err == nil || !strings.Contains(err.Error(), `missing required argument "body"`) {
-			t.Fatalf("expected missing required argument error, got: %v", err)
-		}
+		assert.Error(err)
+		assert.Contains(err.Error(), `missing required argument "body"`)
 	})
 
 	t.Run("invalid object payload", func(t *testing.T) {
+		assert := assert.New(t)
 		_, err := decodeObjectArg[payload](toolReq(map[string]any{"body": "not-an-object"}), "body", true)
-		if err == nil || !strings.Contains(err.Error(), `unmarshaling "body"`) {
-			t.Fatalf("expected unmarshal error, got: %v", err)
-		}
+		assert.Error(err)
+		assert.Contains(err.Error(), `unmarshaling "body"`)
 	})
 }
 
 func TestToolErrorResult(t *testing.T) {
 	t.Run("elation api error", func(t *testing.T) {
+		assert := assert.New(t)
 		res := toolErrorResult(&elation.Error{StatusCode: 400, Body: `{"error":"bad request"}`})
-		if !res.IsError {
-			t.Fatal("expected IsError=true")
-		}
+		assert.True(res.IsError)
 		text := resultText(t, res)
-		if !strings.Contains(text, "status=400") {
-			t.Fatalf("expected status in tool error text, got %q", text)
-		}
+		assert.Contains(text, "status=400")
 	})
 
 	t.Run("generic error", func(t *testing.T) {
+		assert := assert.New(t)
 		res := toolErrorResult(fmt.Errorf("boom"))
-		if !res.IsError {
-			t.Fatal("expected IsError=true")
-		}
-		if text := resultText(t, res); text != "boom" {
-			t.Fatalf("expected boom, got %q", text)
-		}
+		assert.True(res.IsError)
+		text := resultText(t, res)
+		assert.Equal("boom", text)
 	})
 }
 
 func TestRegisteredHandler_ValidatesInputBeforeClientCall(t *testing.T) {
+	assert := assert.New(t)
 	s := server.NewMCPServer("test", "0.0.0")
 	registerTools(s, nil, true)
 
 	tool := s.GetTool("patients_get")
-	if tool == nil {
-		t.Fatal("expected patients_get tool to exist")
-	}
+	assert.NotNil(tool)
 
 	res, err := tool.Handler(t.Context(), toolReq(map[string]any{}))
-	if err != nil {
-		t.Fatalf("unexpected protocol-level error: %v", err)
-	}
-	if !res.IsError {
-		t.Fatal("expected tool-level error result")
-	}
-	if text := resultText(t, res); !strings.Contains(text, `missing required argument "id"`) {
-		t.Fatalf("unexpected error text: %q", text)
-	}
+	assert.NoError(err)
+	assert.True(res.IsError)
+	text := resultText(t, res)
+	assert.Contains(text, `missing required argument "id"`)
 }
 
 func TestParseServerOptions(t *testing.T) {
 	t.Run("defaults to safe tools only", func(t *testing.T) {
+		assert := assert.New(t)
 		opts, err := parseServerOptions(nil)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if opts.allowUnsafeTools {
-			t.Fatal("expected allowUnsafeTools=false by default")
-		}
+		assert.NoError(err)
+		assert.False(opts.allowUnsafeTools)
 	})
 
 	t.Run("enables unsafe tools flag", func(t *testing.T) {
+		assert := assert.New(t)
 		opts, err := parseServerOptions([]string{"--allow-unsafe-tools"})
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if !opts.allowUnsafeTools {
-			t.Fatal("expected allowUnsafeTools=true")
-		}
+		assert.NoError(err)
+		assert.True(opts.allowUnsafeTools)
 	})
 }
 

@@ -821,8 +821,24 @@ func requireInt64(req mcp.CallToolRequest, key string) (int64, error) {
 
 	switch v := raw.(type) {
 	case float64:
+		// Reject non-integral floats (e.g., 42.9)
+		if v != float64(int64(v)) {
+			return 0, fmt.Errorf("argument %q must be an integer (got non-integral float)", key)
+		}
+		// Reject NaN and Infinity
+		if v != v || v > float64(^uint64(0)>>1) || v < -float64(^uint64(0)>>1) {
+			return 0, fmt.Errorf("argument %q: invalid float value", key)
+		}
 		return int64(v), nil
 	case float32:
+		// Reject non-integral floats (e.g., 42.9)
+		if v != float32(int64(v)) {
+			return 0, fmt.Errorf("argument %q must be an integer (got non-integral float)", key)
+		}
+		// Reject NaN and Infinity
+		if v != v || v > float32(^uint32(0)>>1) || v < -float32(^uint32(0)>>1) {
+			return 0, fmt.Errorf("argument %q: invalid float value", key)
+		}
 		return int64(v), nil
 	case int:
 		return int64(v), nil

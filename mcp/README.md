@@ -62,7 +62,7 @@ Common argument shapes:
 
 The server registers tools across the full current `elation.Client` service surface, including:
 
-- allergy/allergy documentation
+- allergies and allergy documentation
 - appointments
 - billing
 - clinical documents

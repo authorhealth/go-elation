@@ -22,6 +22,7 @@ jobs:
           cache-dependency-path: |
             go.sum
             cli/go.sum
+            mcp/go.sum
 
       - run: go version
 
