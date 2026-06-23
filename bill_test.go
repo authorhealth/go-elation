@@ -24,7 +24,7 @@ func TestBillService_Create(t *testing.T) {
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
-				CPTs:            []*CreatedBillCPT{},
+				CPTs:            []*BillCreateCPT{},
 			},
 		},
 		"all specified fields request": {
@@ -34,14 +34,14 @@ func TestBillService_Create(t *testing.T) {
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
-				CPTs: []*CreatedBillCPT{
+				CPTs: []*BillCreateCPT{
 					{
 						CPT:        "12",
 						Units:      "1.0",
 						UnitCharge: "122.0",
-						Modifiers:  []string{"modifier 1", "modifier 2"},
+						Modifier1:  "10",
+						Modifier2:  "11",
 						DXs:        []CreatedBillDX{{ICD10Code: "dx 1"}, {ICD10Code: "dx 2"}},
-						AltDXs:     []string{"alt dx 1", "alt dx 2"},
 					},
 				},
 				BillingProvider:     42120898,
@@ -113,7 +113,7 @@ func TestBillService_Create_already_exists(t *testing.T) {
 		Patient:         64901939201,
 		Practice:        65540,
 		Physician:       64811630594,
-		CPTs:            []*CreatedBillCPT{},
+		CPTs:            []*BillCreateCPT{},
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
