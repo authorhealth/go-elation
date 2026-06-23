@@ -48,7 +48,7 @@ var getBillCmd = &cobra.Command{
 
 		spew.Dump(response)
 
-		return err
+		return nil
 	}),
 }
 
