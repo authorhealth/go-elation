@@ -24,7 +24,7 @@ func TestBillService_Create(t *testing.T) {
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
-				CPTs:            []*BillCreateCPT{},
+				CPTs:            []*CreatedBillCPT{},
 			},
 		},
 		"all specified fields request": {
@@ -34,7 +34,7 @@ func TestBillService_Create(t *testing.T) {
 				Patient:         64901939201,
 				Practice:        65540,
 				Physician:       64811630594,
-				CPTs: []*BillCreateCPT{
+				CPTs: []*CreatedBillCPT{
 					{
 						CPT:        "12",
 						Units:      "1.0",
@@ -118,7 +118,7 @@ func TestBillService_Create_already_exists(t *testing.T) {
 		Patient:         64901939201,
 		Practice:        65540,
 		Physician:       64811630594,
-		CPTs:            []*BillCreateCPT{},
+		CPTs:            []*CreatedBillCPT{},
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

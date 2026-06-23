@@ -59,38 +59,24 @@ type CreatedBill struct {
 }
 
 type BillCreate struct {
-	ServiceLocation     int64            `json:"service_location"`               //: 10           // required
-	VisitNote           int64            `json:"visit_note"`                     //: 64409108504, // required
-	Patient             int64            `json:"patient"`                        //: 64901939201, // required
-	Practice            int64            `json:"practice"`                       //: 65540, 		   // required
-	Physician           int64            `json:"physician"`                      //: 64811630594, // required
-	CPTs                []*BillCreateCPT `json:"cpts"`                           //: [{}],        // required
-	BillingProvider     int64            `json:"billing_provider,omitempty"`     //: 42120898,
-	RenderingProvider   int64            `json:"rendering_provider,omitempty"`   //: 68382673,
-	SupervisingProvider int64            `json:"supervising_provider,omitempty"` //: 52893234,
-	ReferringProvider   *BillProvider    `json:"referring_provider,omitempty"`   //: {},
-	OrderingProvider    *BillProvider    `json:"ordering_provider,omitempty"`    //: {},
-	PriorAuthorization  string           `json:"prior_authorization,omitempty"`  //: "1234-ABC",
-	PaymentAmount       float64          `json:"payment_amount,omitempty"`       //: 10.00,
-	Notes               string           `json:"notes,omitempty"`                //: "patient has not paid yet",
+	ServiceLocation     int64             `json:"service_location"`               //: 10           // required
+	VisitNote           int64             `json:"visit_note"`                     //: 64409108504, // required
+	Patient             int64             `json:"patient"`                        //: 64901939201, // required
+	Practice            int64             `json:"practice"`                       //: 65540, 		   // required
+	Physician           int64             `json:"physician"`                      //: 64811630594, // required
+	CPTs                []*CreatedBillCPT `json:"cpts"`                           //: [{}],        // required
+	BillingProvider     int64             `json:"billing_provider,omitempty"`     //: 42120898,
+	RenderingProvider   int64             `json:"rendering_provider,omitempty"`   //: 68382673,
+	SupervisingProvider int64             `json:"supervising_provider,omitempty"` //: 52893234,
+	ReferringProvider   *BillProvider     `json:"referring_provider,omitempty"`   //: {},
+	OrderingProvider    *BillProvider     `json:"ordering_provider,omitempty"`    //: {},
+	PriorAuthorization  string            `json:"prior_authorization,omitempty"`  //: "1234-ABC",
+	PaymentAmount       float64           `json:"payment_amount,omitempty"`       //: 10.00,
+	Notes               string            `json:"notes,omitempty"`                //: "patient has not paid yet",
 }
 
 type CreatedBillDX struct {
 	ICD10Code string `json:"icd10_code"`
-}
-
-type BillCreateCPT struct {
-	CPT        string          `json:"cpt"`                   //: "99213",
-	DXs        []CreatedBillDX `json:"dxs"`                   //: [{"icd10_code":"D23.4"}],
-	Modifier1  string          `json:"modifier_1,omitempty"`  //: "10",
-	Modifier2  string          `json:"modifier_2,omitempty"`  //: "11",
-	Modifier3  string          `json:"modifier_3,omitempty"`  //: "12",
-	Modifier4  string          `json:"modifier_4,omitempty"`  //: "13",
-	NDC        string          `json:"ndc,omitempty"`         //: "12345678901",
-	NDCDose    string          `json:"ndc_dose,omitempty"`    //: "1.000",
-	NDCMeasure string          `json:"ndc_measure,omitempty"` //: "UN",
-	UnitCharge string          `json:"unit_charge"`           //: "10.0",
-	Units      string          `json:"units"`                 //: "1.0"
 }
 
 type CreatedBillCPT struct {
