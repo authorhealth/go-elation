@@ -78,13 +78,19 @@ type BillCreate struct {
 type CreatedBillDX struct {
 	ICD10Code string `json:"icd10_code"`
 }
+
 type CreatedBillCPT struct {
-	CPT        string          `json:"cpt"`                 //: "99213",
-	Modifiers  []string        `json:"modifiers,omitempty"` //: ["10"],
-	DXs        []CreatedBillDX `json:"dxs"`                 //: ["D23.4"],
-	AltDXs     []string        `json:"alt_dxs,omitempty"`   //: ["216.4"],
-	UnitCharge string          `json:"unit_charge"`         //: "10.0",
-	Units      string          `json:"units"`               //: "1.0"
+	CPT        string          `json:"cpt"`                   //: "99213",
+	DXs        []CreatedBillDX `json:"dxs"`                   //: [{"icd10_code":"D23.4"}],
+	Modifier1  string          `json:"modifier_1,omitempty"`  //: "10",
+	Modifier2  string          `json:"modifier_2,omitempty"`  //: "11",
+	Modifier3  string          `json:"modifier_3,omitempty"`  //: "12",
+	Modifier4  string          `json:"modifier_4,omitempty"`  //: "13",
+	NDC        string          `json:"ndc,omitempty"`         //: "12345678901",
+	NDCDose    string          `json:"ndc_dose,omitempty"`    //: "1.000",
+	NDCMeasure string          `json:"ndc_measure,omitempty"` //: "UN",
+	UnitCharge string          `json:"unit_charge"`           //: "10.0",
+	Units      string          `json:"units"`                 //: "1.0"
 }
 
 type CreatedBillPayment struct {
@@ -145,12 +151,15 @@ func (b *BillService) Create(ctx context.Context, create *BillCreate) (*CreatedB
 }
 
 type BillCPT struct {
-	CPT        string   `json:"cpt"`                 //: "99213"
-	Modifiers  []string `json:"modifiers,omitempty"` //: ["10"]
-	DXs        []string `json:"dxs"`                 //: ["D23.4"]
-	AltDXs     []string `json:"alt_dxs,omitempty"`   //: ["216.4"]
-	UnitCharge string   `json:"unit_charge"`         //: "10.0"
-	Units      string   `json:"units"`               //: "1.0"
+	AltDXs     []string `json:"alt_dxs"`     //: ["216.4"]
+	CPT        string   `json:"cpt"`         //: "99213"
+	DXs        []string `json:"dxs"`         //: ["D23.4"]
+	Modifiers  []string `json:"modifiers"`   //: ["10"]
+	NDC        string   `json:"ndc"`         //: "12345678901"
+	NDCDose    string   `json:"ndc_dose"`    //: "1.000"
+	NDCMeasure string   `json:"ndc_measure"` //: "UN"
+	UnitCharge string   `json:"unit_charge"` //: "10.0"
+	Units      string   `json:"units"`       //: "1.0"
 }
 
 type BillPayment struct {
