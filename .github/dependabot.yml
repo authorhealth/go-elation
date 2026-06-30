@@ -7,20 +7,34 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - dependencies
       - ci/cd
     schedule:
-      # Check for updates to GitHub Actions every week
-      interval: weekly
-      day: tuesday
-      time: "12:00"
+      interval: monthly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: gomod
     directories:
       - /
       - /cli
     groups:
+      minor-and-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
       golang-org-x:
         patterns:
           - "golang.org/x/*"
@@ -33,6 +47,6 @@ updates:
       - dependencies
       - go
     schedule:
-      interval: weekly
-      day: wednesday
-      time: "17:00"
+      interval: monthly
+    cooldown:
+      default-days: 7
