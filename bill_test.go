@@ -254,3 +254,68 @@ func TestBillService_Find(t *testing.T) {
 	assert.Len(billsRes.Results, 2)
 	assert.Equal(bills, billsRes.Results)
 }
+
+func TestBillService_ReleaseToPMS(t *testing.T) {
+	assert := assert.New(t)
+
+	var id int64 = 65099661468
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if tokenRequest(w, r) {
+			return
+		}
+
+		assert.Equal(http.MethodPatch, r.Method)
+		assert.Equal("/bills/"+strconv.FormatInt(id, 10)+"/actions/release-to-pms/", r.URL.Path)
+
+		b, err := json.Marshal(map[string]string{"status": "success"})
+		assert.NoError(err)
+
+		w.Header().Set("Content-Type", "application/json")
+		//nolint
+		w.Write(b)
+	}))
+	defer srv.Close()
+
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	svc := BillService{client}
+
+	success, res, err := svc.ReleaseToPMS(context.Background(), id)
+	assert.True(success)
+	assert.NotNil(res)
+	assert.NoError(err)
+}
+
+func TestBillService_ReleaseToPMS_api_error(t *testing.T) {
+	assert := assert.New(t)
+
+	var id int64 = 65099661468
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if tokenRequest(w, r) {
+			return
+		}
+
+		assert.Equal(http.MethodPatch, r.Method)
+		assert.Equal("/bills/"+strconv.FormatInt(id, 10)+"/actions/release-to-pms/", r.URL.Path)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadGateway)
+		//nolint
+		w.Write([]byte(`{"err":"oh noes"}`))
+	}))
+	defer srv.Close()
+
+	client := NewHTTPClient(srv.Client(), srv.URL+"/token", "", "", srv.URL)
+	svc := BillService{client}
+
+	success, res, err := svc.ReleaseToPMS(context.Background(), id)
+	assert.False(success)
+	assert.NotNil(res)
+
+	apiError := &Error{}
+	if assert.ErrorAs(err, &apiError) {
+		assert.Equal(502, apiError.StatusCode)
+		assert.Equal(`{"err":"oh noes"}`, apiError.Body)
+	}
+}

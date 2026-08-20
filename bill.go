@@ -21,6 +21,7 @@ type BillServicer interface {
 	Create(ctx context.Context, create *BillCreate) (*CreatedBill, *http.Response, error)
 	Find(ctx context.Context, opts *FindBillOptions) (*Response[[]*Bill], *http.Response, error)
 	Get(ctx context.Context, id int64) (*Bill, *http.Response, error)
+	ReleaseToPMS(ctx context.Context, id int64) (bool, *http.Response, error)
 }
 
 var _ BillServicer = (*BillService)(nil)
@@ -240,4 +241,19 @@ func (b *BillService) Find(ctx context.Context, opts *FindBillOptions) (*Respons
 	}
 
 	return out, res, nil
+}
+
+func (b *BillService) ReleaseToPMS(ctx context.Context, id int64) (bool, *http.Response, error) {
+	ctx, span := b.client.tracer.Start(ctx, "release bill to pms", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
+
+	res, err := b.client.request(ctx, http.MethodPatch, fmt.Sprintf("/bills/%d/actions/release-to-pms/", id), nil, nil, nil)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error making request")
+
+		return false, res, fmt.Errorf("making request: %w", err)
+	}
+
+	return true, res, nil
 }
