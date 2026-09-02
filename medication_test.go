@@ -146,8 +146,8 @@ func TestMedicationService_Find(t *testing.T) {
 		assert.Equal(opts.DocumentDateLTE.Format(time.RFC3339), documentDateLTE)
 		assert.Equal(opts.DocumentDateGTE.Format(time.RFC3339), documentDateGTE)
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*PatientMedication]{
 			Results: []*PatientMedication{

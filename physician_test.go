@@ -44,8 +44,8 @@ func TestPhysicianService_Find(t *testing.T) {
 		assert.Equal(opts.LastName, lastName)
 		assert.Equal(opts.NPI, npi)
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Physician]{
 			Results: []*Physician{

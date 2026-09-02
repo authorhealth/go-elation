@@ -38,8 +38,8 @@ func TestProblemService_Find(t *testing.T) {
 
 		assert.Equal(opts.Patient, strToInt64(patient))
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*PatientProblem]{
 			Results: []*PatientProblem{

@@ -114,8 +114,8 @@ func TestAppointmentService_Find(t *testing.T) {
 		assert.Equal(opts.ToDate.Format(time.RFC3339), toDate)
 		assert.Equal(opts.TimeSlotType, timeSlotType)
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Appointment]{
 			Results: []*Appointment{
