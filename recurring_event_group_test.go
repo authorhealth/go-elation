@@ -119,8 +119,8 @@ func TestRecurringEventGroupService_Find(t *testing.T) {
 		assert.Equal(opts.StartDate, startDate)
 		assert.Equal(opts.EndDate, endDate)
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*RecurringEventGroup]{
 			Results: []*RecurringEventGroup{
@@ -191,8 +191,8 @@ func TestRecurringEventGroupService_Find_Multiple_Params(t *testing.T) {
 		assert.Equal(opts.StartDate, startDate)
 		assert.Equal(opts.EndDate, endDate)
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*RecurringEventGroup]{
 			Results: []*RecurringEventGroup{

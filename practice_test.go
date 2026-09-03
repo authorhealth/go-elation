@@ -32,8 +32,8 @@ func TestPracticeService_Find(t *testing.T) {
 		limit := r.URL.Query().Get("limit")
 		offset := r.URL.Query().Get("offset")
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Practice]{
 			Results: []*Practice{

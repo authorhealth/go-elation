@@ -21,7 +21,7 @@ func tokenRequest(w http.ResponseWriter, r *http.Request) bool {
 func commaStrToInt64(in string) []int64 {
 	var out []int64
 
-	for _, v := range strings.Split(in, ",") {
+	for v := range strings.SplitSeq(in, ",") {
 		i, err := strconv.ParseInt(v, 10, 64)
 
 		if err != nil {

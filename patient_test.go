@@ -173,8 +173,8 @@ func TestPatientService_Find(t *testing.T) {
 		assert.Equal(opts.LastModifiedLT.Format(time.RFC3339), lastModifiedLT)
 		assert.Equal(opts.LastModifiedLTE.Format(time.RFC3339), lastModifiedLTE)
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*Patient]{
 			Results: []*Patient{

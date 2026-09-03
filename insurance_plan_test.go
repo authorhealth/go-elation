@@ -86,8 +86,8 @@ func TestInsurancePlanService_Find(t *testing.T) {
 		assert.Equal(opts.Practice, sliceStrToInt64(practice))
 		assert.Equal(opts.InsuranceCompany, sliceStrToInt64(insuranceCompany))
 
-		assert.Equal(opts.Pagination.Limit, strToInt(limit))
-		assert.Equal(opts.Pagination.Offset, strToInt(offset))
+		assert.Equal(opts.Limit, strToInt(limit))
+		assert.Equal(opts.Offset, strToInt(offset))
 
 		b, err := json.Marshal(Response[[]*InsurancePlan]{
 			Results: []*InsurancePlan{
