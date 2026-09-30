@@ -190,6 +190,7 @@ func TestAppointmentService_Update(t *testing.T) {
 			Status: "Confirmed",
 			Room:   "Room 1",
 		},
+		Physician:         new(int64(67890)),
 		TelehealthDetails: new("telehealth details"),
 		Instructions:      new("instructions"),
 	}
