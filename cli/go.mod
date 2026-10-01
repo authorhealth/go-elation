@@ -2,29 +2,28 @@ module github.com/authorhealth/go-elation/cli
 
 go 1.27.1
 
-require github.com/authorhealth/go-elation v0.0.0-20250324132626-bc6dc6aa1c21
-
 require (
-	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/felixge/httpsnoop v1.1.0 // indirect
-	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
+	github.com/authorhealth/go-elation v0.0.0-20250324132626-bc6dc6aa1c21
+	github.com/davecgh/go-spew v1.1.1
+	github.com/joho/godotenv v1.5.1
+	github.com/spf13/cobra v1.10.2
 )
 
 require (
 	cloud.google.com/go v0.123.0 // indirect
-	github.com/davecgh/go-spew v1.1.1
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/go-querystring v1.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/joho/godotenv v1.5.1
-	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.9 // indirect
+	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
 	go.opentelemetry.io/otel v1.46.0 // indirect
 	go.opentelemetry.io/otel/metric v1.46.0 // indirect
 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
-	golang.org/x/oauth2 v0.36.0 // indirect
+	golang.org/x/oauth2 v0.37.0 // indirect
 )
 
 replace github.com/authorhealth/go-elation => ..
