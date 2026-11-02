@@ -65,6 +65,13 @@ func TestBillService_Create(t *testing.T) {
 				PriorAuthorization: "1234-ABC",
 				PaymentAmount:      100.00,
 				Notes:              "additional billing notes",
+				Metadata: &Metadata{
+					Data: new(map[string]string{
+						"foo": "bar",
+					}),
+					ObjectID:      new("object-id"),
+					ObjectWebLink: new("object-web-link"),
+				},
 			},
 		},
 	}
