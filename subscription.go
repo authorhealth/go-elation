@@ -41,6 +41,7 @@ const (
 	ResourceAppointments            Resource = "appointments"
 	ResourceAllergies               Resource = "allergies"
 	ResourceAllergyDocumentation    Resource = "allergy_documentation"
+	ResourceBills                   Resource = "bills"
 	ResourceDiscontinuedMedications Resource = "discontinued_medications"
 	ResourceLetters                 Resource = "letters"
 	ResourceMedications             Resource = "medications"
