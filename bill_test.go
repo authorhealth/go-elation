@@ -175,6 +175,13 @@ func TestBillService_Get(t *testing.T) {
 
 		b, err := json.Marshal(&Bill{
 			ID: id,
+			Metadata: &Metadata{
+				Data: new(map[string]string{
+					"foo": "bar",
+				}),
+				ObjectID:      new("object-id"),
+				ObjectWebLink: new("object-web-link"),
+			},
 		})
 		assert.NoError(err)
 
@@ -192,6 +199,13 @@ func TestBillService_Get(t *testing.T) {
 	assert.NotNil(res)
 	assert.NoError(err)
 	assert.Equal(id, found.ID)
+	assert.Equal(&Metadata{
+		Data: new(map[string]string{
+			"foo": "bar",
+		}),
+		ObjectID:      new("object-id"),
+		ObjectWebLink: new("object-web-link"),
+	}, found.Metadata)
 }
 
 func TestBillService_Find(t *testing.T) {

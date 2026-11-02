@@ -54,7 +54,6 @@ type CreatedBill struct {
 	Practice             int64             `json:"practice"`                //: 65540,
 	Patient              int64             `json:"patient"`                 //: 64901939201,
 	PriorAuthorization   *string           `json:"prior_authorization"`     //: "1234-ABC",
-	Metadata             any               `json:"metadata"`                //: null,
 	CreatedDate          time.Time         `json:"created_date"`            //: "2016-05-23T17:50:50Z",
 	LastModifiedDate     time.Time         `json:"last_modified_date"`      //: "2016-10-12T22:39:46Z"
 }
@@ -192,9 +191,9 @@ type Bill struct {
 	Practice             int64           `json:"practice"`                //: 65540
 	Patient              int64           `json:"patient"`                 //: 64901939201
 	PriorAuthorization   *string         `json:"prior_authorization"`     //: "1234-ABC"
-	Metadata             any             `json:"metadata"`                //: null
-	CreatedDate          time.Time       `json:"created_date"`            //: "2016-05-23T17:50:50Z"
-	LastModifiedDate     time.Time       `json:"last_modified_date"`      //: "2016-10-12T22:39:46Z"
+	Metadata             *Metadata       `json:"metadata"`
+	CreatedDate          time.Time       `json:"created_date"`       //: "2016-05-23T17:50:50Z"
+	LastModifiedDate     time.Time       `json:"last_modified_date"` //: "2016-10-12T22:39:46Z"
 }
 
 func (b *BillService) Get(ctx context.Context, id int64) (*Bill, *http.Response, error) {
