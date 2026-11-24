@@ -220,6 +220,7 @@ func TestBillService_Find(t *testing.T) {
 		FromServiceDate:   fromServiceDate,
 		ToServiceDate:     toServiceDate,
 		AssignedPhysician: []int64{64811630594},
+		Practice:          []int64{65540},
 		SigningPhysician:  64811630594,
 		VisitNoteID:       []int64{12314823928},
 	}
@@ -239,6 +240,7 @@ func TestBillService_Find(t *testing.T) {
 
 		q := r.URL.Query()
 		assert.Equal("141289139994622", q.Get("patient"))
+		assert.Equal("65540", q.Get("practice"))
 		assert.Equal("143945720594544", q.Get("bill_id"))
 		assert.Equal(fromServiceDate.Format(time.RFC3339), q.Get("from_service_date"))
 		assert.Equal(toServiceDate.Format(time.RFC3339), q.Get("to_service_date"))
