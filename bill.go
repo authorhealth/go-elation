@@ -221,6 +221,7 @@ type FindBillOptions struct {
 	FromServiceDate   time.Time `url:"from_service_date,omitempty"`  //: "2016-05-23T17:50:50Z"
 	ToServiceDate     time.Time `url:"to_service_date,omitempty"`    //: "2016-05-23T17:50:50Z"
 	Patient           []int64   `url:"patient,omitempty"`            //: [141289139994622]
+	Practice          []int64   `url:"practice,omitempty"`           //: [65540]
 	SigningPhysician  int64     `url:"signing_physician,omitempty"`  //: 64811630594
 	VisitNoteID       []int64   `url:"visit_note_id,omitempty"`      //: 12314823928
 }
